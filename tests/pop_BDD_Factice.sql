@@ -1,0 +1,4 @@
+-- Ajout de données dans la table Commune
+
+INSERT INTO Commune(ID_CO, NOM_M , INSEE_COM, STATUT, INSEE_CAN, INSEE_ARR, INSEE_DEP, INSEE_REG, SIREN_EPCI, Polygons)
+VALUES (BELEY, 000000000001, 1, 01, 84, )
