@@ -15,8 +15,8 @@ class Departement:
         INSEE_REG : str
             code INSEE de la région
         Polygons : dict
-            contient les coordonnées des points du polygone entourant la
-            commune
+            contient les coordonnées des points du polygone entourant le
+            département
         """
 
         if not isinstance(ID_d, str):
