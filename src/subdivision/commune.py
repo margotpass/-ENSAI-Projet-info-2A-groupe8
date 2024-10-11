@@ -1,7 +1,7 @@
-class commune:
+class Commune:
     def __init__(self, ID_CO, NOM_M, INSEE_COM, STATUT, INSEE_CAN, INSEE_ARR,
                  INSEE_DEP, INSEE_REG, SIREN_EPCI, Polygons):
-        
+
         """
         Initialise la classe Commune.
 
@@ -11,7 +11,23 @@ class commune:
             identifiant de la commune
         NOM_M : str
             nom de la commune
-        INSEE
+        INSEE_COM : str
+            numéro INSEE de la commune
+        STATUT : str
+            statut de la commune
+        INSEE_CAN : str
+            numéro INSEE du canton associé
+        INSEE_ARR : str
+            numéro INSEE de l'arrondissement associé
+        INSEE_DEP : str
+            numéro INSEE du département associé
+        INSEE_REG : str
+            numéro INSEE de la région associée
+        SIREN_EPCI : str
+            numéro SIREN de l'EPCI associée
+        Polygons : dict
+            contient les coordonnées des points du polygone entourant la
+            commune
         """
 
         if not isinstance(ID_CO, str):
