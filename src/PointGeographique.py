@@ -5,7 +5,7 @@ class PointGeographique():
     paramètres:
     latitude -- latitude du point (float)
     longitude -- longitude du point (float)
-    typeCoordonnees -- type de coordonnées (str) : soit Lamb97, soit WGS84
+    typeCoordonnees -- type de coordonnées (str) : soit Lamb93 soit WGS84
     """
     def __init__(self, latitude, longitude, typeCoordonnees):
         self.latitude = latitude
@@ -17,18 +17,26 @@ class PointGeographique():
         return "Latitude: " + str(self.latitude) + " Longitude: " + str(self.longitude) + " Type de coordonnées: " + str(self.typeCoordonnees)
 
     def convertir_type_coordonnees(self):
-        """ Si les coordonnées sont en Lamb97, les convertit en WGS84"""
-        if self.typeCoordonnees == "Lamb97":
-            # Conversion des coordonnées en Lambert 93 en WGS84
-            lambert = pyproj.Proj("+init=EPSG:2154")
-            wgs84 = pyproj.Proj("+init=EPSG:4326")
-            self.longitude, self.latitude = pyproj.Transformer(lambert, wgs84, self.longitude, self.latitude)
+        """ Si les coordonnées sont en Lambert 93, les convertit en WGS84"""
+        if self.typeCoordonnees == "Lamb93":
+            lambert = pyproj.Proj(init='epsg:2154')
+            wgs84 = pyproj.Proj(init='epsg:4326')
+            self.longitude, self.latitude = pyproj.transform(lambert, wgs84, self.latitude, self.longitude)
             self.typeCoordonnees = "WGS84"
-        else:
+        elif self.typeCoordonnees == "WGS84":
             print("Les coordonnées sont déjà en WGS84")
+        else :
+            print("Type de coordonnées non reconnu")
 
-coord = PointGeographique(341120, 6875760, "Lamb97")
+# Test de convertir_type_coordonnees
+coord = PointGeographique(48.856578, 2.351828, "WGS84")
+print(coord)
 coord.convertir_type_coordonnees()
-print(f"Longitude: {coord.longitude}, Latitude: {coord.latitude}")
+print(coord)
+
+coord2 = PointGeographique(651000, 6863000, "Lamb93")
+print(coord2)
+coord2.convertir_type_coordonnees()
+print(coord2)
 
 
