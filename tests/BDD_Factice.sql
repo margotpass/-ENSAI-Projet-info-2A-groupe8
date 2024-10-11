@@ -1,8 +1,15 @@
 CREATE TABLE Commune(
-    id PRIMARY KEY AUTO_INCREMENT,
-    nom VARCHAR(50),
+    ID_CO PRIMARY KEY AUTO_INCREMENT,
+    NOM_M VARCHAR(50),
+    INSEE_COM VARCHAR,
+    STATUT VARCHAR,
+    INSEE_CAN int,
     INSEE_ARR int,
     INSEE_DEP int,
     INSEE_REG int,
-    polygon FLOAT[]
+    SIREN_EPCI int,
+    Polygons FLOAT[]
 )
+
+ID_CO, NOM_M, INSEE_COM, STATUT, INSEE_CAN, INSEE_ARR,
+                 INSEE_DEP, INSEE_REG, SIREN_EPCI, Polygons
