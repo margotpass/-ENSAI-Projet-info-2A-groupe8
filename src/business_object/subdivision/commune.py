@@ -1,5 +1,5 @@
 class Commune:
-    def __init__(self, ID_CO, NOM_M, INSEE_COM, STATUT, INSEE_CAN, INSEE_ARR,
+    def __init__(self, ID_co, NOM_M, INSEE_COM, STATUT, INSEE_CAN, INSEE_ARR,
                  INSEE_DEP, INSEE_REG, SIREN_EPCI, Polygons):
 
         """
@@ -7,7 +7,7 @@ class Commune:
 
         Paramètres:
         -----------
-        ID_CO : str
+        ID_co : str
             identifiant de la commune
         NOM_M : str
             nom de la commune
@@ -30,7 +30,7 @@ class Commune:
             commune
         """
 
-        if not isinstance(ID_CO, str):
+        if not isinstance(ID_co, str):
             raise TypeError("L'ID doit être un str")
 
         if not isinstance(NOM_M, str):
@@ -61,7 +61,7 @@ class Commune:
         if not isinstance(Polygons, dict):
             raise TypeError("L'attribut Polygons doit être un dictionnaire")
 
-        self.ID_CO = ID_CO
+        self.ID_co = ID_co
         self.NOM_M = NOM_M
         self.INSEE_COM = INSEE_COM
         self.STATUT = STATUT
