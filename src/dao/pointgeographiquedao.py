@@ -23,9 +23,32 @@ class PointGeographiqueDao:
         except Exception as e:
             print(f"Erreur lors de la création de la table 'points' : {e}")
 
+    def create_point(self, longitude, latitude):
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                INSERT INTO points (longitude, latitude)
+                VALUES (%s, %s);
+                """, (longitude, latitude))
+                connection.commit()
+                print("Point créé avec succès.")
 
-if __name__ == "__main__":
-    point_dao = PointGeographiqueDao()
+    def get_point_by_coordinates(self, longitude, latitude):
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT * FROM points                    "
+                    "WHERE longitude = %(longitude)s AND     "
+                    "latitude = %(latitude)s)                "
+                    "RETURNIND id;",
+                    {
+                        "longitude": longitude,
+                        "latitude": latitude
+                    },
+                )
+            res = cursor.fetchone
 
-    # Créer la table points dans la base de données
-    point_dao.create_table_points()
+        if res:
+            longitude = res["longitude"],
+            latitude = res["latitude"]
+
