@@ -1,8 +1,13 @@
 from src.dao.db_connection import DBConnection
+from src.business_object.PointGeographique import PointGeographique
 
 
 class PointGeographiqueDao:
+    """ DAO qui permet d'obtenir des informations sur un point"""
     def create_table_points(self):
+        """Métode pour créer la table où nous allons stocker nos points
+           dans PostgreSQL
+        """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -25,7 +30,7 @@ class PointGeographiqueDao:
 
     def alter_table_points_add_typecoordonnees(self):
         """
-        Ajoute la colonne 'type_coordinates' à la table 'points'.
+        Ajoute la colonne 'type_coordonnees' à la table 'points'.
         """
         try:
             with DBConnection().connection as connection:
@@ -36,12 +41,15 @@ class PointGeographiqueDao:
                     ADD COLUMN type_coordonnees TEXT;"""
                     )
                     connection.commit()
-                    print("Colonne 'type_coordonnees ajoutée avec succès!")
+                    print("Colonne 'type_coordonnees' ajoutée avec succès!")
         except Exception as e:
             print(
                 f"Erreur lors de l'ajout de la colonne 'type_coordonnes: {e}")
 
     def create_point(self, longitude, latitude, type_coordonnees):
+        """Méthode permettant l'ajout d'un point dont on connait les
+        coordonnées et le système de coordonnées à la table points
+        """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute("""
@@ -51,13 +59,15 @@ class PointGeographiqueDao:
                 connection.commit()
                 print("Point créé avec succès.")
 
-    def get_point_by_coordinates(self, longitude, latitude):
+    def get_point_by_coordinates(self, longitude, latitude, type_coordonnees):
+        """Récupère un point de notre BDD à partir de ses coordonnées
+        et d'un système de coordonnées spécifié """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
                     """"SELECT * FROM points
                     WHERE longitude = %(longitude)s,
-                    latitude = %(latitude)s AND 
+                    latitude = %(latitude)s AND
                     type_coordonnees = %(type_coordonnees)s
                     ; """,
                     {
@@ -69,10 +79,15 @@ class PointGeographiqueDao:
             res = cursor.fetchone()
 
         if res:
-            point = point(
+            point = PointGeographique(
                 longitude=res["longitude"],
-                latitude=res["latitude"]
+                latitude=res["latitude"],
+                typeCoordonnees=res["type_coordonnees"]
             )
             print(f"Point trouvé : {point}")
             return point
+        else:
+            print("Aucun point trouvé")
+            return None
 
+    def update_point(self):
