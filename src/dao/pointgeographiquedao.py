@@ -23,13 +23,31 @@ class PointGeographiqueDao:
         except Exception as e:
             print(f"Erreur lors de la création de la table 'points' : {e}")
 
-    def create_point(self, longitude, latitude):
+    def alter_table_points_add_typecoordonnees(self):
+        """
+        Ajoute la colonne 'type_coordinates' à la table 'points'.
+        """
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        """
+                    ALTER TABLE points
+                    ADD COLUMN type_coordonnees TEXT;"""
+                    )
+                    connection.commit()
+                    print("Colonne 'type_coordonnees ajoutée avec succès!")
+        except Exception as e:
+            print(
+                f"Erreur lors de l'ajout de la colonne 'type_coordonnes: {e}")
+
+    def create_point(self, longitude, latitude, type_coordonnees):
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute("""
-                INSERT INTO points (longitude, latitude)
-                VALUES (%s, %s);
-                """, (longitude, latitude))
+                INSERT INTO points (longitude, latitude, type_coordonnees)
+                VALUES (%s, %s, %s);
+                """, (longitude, latitude, type_coordonnees))
                 connection.commit()
                 print("Point créé avec succès.")
 
@@ -37,18 +55,24 @@ class PointGeographiqueDao:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    "SELECT * FROM points                    "
-                    "WHERE longitude = %(longitude)s AND     "
-                    "latitude = %(latitude)s)                "
-                    "RETURNIND id;",
+                    """"SELECT * FROM points
+                    WHERE longitude = %(longitude)s,
+                    latitude = %(latitude)s AND 
+                    type_coordonnees = %(type_coordonnees)s
+                    ; """,
                     {
                         "longitude": longitude,
-                        "latitude": latitude
+                        "latitude": latitude,
+                        "type_coordonnes": type_coordonnees
                     },
                 )
-            res = cursor.fetchone
+            res = cursor.fetchone()
 
         if res:
-            longitude = res["longitude"],
-            latitude = res["latitude"]
+            point = point(
+                longitude=res["longitude"],
+                latitude=res["latitude"]
+            )
+            print(f"Point trouvé : {point}")
+            return point
 
