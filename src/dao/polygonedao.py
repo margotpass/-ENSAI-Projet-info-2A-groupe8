@@ -135,8 +135,3 @@ class PolygoneDAO:
             points.append(point)
 
         return points
-
-
-
-if __name__ == "__main__":
-    PolygoneDAO().create_table_polygones()
