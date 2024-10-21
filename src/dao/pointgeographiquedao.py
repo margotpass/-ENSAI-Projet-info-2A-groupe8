@@ -1,5 +1,5 @@
 from src.dao.db_connection import DBConnection
-from src.business_object.PointGeographique import PointGeographique
+from src.business_object.pointgeographique import PointGeographique
 
 
 class PointGeographiqueDao:
@@ -13,7 +13,7 @@ class PointGeographiqueDao:
                 with connection.cursor() as cursor:
                     # Requête SQL pour créer la table points
                     create_table_query = """
-                    CREATE TABLE IF NOT EXISTS points (
+                    CREATE TABLE IF NOT EXISTS geodata.points (
                         id SERIAL PRIMARY KEY,
                         latitude FLOAT NOT NULL,
                         longitude FLOAT NOT NULL
@@ -37,7 +37,7 @@ class PointGeographiqueDao:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         """
-                    ALTER TABLE points
+                    ALTER TABLE geodata.points
                     ADD COLUMN type_coordonnees TEXT;"""
                     )
                     connection.commit()
@@ -53,19 +53,20 @@ class PointGeographiqueDao:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute("""
-                INSERT INTO points (longitude, latitude, type_coordonnees)
+                INSERT INTO geodata.points (longitude, latitude,
+                 type_coordonnees)
                 VALUES (%s, %s, %s);
                 """, (longitude, latitude, type_coordonnees))
                 connection.commit()
                 print("Point créé avec succès.")
 
-    def get_point_by_coordinates(self, longitude, latitude, type_coordonnees):
+    def find_point_by_coordinates(self, longitude, latitude, type_coordonnees):
         """Récupère un point de notre BDD à partir de ses coordonnées
         et d'un système de coordonnées spécifié """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    """"SELECT * FROM points
+                    """"SELECT * FROM geodata.points
                     WHERE longitude = %(longitude)s,
                     latitude = %(latitude)s AND
                     type_coordonnees = %(type_coordonnees)s
@@ -89,5 +90,3 @@ class PointGeographiqueDao:
         else:
             print("Aucun point trouvé")
             return None
-
-    def update_point(self):
