@@ -1,4 +1,4 @@
-from pointGeographique import PointGeographique
+from src.business_object.pointgeographique import PointGeographique
 import pyproj
 
 
