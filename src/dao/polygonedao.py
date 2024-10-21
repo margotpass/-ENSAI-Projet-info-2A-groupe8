@@ -66,7 +66,7 @@ class PolygoneDAO:
                     SELECT * FROM polygones WHERE id = %s;
                 """, (id,))
                 res = cursor.fetchone()
-       
+
         if res:
             return PolygonePrimaire(id=res[0], subdivision_id=res[1], type_subdivision=res[2], geom_coordinates=res[3], geom_type=res[4])
         else:
@@ -79,7 +79,7 @@ class PolygoneDAO:
             with connection.cursor() as cursor:
                 update_fields = []
                 params = []
-               
+
                 if subdivision_id is not None:
                     update_fields.append("subdivision_id = %s")
                     params.append(subdivision_id)
