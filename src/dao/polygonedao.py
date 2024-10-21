@@ -1,6 +1,6 @@
 from src.dao.db_connection import DBConnection
 from src.business_object.Polygones.Polygoneprimaire import PolygonePrimaire
-from src.business_object.pointGeographique import PointGeographique
+from src.business_object.pointgeographique import PointGeographique
 from typing import List
 
 
@@ -67,7 +67,7 @@ class PolygoneDAO:
                     SELECT * FROM polygones WHERE id = %s;
                 """, (id,))
                 res = cursor.fetchone()
-       
+
         if res:
             return Polygone(id=res[0], subdivision_id=res[1], type_subdivision=res[2], geom_coordinates=res[3], geom_type=res[4])
         else:
@@ -80,7 +80,7 @@ class PolygoneDAO:
             with connection.cursor() as cursor:
                 update_fields = []
                 params = []
-               
+
                 if subdivision_id is not None:
                     update_fields.append("subdivision_id = %s")
                     params.append(subdivision_id)
@@ -139,5 +139,9 @@ class PolygoneDAO:
 
 
 
+def test_create_table_polygones():
+    dao = PolygoneDAO()
+    dao.create_table_polygones()
+
 if __name__ == "__main__":
-    PolygoneDAO().create_table_polygones()
+    test_create_table_polygones()
