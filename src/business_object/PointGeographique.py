@@ -5,28 +5,39 @@ class PointGeographique():
     paramètres:
     latitude -- latitude du point (float)
     longitude -- longitude du point (float)
-    typeCoordonnees -- type de coordonnées (str) : soit Lamb93 soit WGS84
+    typecoordonnees -- type de coordonnées (str) : soit Lamb93 soit WGS84
     """
-    def __init__(self, latitude, longitude, typeCoordonnees):
+    def __init__(self, longitude, latitude, typecoordonnees):
         self.latitude = latitude
         self.longitude = longitude
-        self.typeCoordonnees = typeCoordonnees
+        self.typecoordonnees = typecoordonnees
 
     def __str__(self):
-        """ str sert à afficher les informations du point géographique """
-        return "Latitude: " + str(self.latitude) + " Longitude: " + str(self.longitude) + " Type de coordonnées: " + str(self.typeCoordonnees)
+        """str sert à afficher les informations du point géographique"""
+        return "Latitude: " + str(self.latitude) + " Longitude: " + str(self.longitude) + " Type de coordonnées: " + str(self.typecoordonnees)
 
     def convertir_type_coordonnees(self):
-        """ Si les coordonnées sont en Lambert 93, les convertit en WGS84"""
-        if self.typeCoordonnees == "Lamb93":
-            lambert = pyproj.Proj(init='epsg:2154')
-            wgs84 = pyproj.Proj(init='epsg:4326')
-            self.longitude, self.latitude = pyproj.transform(lambert, wgs84, self.latitude, self.longitude)
-            self.typeCoordonnees = "WGS84"
-        elif self.typeCoordonnees == "WGS84":
+        """Si les coordonnées sont en Lambert 93, les convertit en WGS84"""
+        if self.typecoordonnees == "Lamb93":
+            # Lambert 93 CRS (projection)
+            lambert = pyproj.CRS.from_epsg(2154)  # EPSG code for Lambert 93
+            # WGS84 CRS (référentiel géographique)
+            wgs84 = pyproj.CRS.from_epsg(4326)    # EPSG code for WGS84
+            # Initialisation du transformeur avec un ordre de coordonnées (longitude, latitude)
+            transformer = pyproj.Transformer.from_crs(lambert, wgs84, always_xy=True)
+
+            # Transformer attend (longitude, latitude) pour la projection Lambert 93
+            self.longitude, self.latitude = transformer.transform(self.longitude, self.latitude)
+            self.typecoordonnees = "WGS84"
+
+            # Debugging : Affichage des valeurs après transformation
+            print(f"Transformation réussie: Latitude = {self.latitude}, Longitude = {self.longitude}")
+
+        elif self.typecoordonnees == "WGS84":
             print("Les coordonnées sont déjà en WGS84")
-        else :
+        else:
             print("Type de coordonnées non reconnu")
+
 
 # Test de convertir_type_coordonnees
 coord = PointGeographique(48.856578, 2.351828, "WGS84")
@@ -38,5 +49,3 @@ coord2 = PointGeographique(651000, 6863000, "Lamb93")
 print(coord2)
 coord2.convertir_type_coordonnees()
 print(coord2)
-
-

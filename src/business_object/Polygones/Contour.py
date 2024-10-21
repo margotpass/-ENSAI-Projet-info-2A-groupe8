@@ -1,20 +1,20 @@
-from Connexe import Connexe
+from src.business_object.Polygones.connexe import Connexe
 
 class Contour(Connexe):
     """ Contour contient les connexes
     paramètres:
-    Polygones : List<Connexe>
+    contour : List<Connexe>
     """
-    def __init__(self, Contour):
-        self.Contour = Contour
+    def __init__(self, contour):
+        self.contour = contour
 
     def __str__(self):
         """ str sert à afficher les informations de Contour """
-        return "Contour: " + str(self.Contour)
+        return "Contour: " + str(self.contour)
 
     def get_Connexe(self):
         """ Retourne Contour """
-        return self.Contour
+        return self.contour
 # A absolument tester pour vérifier que la fonction estDansContour fonctionne correctement (copilote l'a fait)
     def estDansContour(PointGeographique, Contour):
         """ Renvoie True si le point est dans le contour, False sinon

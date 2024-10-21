@@ -1,17 +1,17 @@
-from Polygoneprimaire import Polygoneprimaire
+from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
 
-class Connexe(Polygoneprimaire):
+class Connexe(PolygonePrimaire):
     """ Connexe contient les polygones primaires
     paramètres:
-    Connexe : List<PolygonePrimaire>
+    connexe : List<PolygonePrimaire>
     """
-    def __init__(self, Connexe):
-        self.Connexe = Connexe
+    def __init__(self, connexe):
+        self.connexe = connexe
 
     def __str__(self):
         """ str sert à afficher les informations de Connexe """
-        return "Connexe: " + str(self.Connexe)
+        return "Connexe: " + str(self.connexe)
 
     def get_Connexe(self):
-        """ Retourne Connexe """
-        return self.Connexe
+        """ Retourne connexe """
+        return self.connexe
