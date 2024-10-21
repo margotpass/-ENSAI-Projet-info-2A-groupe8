@@ -1,12 +1,12 @@
 class Region:
-    def __init__(self, ID_r, NOM_M, INSEE_REG, Polygons):
+    def __init__(self, ID_R, NOM_M, INSEE_REG, Polygons):
 
         """
         Initialisation de la classe Region
 
         Paramètres:
         -----------
-        ID_r : str
+        ID_R : str
             identifiant de la région
         NOM_M : str
             nom de la région
@@ -17,7 +17,7 @@ class Region:
             région
         """
 
-        if not isinstance(ID_r, str):
+        if not isinstance(ID_R, str):
             raise TypeError("L'identifiant doit être un str")
 
         if not isinstance(NOM_M, str):
@@ -29,7 +29,7 @@ class Region:
         if not isinstance(Polygons, dict):
             raise TypeError("L'attribut Polygons doit être un dictionnaire")
 
-        self.ID_r = ID_r
-        self.NOM_M = NOM_M
-        self.INSEE_REG = INSEE_REG
-        self.Polygons = Polygons
+        self.id_r = ID_R
+        self.nom_m = NOM_M
+        self.insee_reg = INSEE_REG
+        self.polygons = Polygons
