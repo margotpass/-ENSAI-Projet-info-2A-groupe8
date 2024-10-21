@@ -14,11 +14,10 @@ class PolygoneDAO:
                 with connection.cursor() as cursor:
                     # Créer la table polygones
                     create_table_query = """
-                    CREATE TABLE IF NOT EXISTS polygones (
+                    CREATE TABLE IF NOT EXISTS geodata.polygones (
                         id SERIAL PRIMARY KEY,
-                        subdivision_id INT NOT NULL,
-                        type_subdivision TEXT NOT NULL,
-                        geom_coordinates GEOMETRY NOT NULL,
+                        subdivision_id TEXT NOT NULL,
+                        geom_coordinates JSON NOT NULL,
                         geom_type TEXT NOT NULL
                     )
                     """
@@ -26,19 +25,19 @@ class PolygoneDAO:
 
                     # Insérer les polygones des autres tables
                     insert_polygons_query = """
-                    INSERT INTO polygones (subdivision_id, type_subdivision, geom_coordinates, geom_type)
-                    SELECT id, 'arrondissement', geom_coordinates, geom_type FROM arrondissement
+                    INSERT INTO geodata.polygones (subdivision_id, geom_coordinates, geom_type)
+                    SELECT id, geom_coordinates, geom_type FROM geodata.arrondissement
                     UNION ALL
-                    SELECT id, 'commune', geom_coordinates, geom_type FROM commune
+                    SELECT id, geom_coordinates, geom_type FROM geodata.commune
                     UNION ALL
-                    SELECT id, 'epci', geom_coordinates, geom_type FROM epci
+                    SELECT id, geom_coordinates, geom_type FROM geodata.epci
                     UNION ALL
-                    SELECT id, 'region', geom_coordinates, geom_type FROM region
+                    SELECT id, geom_coordinates, geom_type FROM geodata.region
                     UNION ALL
-                    SELECT id, 'canton', geom_coordinates, geom_type FROM canton
+                    SELECT id, geom_coordinates, geom_type FROM geodata.canton
                     UNION ALL
-                    SELECT id, 'departement', geom_coordinates, geom_type FROM departement
-                    ON CONFLICT (subdivision_id, type_subdivision) DO NOTHING;
+                    SELECT id, geom_coordinates, geom_type FROM geodata.departement
+                    ;
                     """
                     cursor.execute(insert_polygons_query)
 
@@ -59,7 +58,7 @@ class PolygoneDAO:
                 connection.commit()
                 print("Polygone créé avec succès.")
 
-    def read_polygone(self, id: int) -> Polygone:
+    def read_polygone(self, id: int) -> PolygonePrimaire:
         """Récupère un polygone à partir de son ID"""
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
@@ -69,7 +68,7 @@ class PolygoneDAO:
                 res = cursor.fetchone()
 
         if res:
-            return Polygone(id=res[0], subdivision_id=res[1], type_subdivision=res[2], geom_coordinates=res[3], geom_type=res[4])
+            return PolygonePrimaire(id=res[0], subdivision_id=res[1], type_subdivision=res[2], geom_coordinates=res[3], geom_type=res[4])
         else:
             print("Aucun polygone trouvé")
             return None
