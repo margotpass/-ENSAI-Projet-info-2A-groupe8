@@ -1,5 +1,6 @@
-from PointGeographique import PointGeographique
+from pointGeographique import PointGeographique
 import pyproj
+
 
 class PolygonePrimaire():
     """ Polygone primaire caractérisé par ses points géographiques.
@@ -16,4 +17,3 @@ class PolygonePrimaire():
     def get_polygoneprimaire(self):
         """ Retourne le polygone primaire """
         return self.polygoneprimaire
-
