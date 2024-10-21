@@ -1,12 +1,12 @@
 class Departement:
-    def __init__(self, ID_d, NOM_M, INSEE_DEP, INSEE_REG, Polygons):
+    def __init__(self, ID_D, NOM_M, INSEE_DEP, INSEE_REG, Polygons):
 
         """
         Initialisation de la classe Departement
 
         Paramètres:
         -----------
-        ID_d : str
+        ID_D : str
             identifiant du département
         NOM_M : str
             nom du département
@@ -19,7 +19,7 @@ class Departement:
             département
         """
 
-        if not isinstance(ID_d, str):
+        if not isinstance(ID_D, str):
             raise TypeError("L'ID doit être un str")
 
         if not isinstance(NOM_M, str):
@@ -34,8 +34,8 @@ class Departement:
         if not isinstance(Polygons, dict):
             raise TypeError("L'attribut Polygons doit être un dictionnaire")
 
-        self.ID_d = ID_d
-        self.NOM_M = NOM_M
-        self.INSEE_DEP = INSEE_DEP
-        self.INSEE_REG = INSEE_REG
-        self.Polygons = Polygons
+        self.id_d = ID_D
+        self.nom_m = NOM_M
+        self.insee_dep = INSEE_DEP
+        self.insee_reg = INSEE_REG
+        self.polygons = Polygons

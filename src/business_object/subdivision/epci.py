@@ -1,12 +1,12 @@
-class EPCI:
-    def __init__(self, ID_e, SIREN, NOM, NATURE, Polygons):
+class Epci:
+    def __init__(self, ID_E, SIREN, NOM, NATURE, Polygons):
 
         """
         Initialisation de la classe EPCI
 
         Paramètres:
         -----------
-        ID_e : str
+        ID_E : str
             identifiant de l'EPCI
         NOM : str
             nom de l'EPCI
@@ -19,7 +19,7 @@ class EPCI:
             EPCI
         """
 
-        if not isinstance(ID_e, str):
+        if not isinstance(ID_E, str):
             raise TypeError("L'identifiant doit être un str")
 
         if not isinstance(SIREN, str):
@@ -34,8 +34,8 @@ class EPCI:
         if not isinstance(Polygons, dict):
             raise TypeError("L'attribut Polygons doit être un dict")
 
-        self.ID_e = ID_e
-        self.SIREN = SIREN
-        self.NOM = NOM
-        self.NATURE = NATURE
-        self.Polygons = Polygons
+        self.id_e = ID_E
+        self.siren = SIREN
+        self.nom = NOM
+        self.nature = NATURE
+        self.polygons = Polygons

@@ -1,12 +1,12 @@
 class Arrondissement:
-    def __init__(self, ID_a, NOM_M, INSEE_ARR, INSEE_DEP, INSEE_REG, Polygons):
+    def __init__(self, ID_A, NOM_M, INSEE_ARR, INSEE_DEP, INSEE_REG, Polygons):
 
         """
         Initialisation de la classe Arrondissement
 
         Paramètres:
         -----------
-        ID_a : str
+        ID_A : str
             identifiant de l'arrondissement
         NOM_M : str
             nom de l'arrondissement
@@ -21,7 +21,7 @@ class Arrondissement:
             arrondissement
         """
 
-        if not isinstance(ID_a, str):
+        if not isinstance(ID_A, str):
             raise TypeError("L'ID doit être un str")
 
         if not isinstance(NOM_M, str):
@@ -40,9 +40,9 @@ class Arrondissement:
         if not isinstance(Polygons, dict):
             raise TypeError("L'attribut Polygons doit être un dictionnaire")
 
-        self.ID_a = ID_a
-        self.NOM_M = NOM_M
-        self.INSEE_ARR = INSEE_ARR
-        self.INSEE_DEP = INSEE_DEP
-        self.INSEE_REG = INSEE_REG
-        self.Polygons = Polygons
+        self.id_a = ID_A
+        self.nom_m = NOM_M
+        self.insee_arr = INSEE_ARR
+        self.insee_dep = INSEE_DEP
+        self.insee_reg = INSEE_REG
+        self.polygons = Polygons
