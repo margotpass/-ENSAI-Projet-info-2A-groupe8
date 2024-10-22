@@ -1,7 +1,7 @@
 from src.business_object.pointgeographique import PointGeographique
 import pyproj
 
-from PointGeographique import PointGeographique
+from pointgeographique import PointGeographique
 
 class PolygonePrimaire:
     """ Polygone primaire caractérisé par ses points géographiques.
