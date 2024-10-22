@@ -1,6 +1,9 @@
-class Commune:
-    def __init__(self, ID_CO, NOM_M, INSEE_COM, STATUT, INSEE_CAN, INSEE_ARR,
-                 INSEE_DEP, INSEE_REG, SIREN_EPCI, Polygons):
+from src.business_object.subdivision import Subdivision
+
+
+class Commune(Subdivision):
+    def __init__(self, ID_CO, NOM_M, ANNEE, INSEE_COM, STATUT, INSEE_CAN,
+                 INSEE_ARR, INSEE_DEP, INSEE_REG, SIREN_EPCI, Polygons):
 
         """
         Initialise la classe Commune.
@@ -11,6 +14,8 @@ class Commune:
             identifiant de la commune
         NOM_M : str
             nom de la commune
+        ANNEE : int
+            année que veut utiliser l'utilisateur pour sa recherche
         INSEE_COM : str
             numéro INSEE de la commune
         STATUT : str
@@ -29,12 +34,6 @@ class Commune:
             contient les coordonnées des points du polygone entourant la
             commune
         """
-
-        if not isinstance(ID_CO, str):
-            raise TypeError("L'ID doit être un str")
-
-        if not isinstance(NOM_M, str):
-            raise TypeError("Le nom doit être un str")
 
         if not isinstance(INSEE_COM, str):
             raise TypeError("Le code INSEE de la commune doit être un str")
@@ -58,11 +57,7 @@ class Commune:
         if not isinstance(SIREN_EPCI, str):
             raise TypeError("Le code SIREN doit être un str")
 
-        if not isinstance(Polygons, dict):
-            raise TypeError("L'attribut Polygons doit être un dictionnaire")
-
-        self.id_co = ID_CO
-        self.nom_m = NOM_M
+        super.__init__(ID_CO, NOM_M, ANNEE, Polygons)
         self.insee_com = INSEE_COM
         self.statut = STATUT
         self.insee_can = INSEE_CAN
@@ -70,4 +65,3 @@ class Commune:
         self.insee_dep = INSEE_DEP
         self.insee_reg = INSEE_REG
         self.siren_epci = SIREN_EPCI
-        self.polygons = Polygons
