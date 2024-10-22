@@ -1,3 +1,6 @@
+from src.business_object.pointgeographique import PointGeographique
+import pyproj
+
 from PointGeographique import PointGeographique
 
 class PolygonePrimaire:

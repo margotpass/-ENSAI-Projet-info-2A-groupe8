@@ -1,5 +1,6 @@
 import pyproj
 
+
 class PointGeographique():
     """ Point géographique caractérisé par ses coordonnées géographiques.
     paramètres:
@@ -36,7 +37,9 @@ class PointGeographique():
         elif self.typecoordonnees == "WGS84":
             print("Les coordonnées sont déjà en WGS84")
         else:
+        else:
             print("Type de coordonnées non reconnu")
+
 
 
 # Test de convertir_type_coordonnees

@@ -1,12 +1,12 @@
 class Canton:
-    def __init__(self, ID_ca, INSEE_CAN, INSEE_DEP, INSEE_REG, Polygons):
+    def __init__(self, ID_CA, INSEE_CAN, INSEE_DEP, INSEE_REG, Polygons):
 
         """
         Initialisation de la classe Canton
 
         Paramètres:
         -----------
-        ID_ca : str
+        ID_CA : str
             identifiant du canton
         INSEE_CAN : str
             code INSEE du canton
@@ -19,7 +19,7 @@ class Canton:
             canton
         """
 
-        if not isinstance(ID_ca, str):
+        if not isinstance(ID_CA, str):
             raise TypeError("L'ID doit être un str")
 
         if not isinstance(INSEE_CAN, str):
@@ -34,8 +34,8 @@ class Canton:
         if not isinstance(Polygons, dict):
             raise TypeError("L'attribut Polygons doit être un dictionnaire")
 
-        self.ID_ca = ID_ca
-        self.INSEE_CAN = INSEE_CAN
-        self.INSEE_DEP = INSEE_DEP
-        self.INSEE_REG = INSEE_REG
-        self.Polygons = Polygons
+        self.id_ca = ID_CA
+        self.insee_can = INSEE_CAN
+        self.insee_dep = INSEE_DEP
+        self.insee_reg = INSEE_REG
+        self.polygons = Polygons
