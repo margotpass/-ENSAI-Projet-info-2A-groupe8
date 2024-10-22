@@ -13,7 +13,14 @@ class PolygonePrimaire:
 
     def __str__(self):
         """ str sert à afficher les informations du polygone primaire """
-        return f"Polygone Primaire: {[str(point) for point in self.polygoneprimaire]}"
+        if not self.polygoneprimaire:
+            raise ValueError("Le polygone est vide et ne peut pas être affiché")
+        # Vérifie si tous les points sont valides
+        for point in self.polygoneprimaire:
+            if not isinstance(point, PointGeographique):
+                raise ValueError("Tous les points du polygone doivent être des instances de PointGeographique")
+
+        return f"Polygone Primaire: [{', '.join(str(point) for point in self.polygoneprimaire)}]"
 
     def get_polygoneprimaire(self):
         """ Retourne le polygone primaire """
