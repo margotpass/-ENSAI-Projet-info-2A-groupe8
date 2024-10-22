@@ -14,18 +14,11 @@ class PolygonePrimaire:
         else:
             # Vérifie que tous les points fournis sont des instances de PointGeographique
             if not all(isinstance(point, PointGeographique) for point in polygoneprimaire):
-                raise ValueError("Tous les points doivent être des instances de PointGeographique")
+                raise TypeError("Tous les points doivent être des instances de PointGeographique")
             self.polygoneprimaire = polygoneprimaire
 
     def __str__(self):
         """ str sert à afficher les informations du polygone primaire """
-        if not self.polygoneprimaire:
-            raise ValueError("Le polygone est vide et ne peut pas être affiché")
-        # Vérifie si tous les points sont valides
-        for point in self.polygoneprimaire:
-            if not isinstance(point, PointGeographique):
-                raise ValueError("Tous les points du polygone doivent être des instances de PointGeographique")
-
         return f"Polygone Primaire: [{', '.join(str(point) for point in self.polygoneprimaire)}]"
 
     def get_polygoneprimaire(self):
@@ -37,4 +30,4 @@ class PolygonePrimaire:
         if isinstance(point, PointGeographique):
             self.polygoneprimaire.append(point)
         else:
-            raise ValueError("L'objet ajouté doit être une instance de PointGeographique")
+            raise TypeError("L'objet ajouté doit être une instance de PointGeographique")

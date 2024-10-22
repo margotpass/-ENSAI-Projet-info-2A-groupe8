@@ -35,16 +35,10 @@ def test_initialisation_polygone_avec_point_invalide():
         """Classe pour simuler un point invalide."""
         pass  # Ne définit pas __str__, donc ce ne sera pas un PointGeographique
 
-    with pytest.raises(ValueError, match="Tous les points doivent être des instances de PointGeographique"):
+    with pytest.raises(TypeError, match="Tous les points doivent être des instances de PointGeographique"):
         PolygonePrimaire([PointInvalide()])  # Essaye d'initialiser avec un point invalide
 
 # Tests de la fonction __str__ de la classe PolygonePrimaire
-def test_str_polygone_vide():
-    """Test pour vérifier la méthode __str__ d'un polygone vide"""
-    polygone_vide = PolygonePrimaire()  # Polygone vide
-    with pytest.raises(ValueError, match="Le polygone est vide et ne peut pas être affiché"):
-        str(polygone_vide)
-
 def test_str_polygone_avec_points():
     """Test pour vérifier la méthode __str__ d'un polygone avec des points"""
     point1 = PointGeographique(48.858844, 2.294351, "WGS84")
@@ -59,18 +53,6 @@ def test_str_polygone_avec_points():
     )
     assert str(polygone) == expected_str, f"La représentation en chaîne du polygone devrait être '{expected_str}'"
 
-def test_str_polygone_invalide():
-    """Test pour vérifier que __str__ lève une erreur pour un polygone avec un point invalide."""
-
-    # Test pour un polygone avec un point invalide
-    class PointInvalide:
-        """Classe pour simuler un point invalide."""
-        pass  # Ne définit pas __str__, donc ce ne sera pas un PointGeographique
-
-    polygone_avec_point_invalide = PolygonePrimaire([PointInvalide()])  # Ajout d'un point invalide
-    with pytest.raises(ValueError, match="Tous les points du polygone doivent être des instances de PointGeographique"):
-        str(polygone_avec_point_invalide)  # Essaye de convertir en chaîne
-
 # Tests de la fonction ajouter_point de la classe PolygonePrimaire
 def test_ajout_point_dans_polygone(polygone):
     """Test pour vérifier l'ajout d'un point géographique dans le polygone"""
@@ -82,7 +64,7 @@ def test_ajout_point_dans_polygone(polygone):
 def test_ajout_point_invalide():
     """Test pour vérifier qu'un point non valide génère une erreur"""
     polygone = PolygonePrimaire()
-    with pytest.raises(ValueError, match="L'objet ajouté doit être une instance de PointGeographique"):
+    with pytest.raises(TypeError, match="L'objet ajouté doit être une instance de PointGeographique"):
         polygone.ajouter_point("non_point")
 
 # Tests de la fonction get_polygoneprimaire de la classe PolygonePrimaire
