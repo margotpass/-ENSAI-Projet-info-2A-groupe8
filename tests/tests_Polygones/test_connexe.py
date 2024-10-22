@@ -39,6 +39,11 @@ def test_initialisation_connexe_avec_polygones():
     assert isinstance(connexe.get_connexe()[0], PolygonePrimaire)
     assert isinstance(connexe.get_connexe()[1], PolygonePrimaire)
 
+def test_initialisation_connexe_avec_polygones_invalides():
+    """Test pour vérifier que l'initialisation échoue si des éléments non valides sont fournis"""
+    with pytest.raises(TypeError, match="Tous les éléments doivent être des instances de PolygonePrimaire"):
+        Connexe([1, "non_polygone"])
+
 def test_str_connexe_avec_polygones(polygones_connexes):
     """Test pour vérifier la méthode __str__ d'une liste connexe avec des polygones primaires"""
     point1 = PointGeographique(48.858844, 2.294351, "WGS84")
@@ -74,3 +79,17 @@ def test_ajout_polygone_invalide():
     connexe = Connexe()
     with pytest.raises(TypeError, match="L'objet ajouté doit être une instance de PolygonePrimaire"):
         connexe.ajouter_polygone("non_polygone")
+
+def test_ajout_polygone_vers_connexe_vide():
+    """Test pour vérifier que l'ajout d'un polygone à une Connexe vide fonctionne correctement"""
+    connexe_vide = Connexe()
+    point = PointGeographique(48.858844, 2.294351, "WGS84")
+    polygone = PolygonePrimaire([point])
+    connexe_vide.ajouter_polygone(polygone)
+    assert len(connexe_vide.get_connexe()) == 1
+    assert connexe_vide.get_connexe()[0] == polygone
+
+
+def test_get_connexe(polygones_connexes):
+    """Test pour vérifier que get_connexe retourne la liste actuelle des polygones"""
+    assert polygones_connexes.get_connexe() == [polygones_connexes.get_connexe()[0], polygones_connexes.get_connexe()[1]]
