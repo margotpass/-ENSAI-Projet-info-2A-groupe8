@@ -13,7 +13,6 @@ data_commune = {
 }
 
 @pytest.fixture
-
 def point_commune():
     """Fixture pour créer un point géographique à partir des coordonnées de la commune"""
     latitude, longitude = data_commune["point"][1], data_commune["point"][0]  # On extrait latitude et longitude
