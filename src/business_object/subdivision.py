@@ -1,9 +1,8 @@
-from src.business_object.Polygones.Contour import Contour
+from src.business_object.Polygones.contour import Contour
 
 
 class Subdivision:
-    def __init__(self, id, nom=None, typeSubdivision=None, annee=None,
-                 polygones=None):
+    def __init__(self, id, nom=None, annee=None, polygones=None):
 
         if not isinstance(id, str):
             raise TypeError("L'identifiant doit être un str")
@@ -17,10 +16,9 @@ class Subdivision:
             raise ValueError("L'année doit être positive")
 
         if not isinstance(polygones, Contour):
-            raise TypeError("Le nom doit être une instance de Contour")
+            raise TypeError("Le polygone doit être une instance de Contour")
 
         self.id = id
         self.nom = nom
-        self.typeSubdivision = typeSubdivision
         self.annee = annee
         self.polygones = polygones

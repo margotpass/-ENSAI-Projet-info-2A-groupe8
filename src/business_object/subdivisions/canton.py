@@ -1,5 +1,9 @@
-class Canton:
-    def __init__(self, ID_CA, INSEE_CAN, INSEE_DEP, INSEE_REG, Polygons):
+from src.business_object.subdivision import Subdivision
+
+
+class Canton(Subdivision):
+    def __init__(self, ID_CA, ANNEE, INSEE_CAN, INSEE_DEP, INSEE_REG,
+                 Polygons):
 
         """
         Initialisation de la classe Canton
@@ -8,6 +12,8 @@ class Canton:
         -----------
         ID_CA : str
             identifiant du canton
+        ANNEE : int
+            année que veut utiliser l'utilisateur pour sa recherche
         INSEE_CAN : str
             code INSEE du canton
         INSEE_DEP : str
@@ -19,9 +25,6 @@ class Canton:
             canton
         """
 
-        if not isinstance(ID_CA, str):
-            raise TypeError("L'ID doit être un str")
-
         if not isinstance(INSEE_CAN, str):
             raise TypeError("Le code INSEE du canton doit être un str")
 
@@ -31,11 +34,7 @@ class Canton:
         if not isinstance(INSEE_REG, str):
             raise TypeError("Le code INSEE de la région doit être un str")
 
-        if not isinstance(Polygons, dict):
-            raise TypeError("L'attribut Polygons doit être un dictionnaire")
-
-        self.id_ca = ID_CA
+        super().__init__(ID_CA, None, ANNEE, Polygons)
         self.insee_can = INSEE_CAN
         self.insee_dep = INSEE_DEP
         self.insee_reg = INSEE_REG
-        self.polygons = Polygons
