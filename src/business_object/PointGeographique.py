@@ -1,6 +1,5 @@
 import pyproj
 
-
 class PointGeographique():
     """ Point géographique caractérisé par ses coordonnées géographiques.
     paramètres:
@@ -8,13 +7,13 @@ class PointGeographique():
     longitude -- longitude du point (float)
     typecoordonnees -- type de coordonnées (str) : soit Lamb93 soit WGS84
     """
-    def __init__(self, longitude, latitude, typecoordonnees):
+    def __init__(self, latitude, longitude, typecoordonnees):
         self.latitude = latitude
         self.longitude = longitude
         self.typecoordonnees = typecoordonnees
 
     def __str__(self):
-        """str sert à afficher les informations du point géographique"""
+        """Affiche les informations du point géographique"""
         return "Latitude: " + str(self.latitude) + " Longitude: " + str(self.longitude) + " Type de coordonnées: " + str(self.typecoordonnees)
 
     def convertir_type_coordonnees(self):
@@ -24,7 +23,7 @@ class PointGeographique():
             lambert = pyproj.CRS.from_epsg(2154)  # EPSG code for Lambert 93
             # WGS84 CRS (référentiel géographique)
             wgs84 = pyproj.CRS.from_epsg(4326)    # EPSG code for WGS84
-            # Initialisation du transformeur avec un ordre de coordonnées (longitude, latitude)
+            # Initialisation du transformeur avec un ordre de coordonnées (latitude, longitude)
             transformer = pyproj.Transformer.from_crs(lambert, wgs84, always_xy=True)
 
             # Transformer attend (longitude, latitude) pour la projection Lambert 93
@@ -37,18 +36,15 @@ class PointGeographique():
         elif self.typecoordonnees == "WGS84":
             print("Les coordonnées sont déjà en WGS84")
         else:
-        else:
             print("Type de coordonnées non reconnu")
 
-
-
-# Test de convertir_type_coordonnees
+# Test de la classe
 coord = PointGeographique(48.856578, 2.351828, "WGS84")
 print(coord)
 coord.convertir_type_coordonnees()
 print(coord)
 
-coord2 = PointGeographique(651000, 6863000, "Lamb93")
+coord2 = PointGeographique(48.86516571317747, 2.3320684023104286, "Lamb93")
 print(coord2)
 coord2.convertir_type_coordonnees()
 print(coord2)

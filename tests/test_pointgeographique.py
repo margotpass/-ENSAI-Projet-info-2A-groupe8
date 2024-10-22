@@ -29,7 +29,7 @@ def test_point_geographique_commune(point_commune):
 
 def test_conversion_lamb93_to_wgs84():
     """Test pour vérifier la conversion des coordonnées Lambert 93 à WGS84"""
-    point_lamb93 = PointGeographique(651000, 6863000, "Lamb93") # Longitude en premier, puis latitude
+    point_lamb93 = PointGeographique(6863000, 651000, "Lamb93") # Longitude en premier, puis latitude
     print(f"Coordonnées avant conversion: Latitude = {point_lamb93.latitude}, Longitude = {point_lamb93.longitude}")
 
     # Appel de la conversion
