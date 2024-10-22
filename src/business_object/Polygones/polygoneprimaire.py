@@ -9,7 +9,13 @@ class PolygonePrimaire:
     """
     def __init__(self, polygoneprimaire=None):
         # Initialise la liste des points, vide si non fournie
-        self.polygoneprimaire = polygoneprimaire if polygoneprimaire else []
+        if polygoneprimaire is None:
+            self.polygoneprimaire = []
+        else:
+            # Vérifie que tous les points fournis sont des instances de PointGeographique
+            if not all(isinstance(point, PointGeographique) for point in polygoneprimaire):
+                raise ValueError("Tous les points doivent être des instances de PointGeographique")
+            self.polygoneprimaire = polygoneprimaire
 
     def __str__(self):
         """ str sert à afficher les informations du polygone primaire """
