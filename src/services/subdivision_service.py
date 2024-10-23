@@ -1,7 +1,7 @@
 from typing import Optional
 from utils.singleton import Singleton
-from business_object.subdivision.subdivision import Subdivision
-from dao.subdivision_dao import SubdivisionDAO
+from business_object.subdivision import Subdivision
+from dao.subdivisiondao import SubdivisionDAO
 
 
 class SubdivisionService(metaclass=Singleton):
