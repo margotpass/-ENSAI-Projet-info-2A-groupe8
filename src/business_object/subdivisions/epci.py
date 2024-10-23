@@ -1,5 +1,8 @@
-class Epci:
-    def __init__(self, ID_E, SIREN, NOM, NATURE, Polygons):
+from src.business_object.subdivision import Subdivision
+
+
+class Epci(Subdivision):
+    def __init__(self, ID_E, ANNEE, SIREN, NOM, NATURE, Polygons):
 
         """
         Initialisation de la classe EPCI
@@ -8,6 +11,8 @@ class Epci:
         -----------
         ID_E : str
             identifiant de l'EPCI
+        ANNEE : int
+            année que veut utiliser l'utilisateur pour sa recherche
         NOM : str
             nom de l'EPCI
         SIREN : str
@@ -19,23 +24,12 @@ class Epci:
             EPCI
         """
 
-        if not isinstance(ID_E, str):
-            raise TypeError("L'identifiant doit être un str")
-
         if not isinstance(SIREN, str):
             raise TypeError("Le code SIREN doit être un str")
-
-        if not isinstance(NOM, str):
-            raise TypeError("Le nom de l'EPCI doit être un str")
 
         if not isinstance(NATURE, str):
             raise TypeError("La nature de l'EPCI doit être un str")
 
-        if not isinstance(Polygons, dict):
-            raise TypeError("L'attribut Polygons doit être un dict")
-
-        self.id_e = ID_E
+        super.__init__(ID_E, NOM, ANNEE, Polygons)
         self.siren = SIREN
-        self.nom = NOM
         self.nature = NATURE
-        self.polygons = Polygons

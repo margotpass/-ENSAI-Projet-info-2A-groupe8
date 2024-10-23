@@ -1,21 +1,37 @@
-from Connexe import Connexe
+from src.business_object.Polygones.connexe import Connexe
+from src.business_object.pointgeographique import PointGeographique
+from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
 
 class Contour(Connexe):
     """ Contour contient les connexes
     paramètres:
-    Polygones : List<Connexe>
+    contour : List<Connexe>
     """
-    def __init__(self, Contour):
-        self.Contour = Contour
+    def __init__(self, contour=None):
+        """ Initialise la liste de connexes """
+        if contour is None:
+            self.contour = []
+        else:
+            # Vérifie que chaque élément de la liste est bien une instance de Connexe
+            if not all(isinstance(connexe, Connexe) for connexe in contour):
+                raise TypeError("Tous les éléments doivent être des instances de Connexe")
+            self.contour = contour
 
     def __str__(self):
-        """ str sert à afficher les informations de Contour """
-        return "Contour: " + str(self.Contour)
+        """ Affiche les informations de Contour """
+        return "Contour: [" + ", ".join(str(connexe) for connexe in self.contour) + "]"
 
+    def get_connexes(self):
+        """ Retourne la liste des connexes """
+        return self.contour
+
+<<<<<<< HEAD:src/business_object/Polygones/Contour.py
     def get_Connexe(self):
         """ Retourne Contour """
         return self.Contour
 
+=======
+>>>>>>> 0fef8301e5ac4b73f06a11841a0ce91f21e1912c:src/business_object/Polygones/contour.py
 # A absolument tester pour vérifier que la fonction estDansContour fonctionne correctement (copilote l'a fait)
     def estDansContour(PointGeographique, Contour):
         """ Renvoie True si le point est dans le contour, False sinon
@@ -61,8 +77,3 @@ class Contour(Connexe):
             return True
         # If the number of intersections is even
         return False
-
-
-
-
-

@@ -1,5 +1,9 @@
-class Arrondissement:
-    def __init__(self, ID_A, NOM_M, INSEE_ARR, INSEE_DEP, INSEE_REG, Polygons):
+from src.business_object.subdivision import Subdivision
+
+
+class Arrondissement(Subdivision):
+    def __init__(self, ID_A, NOM_M, ANNEE, INSEE_ARR, INSEE_DEP,
+                 INSEE_REG, Polygons):
 
         """
         Initialisation de la classe Arrondissement
@@ -10,6 +14,8 @@ class Arrondissement:
             identifiant de l'arrondissement
         NOM_M : str
             nom de l'arrondissement
+        ANNEE : int
+            année que veut utiliser l'utilisateur pour sa recherche
         INSEE_ARR : str
             code INSEE de l'arrondissement
         INSEE_DEP : str
@@ -21,12 +27,6 @@ class Arrondissement:
             arrondissement
         """
 
-        if not isinstance(ID_A, str):
-            raise TypeError("L'ID doit être un str")
-
-        if not isinstance(NOM_M, str):
-            raise TypeError("Le nom de l'arrondissement doit être un str")
-
         if not isinstance(INSEE_ARR, str):
             raise TypeError("Le code INSEE de l'arrondissement doit être un"
                             " str")
@@ -37,12 +37,7 @@ class Arrondissement:
         if not isinstance(INSEE_REG, str):
             raise TypeError("Le code INSEE de la région doit être un str")
 
-        if not isinstance(Polygons, dict):
-            raise TypeError("L'attribut Polygons doit être un dictionnaire")
-
-        self.id_a = ID_A
-        self.nom_m = NOM_M
+        super().__init__(ID_A, NOM_M, ANNEE, Polygons)
         self.insee_arr = INSEE_ARR
         self.insee_dep = INSEE_DEP
         self.insee_reg = INSEE_REG
-        self.polygons = Polygons
