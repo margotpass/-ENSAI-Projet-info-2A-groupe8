@@ -1,6 +1,7 @@
 from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
 from src.business_object.pointgeographique import PointGeographique
 
+
 class Connexe(PolygonePrimaire):
     """ Classe Convexe, qui représente une liste de polygones primaires
     paramètres:
@@ -21,7 +22,6 @@ class Connexe(PolygonePrimaire):
     def __str__(self):
         """ Affiche les informations des polygones connexes """
         return f"Connexe: [{', '.join(str(polygone) for polygone in self.connexe)}]"
-
 
     def get_connexe(self):
         """ Retourne la liste de polygones """
