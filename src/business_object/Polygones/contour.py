@@ -2,6 +2,7 @@ from src.business_object.Polygones.connexe import Connexe
 from src.business_object.pointgeographique import PointGeographique
 from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
 
+
 class Contour(Connexe):
     """ Contour contient les connexes
     paramètres:
