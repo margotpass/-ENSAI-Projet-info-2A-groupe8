@@ -16,6 +16,18 @@ class PointGeographique():
         """Affiche les informations du point géographique"""
         return "Latitude: " + str(self.latitude) + " Longitude: " + str(self.longitude) + " Type de coordonnées: " + str(self.typecoordonnees)
 
+    def get_latitude(self):
+        """Retourne la latitude du point"""
+        return self.latitude
+
+    def get_longitude(self):
+        """Retourne la longitude du point"""
+        return self.longitude
+
+    def get_typecoordonnees(self):
+        """Retourne le type de coordonnées du point"""
+        return self.typecoordonnees
+
     def convertir_type_coordonnees(self):
         """Si les coordonnées sont en Lambert 93, les convertit en WGS84"""
         if self.typecoordonnees == "Lamb93":
