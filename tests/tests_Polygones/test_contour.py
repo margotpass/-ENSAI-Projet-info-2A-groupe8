@@ -271,7 +271,7 @@ def test_point_exterieur(polygone_contour):
 # Tests pour la méthode point_sur_segment de la classe Contour
 def test_point_sur_segment_horizontal(polygone_contour):
     """Test si un point sur un segment horizontal retourne True."""
-    point_horizontal = PointGeographique(44.05, 5.1, "WGS84")
+    point_horizontal = PointGeographique(5.1, 44.05, "WGS84")  # Sur un segment horizontal
     p1 = (44.05, 5.1)
     p2 = (44.1, 5.1)
 
@@ -280,7 +280,7 @@ def test_point_sur_segment_horizontal(polygone_contour):
 
 def test_point_sur_segment_vertical(polygone_contour):
     """Test si un point sur un segment vertical retourne True."""
-    point_vertical = PointGeographique(44.1, 5.1, "WGS84")  # Sur un segment vertical
+    point_vertical = PointGeographique(5.1, 44.1, "WGS84")  # Sur un segment vertical
     p1 = (44.1, 5.1)  # Premier point du segment
     p2 = (44.1, 5.2)  # Deuxième point du segment
 
@@ -295,3 +295,34 @@ def test_point_non_sur_segment(polygone_contour):
 
     result = polygone_contour.point_sur_segment(point_exterieur, p1, p2)
     assert result is False, f"Expected False, but got {result}"
+
+def test_point_sur_segment_invalide(polygone_contour):
+    """Test si un point sur un segment invalide retourne False."""
+    point_invalide = PointGeographique(44.05, 5.1, "WGS84")  # Sur un segment invalide
+    p1 = (44.05, 5.1)  # Premier point du segment
+    p2 = (44.1, 5.1)   # Deuxième point du segment
+
+    result = polygone_contour.point_sur_segment(point_invalide, p1, p2)
+    assert result is False, f"Expected False, but got {result}"
+
+# Tests pour la méthode estDansPolygone de la classe Contour
+def test_est_dans_polygone_interieur(polygone_contour):
+    """Test si un point à l'intérieur d'un polygone connexe retourne True."""
+    point_interieur = PointGeographique(44.06, 5.15, "WGS84")  # À l'intérieur de polygone2
+    assert polygone_contour.estDansPolygone(point_interieur) is True
+
+def test_est_dans_polygone_bord(polygone_contour):
+    """Test si un point sur le bord d'un polygone connexe retourne True."""
+    point_bord = PointGeographique(44.05, 5.1, "WGS84")  # Sur le bord de polygone2
+    assert polygone_contour.estDansPolygone(point_bord) is True
+
+def test_est_dans_polygone_exterieur(polygone_contour):
+    """Test si un point à l'extérieur du polygone retourne False."""
+    point_exterieur = PointGeographique(44.2, 5.2, "WGS84")
+    assert polygone_contour.estDansPolygone(point_exterieur) is False
+
+def test_est_dans_polygone_bordure(polygone_contour):
+    """Test si un point sur la bordure du polygone retourne True."""
+    point_bordure = PointGeographique(44.0, 5.0, "WGS84")  # Un des points du polygone
+    assert polygone_contour.estDansPolygone(point_bordure) is True
+

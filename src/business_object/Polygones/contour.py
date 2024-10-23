@@ -94,7 +94,7 @@ class Contour(Connexe):
         #Vérifie si le point est dans l'un des polygones de ce contour.
         
         for connexe in self.contour:
-            for polygone in connexe.get_polygones():  # Remplace par la méthode appropriée
+            for polygone in connexe.get_connexe():  # Remplace par la méthode appropriée
                 print("Polygone:", [f"({p.latitude}, {p.longitude})" for p in polygone.polygoneprimaire])  # Pour débogage
                 if self.point_dans_polygone(point, polygone):
                     return True
