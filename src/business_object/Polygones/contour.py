@@ -68,7 +68,7 @@ class Contour(Connexe):
                             inside = not inside
             p1x, p1y = p2x, p2y
 
-        return inside
+            return inside
 
     def point_sur_segment(self, point: PointGeographique, p1: tuple, p2: tuple) -> bool:
         """Vérifie si le point est sur le segment défini par p1 et p2."""
@@ -90,12 +90,13 @@ class Contour(Connexe):
 
 
     def estDansPolygone(self, point: PointGeographique) -> bool:
-        """
-        Vérifie si le point est dans l'un des polygones de ce contour.
-        """
+        
+        #Vérifie si le point est dans l'un des polygones de ce contour.
+        
         for connexe in self.contour:
             for polygone in connexe.get_connexe():  # Remplace par la méthode appropriée
                 print("Polygone:", [f"({p.latitude}, {p.longitude})" for p in polygone.polygoneprimaire])  # Pour débogage
                 if self.point_dans_polygone(point, polygone):
                     return True
         return False
+"""

@@ -1,16 +1,18 @@
 import dotenv
-from vue_abstraite import VueAbstraite
+from src.view.vue_abstraite import VueAbstraite
+from src.view.menu_utilisateur_vue import MenuUtilisateur
 
 
 if __name__ == "__main__":
     # On charge les variables d'envionnement
     dotenv.load_dotenv(override=True)
 
-    vue_courante = VueAbstraite("Bienvenue")
+    vue_courante = MenuUtilisateur("Bienvenue")
 
     while vue_courante:
 
         # Affichage du menu
+
         vue_courante.afficher()
 
         # Affichage des choix possibles

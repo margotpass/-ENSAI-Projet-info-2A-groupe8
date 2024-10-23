@@ -1,7 +1,7 @@
 from typing import Optional
-from business_object.subdivision.subdivision import Subdivision
-from business_object.point_geographique import PointGeographique
-from dao.subdivision_dao import SubdivisionDAO
+from src.business_object.subdivision import Subdivision
+from src.business_object.pointgeographique import PointGeographique
+from src.dao.subdivisiondao import SubdivisionDAO
 
 class LocalisationService:
 
