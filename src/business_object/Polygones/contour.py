@@ -43,16 +43,22 @@ class Contour(Connexe):
         if connexe in self.contour:
             self.contour.remove(connexe)
 
-# Les deux méthodes suivantes sont liées pour vérifier si un point est dans un polygone
-    def point_dans_polygone(point, polygone):
-        """Vérifie si un point est à l'intérieur d'un polygone."""
-        n = len(polygone.get_polygone())  # Assume que get_polygone() retourne la liste des points
+    # Les deux méthodes suivantes sont liées pour vérifier si un point est dans un polygone
+    def point_dans_polygone(self, point: PointGeographique, polygone: PolygonePrimaire) -> bool:
+        """Vérifie si le point est à l'intérieur du polygone ou sur ses bords."""
+        x, y = point.longitude, point.latitude
         inside = False
-        x, y = point.get_latitude(), point.get_longitude()  # ou les méthodes appropriées pour récupérer les coordonnées
+        n = len(polygone.polygoneprimaire)
 
-        p1x, p1y = polygone.get_polygone()[0].get_latitude(), polygone.get_polygone()[0].get_longitude()
-        for i in range(n + 1):
-            p2x, p2y = polygone.get_polygone()[i % n].get_latitude(), polygone.get_polygone()[i % n].get_longitude()
+        p1x, p1y = polygone.polygoneprimaire[0].longitude, polygone.polygoneprimaire[0].latitude
+        for i in range(1, n + 1):
+            p2x, p2y = polygone.polygoneprimaire[i % n].longitude, polygone.polygoneprimaire[i % n].latitude
+
+            # Vérification si le point est sur le bord
+            if self.point_sur_segment(point, (p1x, p1y), (p2x, p2y)):
+                return True
+
+            # Vérification de l'algorithme de ray-casting
             if y > min(p1y, p2y):
                 if y <= max(p1y, p2y):
                     if x <= max(p1x, p2x):
@@ -63,6 +69,24 @@ class Contour(Connexe):
             p1x, p1y = p2x, p2y
 
         return inside
+
+    def point_sur_segment(self, point: PointGeographique, p1: tuple, p2: tuple) -> bool:
+        """Vérifie si le point est sur le segment défini par p1 et p2."""
+        x, y = point.longitude, point.latitude
+        p1x, p1y = p1
+        p2x, p2y = p2
+
+        # Vérifie si le point est aligné avec le segment et à l'intérieur des bornes
+        if (min(p1x, p2x) <= x <= max(p1x, p2x)) and (min(p1y, p2y) <= y <= max(p1y, p2y)):
+            # Calcule la pente pour vérifier l'alignement
+            if (p2x - p1x) == 0:  # Segment vertical
+                return x == p1x
+            else:
+                slope = (p2y - p1y) / (p2x - p1x)
+                expected_y = slope * (x - p1x) + p1y
+                return expected_y == y
+
+        return False
 
 
     def estDansPolygone(self, point: PointGeographique) -> bool:
