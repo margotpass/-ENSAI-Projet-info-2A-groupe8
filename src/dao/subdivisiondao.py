@@ -1,3 +1,6 @@
+from src.dao.db_connection import DBConnection
+
+
 class SubdivisionDAO: 
     def insert_arrondissement(self, arrondissement):
         geom_type = self.get_geom_type(arrondissement.polygones)  # Remplacez par la méthode adéquate
@@ -336,7 +339,7 @@ class SubdivisionDAO:
 
     def find_departement_by_insee(self, insee_dep):
         query = """
-        SELECT * FROM departement 
+        SELECT nom_m FROM geodata2.departement 
         WHERE insee_dep = %s
         """
         with DBConnection().connection as connection:

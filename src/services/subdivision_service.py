@@ -1,38 +1,42 @@
 from typing import Optional
-from utils.singleton import Singleton
-from business_object.subdivision import Subdivision
-from dao.subdivisiondao import SubdivisionDAO
+from src.utils.singleton import Singleton
+from src.business_object.subdivision import Subdivision
+from src.dao.subdivisiondao import SubdivisionDAO
 
 
 class SubdivisionService(metaclass=Singleton):
     def __init__(self):
         self.subdivision_dao = SubdivisionDAO()
 
-    def chercherSubdivisionParID(self, typeSubdivision: str, id: int, annee: int) -> Optional[Subdivision]:
+    def chercherSubdivisionParID(self, typeSubdivision: str, id: str, annee: int) -> Optional[Subdivision]:
         # Générer le code INSEE selon le type de subdivision et l'ID
         codeINSEE = self._genererCodeINSEE(typeSubdivision, id)
-
+        #codeINSEE = id
         # Rechercher la subdivision par le code INSEE via le DAO
-        subdivision = self.subdivision_dao.getSubdivisionByCode(codeINSEE)
+        subdivision = self.subdivision_dao.find_by_code_insee(typeSubdivision, codeINSEE)
+        return subdivision
 
-        # Vérifier si l'année correspond
-        if subdivision and subdivision.annee == annee:
-            return subdivision
-        return None
 
-    def _genererCodeINSEE(self, typeSubdivision: str, id: int) -> str:
+    def _genererCodeINSEE(self, typeSubdivision: str, id: str) -> str:
         # Génère le code INSEE en fonction du type de subdivision
-        if typeSubdivision == "COMMUNE":
-            return f"{id:05d}"  # Code INSEE pour les communes, sur 5 chiffres
-        elif typeSubdivision == "DEPARTEMENT":
-            return f"{id:03d}"  # Code INSEE pour les départements, sur 3 chiffres
-        elif typeSubdivision == "REGION":
-            return f"{id:02d}"  # Code INSEE pour les régions, sur 2 chiffres
-        elif typeSubdivision == "ARRONDISSEMENT":
-            return f"{id:01d}"  # Code INSEE pour les arrondissements, sur 1 chiffre
-        elif typeSubdivision == "CANTON":
-            return f"{id:05d}"  # Code INSEE pour les cantons, sur 5 chiffres
+
+        if typeSubdivision == "Commmune":
+            return id.zfill(5) # code INSEE commune formater pour compléter avec 0 à gauche
+        
+        elif typeSubdivision == "Departement":
+            return id.zfill(2) #ATTENTION NE PRENDS PAS EN COMPTE LES DEPARTEMENTS OUTRE MER
+        
+        elif typeSubdivision == "Region":
+            return id.zfill(2)
+        
+        elif typeSubdivision == "Arrondissement":
+            return id.zfill(3)
+        
+        elif typeSubdivision == "Canton":
+            return id.zfill(4) #ATTENTION NE PRENDS PAS EN COMPTE un infime nmbre de canton à 5 chiffres
+        
         elif typeSubdivision == "EPCI":
-            return f"{id:09d}"  # Code SIREN pour les EPCI, sur 9 chiffres
+            return id.zfill(9)
+        
         else:
             raise ValueError(f"Type de subdivision inconnu pour génération de code INSEE : {typeSubdivision}")
