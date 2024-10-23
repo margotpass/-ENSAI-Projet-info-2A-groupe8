@@ -15,6 +15,7 @@ class Contour(Connexe):
     def get_Connexe(self):
         """ Retourne Contour """
         return self.Contour
+
 # A absolument tester pour vérifier que la fonction estDansContour fonctionne correctement (copilote l'a fait)
     def estDansContour(PointGeographique, Contour):
         """ Renvoie True si le point est dans le contour, False sinon

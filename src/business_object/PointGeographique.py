@@ -8,7 +8,7 @@ class PointGeographique():
     longitude -- longitude du point (float)
     typeCoordonnees -- type de coordonnées (str) : soit Lamb93 soit WGS84
     """
-    def __init__(self, latitude, longitude, typeCoordonnees):
+    def __init__(self, latitude, longitude, typeCoordonnees="WGS84"):
         self.latitude = latitude
         self.longitude = longitude
         self.typeCoordonnees = typeCoordonnees

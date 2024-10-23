@@ -1,11 +1,12 @@
-from Polygoneprimaire import Polygoneprimaire
+from src.business_object.Polygones.Polygoneprimaire import PolygonePrimaire
 
-class Connexe(Polygoneprimaire):
+
+class Connexe(PolygonePrimaire):
     """ Connexe contient les polygones primaires
     paramètres:
     Connexe : List<PolygonePrimaire>
     """
-    def __init__(self, Connexe):
+    def __init__(self, Connexe: list[PolygonePrimaire]):
         self.Connexe = Connexe
 
     def __str__(self):
