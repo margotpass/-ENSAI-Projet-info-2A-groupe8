@@ -89,6 +89,6 @@ def test_ajout_polygone_vers_connexe_vide():
     assert len(connexe_vide.get_connexe()) == 1
     assert connexe_vide.get_connexe()[0] == polygone
 
-def test_get_connexe(polygones_connexes):
+def test_get_contour(polygones_connexes):
     """Test pour vérifier que get_connexe retourne la liste actuelle des polygones"""
-    assert polygones_connexes.get_connexe() == [polygones_connexes.get_connexe()[0], polygones_connexes.get_connexe()[1]]
+    assert polygones_connexes.get_contour() == [polygones_connexes.get_contour()[0], polygones_connexes.get_contour()[1]]

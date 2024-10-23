@@ -21,9 +21,26 @@ class Contour(Connexe):
         """ Affiche les informations de Contour """
         return "Contour: [" + ", ".join(str(connexe) for connexe in self.contour) + "]"
 
-    def get_connexes(self):
+    def get_contour(self):
         """ Retourne la liste des connexes """
         return self.contour
+
+    def ajout_connexe(self, connexe):
+        """Ajoute un Connexe au contour, ce qui représente ajouter une enclave par exemple"""
+        if not isinstance(connexe, Connexe):
+            raise TypeError("L'objet ajouté doit être une instance de Connexe")
+
+        # Vérifie si la connexe est déjà présente
+        if connexe in self.contour:
+            print("Cette connexe est déjà présente dans le contour.")
+            return  # Ne fait rien si la connexe est déjà présente
+
+        self.contour.append(connexe)
+
+    def retirer_connexe(self, connexe):
+        """Retire un connexe du contour, ce qui représente retirer une enclave par exemple"""
+        if connexe in self.contour:
+            self.contour.remove(connexe)
 
 # A absolument tester pour vérifier que la fonction estDansContour fonctionne correctement (copilote l'a fait)
     def estDansContour(PointGeographique, Contour):
@@ -40,7 +57,7 @@ class Contour(Connexe):
         x = PointGeographique.latitude
         y = PointGeographique.longitude
         # Get the coordinates of the contour
-        poly = Contour.get_Connexe()
+        poly = Contour.get_contour()
         n = len(poly)
         # Initialize the number of intersections
         count = 0
