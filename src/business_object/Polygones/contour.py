@@ -42,48 +42,61 @@ class Contour(Connexe):
         if connexe in self.contour:
             self.contour.remove(connexe)
 
-# A absolument tester pour vérifier que la fonction estDansContour fonctionne correctement (copilote l'a fait)
-    def estDansContour(PointGeographique, Contour):
-        """ Renvoie True si le point est dans le contour, False sinon
-        Algorithm of  Ray Casting :
-        First step:
-        Trace a ray: Draw a horizontal ray from the point being tested.
-        Second step:
-        Count the intersections: Count how many times this ray intersects the edges of the polygon.
-        Third step:
-        Determine the position: If the number of intersections is odd, the point is inside the polygon; if it is even, the point is outside.
+# Les deux méthodes suivantes sont liées pour vérifier si un point est dans un polygone
+    def point_dans_polygone(point, polygone):
+    """Vérifie si un point est à l'intérieur d'un polygone."""
+    n = len(polygone.get_polygone())  # Assume que get_polygone() retourne la liste des points
+    inside = False
+    x, y = point.get_latitude(), point.get_longitude()  # ou les méthodes appropriées pour récupérer les coordonnées
+
+    p1x, p1y = polygone.get_polygone()[0].get_latitude(), polygone.get_polygone()[0].get_longitude()
+    for i in range(n + 1):
+        p2x, p2y = polygone.get_polygone()[i % n].get_latitude(), polygone.get_polygone()[i % n].get_longitude()
+        if y > min(p1y, p2y):
+            if y <= max(p1y, p2y):
+                if x <= max(p1x, p2x):
+                    if p1y != p2y:
+                        xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                    if p1x == p2x or x <= xinters:
+                        inside = not inside
+        p1x, p1y = p2x, p2y
+
+    return inside
+
         """
-        # Get the coordinates of the point
-        x = PointGeographique.latitude
-        y = PointGeographique.longitude
-        # Get the coordinates of the contour
-        poly = Contour.get_contour()
-        n = len(poly)
-        # Initialize the number of intersections
-        count = 0
-        # For each edge of the polygon
-        for i in range(n):
-            # Get the coordinates of the two vertices of the edge
-            x1 = poly[i].latitude
-            y1 = poly[i].longitude
-            x2 = poly[(i+1)%n].latitude
-            y2 = poly[(i+1)%n].longitude
-            # If the edge is horizontal
-            if y1 == y2:
-                continue
-            # If the point is on the edge
-            if y == y1 and x == x1:
+        Algorithme du Ray-Casting pour vérifier si un point est dans un polygone.
+        """
+        points = polygone.polygoneprimaire
+        n = len(points)
+        inside = False
+
+        x, y = point.latitude, point.longitude
+        p1x, p1y = points[0].latitude, points[0].longitude
+
+        for i in range(n + 1):
+            p2x, p2y = points[i % n].latitude, points[i % n].longitude
+            if y > min(p1y, p2y):
+                if y <= max(p1y, p2y):
+                    if x <= max(p1x, p2x):
+                        if p1y != p2y:
+                            xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                        if p1x == p2x or x <= xinters:
+                            inside = not inside
+            # Vérification si le point est exactement sur un bord
+            if (p1x == x and p1y == y) or (p2x == x and p2y == y):
                 return True
-            # If the point is above or below the edge
-            if y < min(y1, y2) or y > max(y1, y2):
-                continue
-            # Calculate the x-coordinate of the intersection
-            x0 = (y - y1) * (x2 - x1) / (y2 - y1) + x1
-            # If the intersection is to the right of the point
-            if x0 > x:
-                count += 1
-        # If the number of intersections is odd
-        if count % 2 == 1:
-            return True
-        # If the number of intersections is even
+            p1x, p1y = p2x, p2y
+
+        return inside
+
+
+    def estDansPolygone(self, point: PointGeographique) -> bool:
+        """
+        Vérifie si le point est dans l'un des polygones de ce contour.
+        """
+        for connexe in self.contour:
+            for polygone in connexe.get_polygones():  # Remplace par la méthode appropriée
+                print("Polygone:", [f"({p.latitude}, {p.longitude})" for p in polygone.polygoneprimaire])  # Pour débogage
+                if self.point_dans_polygone(point, polygone):
+                    return True
         return False

@@ -236,3 +236,36 @@ def test_retirer_le_seul_connexe(polygone_contour):
     # Vérifie que le contour est maintenant vide
     assert len(contour.get_contour()) == 0
 
+# Tests pour la méthode point_dans_polygone de la classe Contour
+def test_point_dans_polygone_interieur(polygone_contour):
+    """Test si un point à l'intérieur du polygone retourne True."""
+    point_interieur = PointGeographique(43.75, 5.3, "WGS84")
+    # On teste le polygone intérieur en utilisant la méthode de Contour
+    assert polygone_contour.point_dans_polygone(point_interieur, polygone_contour.get_contour()[0].get_connexe()[0]) is True
+
+def test_point_dans_polygone_exterieur(polygone_contour):
+    """Test si un point à l'extérieur du polygone retourne False."""
+    point_exterieur = PointGeographique(44.2, 5.2, "WGS84")
+    assert polygone_contour.point_dans_polygone(point_exterieur, polygone_contour.get_contour()[0].get_connexe()[0]) is False
+
+def test_point_sur_bordure(polygone_contour):
+    """Test si un point sur la bordure du polygone retourne True."""
+    point_bordure = PointGeographique(44.0, 5.0, "WGS84")  # Un des points du polygone
+    assert polygone_contour.point_dans_polygone(point_bordure, polygone_contour.get_contour()[0].get_connexe()[0]) is True
+
+def test_point_dans_polygone_connexe_interieur(polygone_contour):
+    """Test si un point à l'intérieur d'un polygone connexe retourne True."""
+    point_interieur = PointGeographique(44.05, 5.15, "WGS84")  # À l'intérieur de polygone2
+    polygone_test = polygone_contour.get_contour()[1].get_connexe()[0]
+
+    print("Vérification si le point est à l'intérieur du polygone.")
+    print(f"Point: {point_interieur}")
+    print(f"Polygone: {polygone_test}")
+
+    # Test d'appartenance du point au polygone
+    assert polygone_contour.point_dans_polygone(point_interieur, polygone_test) is True
+
+def test_point_dans_polygone_connexe_exterieur(polygone_contour):
+    """Test si un point à l'extérieur d'un polygone connexe retourne False."""
+    point_exterieur = PointGeographique(44.0, 6.0, "WGS84")  # À l'extérieur de polygone2
+    assert polygone_contour.point_dans_polygone(point_exterieur, polygone_contour.get_contour()[1].get_connexe()[0]) is False
