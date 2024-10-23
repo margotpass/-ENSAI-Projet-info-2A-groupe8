@@ -43,39 +43,22 @@ class Contour(Connexe):
         if connexe in self.contour:
             self.contour.remove(connexe)
 
-# Les deux méthodes suivantes sont liées pour vérifier si un point est dans un polygone
-    def point_dans_polygone(point, polygone):
-    """Vérifie si un point est à l'intérieur d'un polygone."""
-    n = len(polygone.get_polygone())  # Assume que get_polygone() retourne la liste des points
-    inside = False
-    x, y = point.get_latitude(), point.get_longitude()  # ou les méthodes appropriées pour récupérer les coordonnées
-
-    p1x, p1y = polygone.get_polygone()[0].get_latitude(), polygone.get_polygone()[0].get_longitude()
-    for i in range(n + 1):
-        p2x, p2y = polygone.get_polygone()[i % n].get_latitude(), polygone.get_polygone()[i % n].get_longitude()
-        if y > min(p1y, p2y):
-            if y <= max(p1y, p2y):
-                if x <= max(p1x, p2x):
-                    if p1y != p2y:
-                        xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
-                    if p1x == p2x or x <= xinters:
-                        inside = not inside
-        p1x, p1y = p2x, p2y
-
-    return inside
-
-        """
-        Algorithme du Ray-Casting pour vérifier si un point est dans un polygone.
-        """
-        points = polygone.polygoneprimaire
-        n = len(points)
+    # Les deux méthodes suivantes sont liées pour vérifier si un point est dans un polygone
+    def point_dans_polygone(self, point: PointGeographique, polygone: PolygonePrimaire) -> bool:
+        """Vérifie si le point est à l'intérieur du polygone ou sur ses bords."""
+        x, y = point.longitude, point.latitude
         inside = False
+        n = len(polygone.polygoneprimaire)
 
-        x, y = point.latitude, point.longitude
-        p1x, p1y = points[0].latitude, points[0].longitude
+        p1x, p1y = polygone.polygoneprimaire[0].longitude, polygone.polygoneprimaire[0].latitude
+        for i in range(1, n + 1):
+            p2x, p2y = polygone.polygoneprimaire[i % n].longitude, polygone.polygoneprimaire[i % n].latitude
 
-        for i in range(n + 1):
-            p2x, p2y = points[i % n].latitude, points[i % n].longitude
+            # Vérification si le point est sur le bord
+            if self.point_sur_segment(point, (p1x, p1y), (p2x, p2y)):
+                return True
+
+            # Vérification de l'algorithme de ray-casting
             if y > min(p1y, p2y):
                 if y <= max(p1y, p2y):
                     if x <= max(p1x, p2x):
@@ -83,21 +66,37 @@ class Contour(Connexe):
                             xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
                         if p1x == p2x or x <= xinters:
                             inside = not inside
-            # Vérification si le point est exactement sur un bord
-            if (p1x == x and p1y == y) or (p2x == x and p2y == y):
-                return True
             p1x, p1y = p2x, p2y
 
-        return inside
+            return inside
+
+    def point_sur_segment(self, point: PointGeographique, p1: tuple, p2: tuple) -> bool:
+        """Vérifie si le point est sur le segment défini par p1 et p2."""
+        x, y = point.longitude, point.latitude
+        p1x, p1y = p1
+        p2x, p2y = p2
+
+        # Vérifie si le point est aligné avec le segment et à l'intérieur des bornes
+        if (min(p1x, p2x) <= x <= max(p1x, p2x)) and (min(p1y, p2y) <= y <= max(p1y, p2y)):
+            # Calcule la pente pour vérifier l'alignement
+            if (p2x - p1x) == 0:  # Segment vertical
+                return x == p1x
+            else:
+                slope = (p2y - p1y) / (p2x - p1x)
+                expected_y = slope * (x - p1x) + p1y
+                return expected_y == y
+
+        return False
 
 
     def estDansPolygone(self, point: PointGeographique) -> bool:
-        """
-        Vérifie si le point est dans l'un des polygones de ce contour.
-        """
+        
+        #Vérifie si le point est dans l'un des polygones de ce contour.
+        
         for connexe in self.contour:
             for polygone in connexe.get_polygones():  # Remplace par la méthode appropriée
                 print("Polygone:", [f"({p.latitude}, {p.longitude})" for p in polygone.polygoneprimaire])  # Pour débogage
                 if self.point_dans_polygone(point, polygone):
                     return True
         return False
+"""
