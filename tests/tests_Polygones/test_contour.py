@@ -259,8 +259,8 @@ def test_point_dans_polygone_connexe_interieur(polygone_contour):
     polygone_test = polygone_contour.get_contour()[1].get_connexe()[0]
 
     print("Vérification si le point est à l'intérieur du polygone.")
-    print(f"Point: {point_interieur}")
-    print(f"Polygone: {polygone_test}")
+    print(f"Point: {point_interieur.get_latitude()}, {point_interieur.get_longitude()}")
+    print(f"Polygone: {[f'({p.get_latitude()}, {p.get_longitude()})' for p in polygone_test.get_polygone()]}")
 
     # Test d'appartenance du point au polygone
     assert polygone_contour.point_dans_polygone(point_interieur, polygone_test) is True
