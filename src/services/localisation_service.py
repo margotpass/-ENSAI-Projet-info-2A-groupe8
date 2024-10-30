@@ -13,18 +13,26 @@ class LocalisationService:
             self.contour_dao = ContourDAO()
 
     def localiserPointDansSubdivision(self, code_insee, point: PointGeographique, annee: int = 2024) -> Optional[Subdivision]:
-        # Étape 1 : Récupérer toutes les subdivisions
-        subdivisions = self.subdivision_dao.find_by_code_insee()
+        # Étape 1 : Récupérer la table du type de subdivision correspondante au code insee
+        type_subdivision_liste = ["Arrondissement", "Canton", "Commune",  "Departement", "EPCI", "Region"]
+
+        for type_subdivision in type_subdivision_liste:
+            try:
+                subdivisions = self.subdivision_dao.find_by_code_insee(type_subdivision, code_insee)
+                break
+            except:
+                continue
  
-        # Étape 2 : Parcourir chaque subdivision pour vérifier si le point est dans ses polygones
+        # Étape 2 : Parcourir les subdivisions du type de subdivision trouvé pour récupérer les contours
         for subdivision in subdivisions:
-            contour = subdivision.polygones  # Accéder directement à l'attribut polygones
+            contours = self.contour_dao.getAllContours(subdivision)
 
-            # Vérifier si le point est dans l'un des polygones de cette subdivision
-            if contour.estDansPolygone(point):
-                return subdivision  # Retourner la subdivision si le point y appartient
+           # Etape 3 : vérifier si le point est dans un des contours
+            for contour in contours :
+                if contour.estDansPolygone(point):
+                    return subdivision  # Retourner la subdivision si le point y appartient
 
-        # Si aucun polygone ne contient le point, retourner None
+        # Si aucun contour ne contient le point, retourner None
         return None
 
     def __str__(self):
