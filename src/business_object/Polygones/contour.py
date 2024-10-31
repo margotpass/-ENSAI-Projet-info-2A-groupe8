@@ -99,4 +99,3 @@ class Contour(Connexe):
                 if self.point_dans_polygone(point, polygone):
                     return True
         return False
-"""

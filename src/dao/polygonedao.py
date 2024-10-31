@@ -1,5 +1,5 @@
-from src.business_object.Polygones.Polygoneprimaire import PolygonePrimaire
-from src.dao.point_geographique_dao import PointGeographiqueDAO
+from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
+from src.dao.pointgeographiquedao import PointGeographiqueDAO
 from typing import List
 
 

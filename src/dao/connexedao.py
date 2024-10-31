@@ -1,5 +1,5 @@
-from src.business_object.Polygones.Connexe import Connexe
-from src.dao.polygone_dao import PolygoneDAO
+from src.business_object.Polygones.connexe import Connexe
+from src.dao.polygonedao import PolygoneDAO
 from typing import List
 
 

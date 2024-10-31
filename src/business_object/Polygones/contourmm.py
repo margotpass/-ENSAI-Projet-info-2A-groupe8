@@ -1,5 +1,5 @@
-from src.business_object.Polygones.Connexe import Connexe
-from src.business_object.Polygones.Polygoneprimaire import PolygonePrimaire
+from src.business_object.Polygones.connexe import Connexe
+from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
 from src.business_object.pointgeographique import PointGeographique
 from typing import List
 

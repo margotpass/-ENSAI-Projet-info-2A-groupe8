@@ -305,7 +305,7 @@ class SubdivisionDAO:
         elif type_subdivision == "Region":
             return self.find_region_by_insee(code_insee)
         else:
-            raise ValueError("Type de subdivision inconnu")
+            raise ValueError("Type de subdivision inconnue")
 
     def find_arrondissement_by_insee(self, insee_arr):
         query = """

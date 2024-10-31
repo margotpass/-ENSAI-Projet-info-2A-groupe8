@@ -1,5 +1,5 @@
 from src.business_object.Polygones.contourmm import ContourMM
-from src.dao.connexe_dao import ConnexeDAO
+from src.dao.connexedao import ConnexeDAO
 from typing import List, Tuple
 from src.dao.db_connection import DBConnection
 
