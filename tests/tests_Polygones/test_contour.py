@@ -240,7 +240,7 @@ def test_retirer_le_seul_connexe(polygone_contour):
 def test_point_dans_polygone_connexe_interieur(polygone_contour):
     """Test si un point à l'intérieur d'un polygone connexe retourne True."""
     point_interieur = PointGeographique(44.06, 5.15, "WGS84")  # À l'intérieur de polygone2
-    polygone_test = polygone_contour.get_contour()[1].get_connexe()[0]  # Assurez-vous que c'est bien polygone2
+    polygone_test = polygone_contour.get_contour()[1].get_connexe()[0]
 
     result = polygone_contour.point_dans_polygone(point_interieur, polygone_test)
     assert result is True, f"Expected True, but got {result}"

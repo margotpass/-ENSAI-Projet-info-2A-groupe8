@@ -68,25 +68,23 @@ class Contour(Connexe):
                             inside = not inside
             p1x, p1y = p2x, p2y
 
-            return inside
+        return inside
 
     def point_sur_segment(self, point: PointGeographique, p1: tuple, p2: tuple) -> bool:
-        """Vérifie si le point est sur le segment défini par p1 et p2."""
         x, y = point.longitude, point.latitude
         p1x, p1y = p1
         p2x, p2y = p2
 
-        # Vérifie si le point est aligné avec le segment et à l'intérieur des bornes
         if (min(p1x, p2x) <= x <= max(p1x, p2x)) and (min(p1y, p2y) <= y <= max(p1y, p2y)):
-            # Calcule la pente pour vérifier l'alignement
             if (p2x - p1x) == 0:  # Segment vertical
-                return x == p1x
+                return abs(x - p1x) < 1e-9  # Tolérance pour les flottants
             else:
                 slope = (p2y - p1y) / (p2x - p1x)
                 expected_y = slope * (x - p1x) + p1y
-                return expected_y == y
+                return abs(expected_y - y) < 1e-9  # Tolérance pour les flottants
 
         return False
+
 
 
     def estDansPolygone(self, point: PointGeographique) -> bool:
