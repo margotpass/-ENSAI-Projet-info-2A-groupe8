@@ -35,7 +35,7 @@ class MenuUtilisateur(VueAbstraite):
             message="Choississez ce que vous souhaitez faire : ",
             choices=[
                 "Obtenir une subdivision selon un code",
-                #"Obtenir une subdivision selon un point géographique",
+                "Obtenir une subdivision selon un point géographique",
                 #"Obtenir un fichier regroupant les différentes subdivisions selon un point géographique",
                 "Quitter",
             ],
@@ -52,7 +52,7 @@ class MenuUtilisateur(VueAbstraite):
                 result = SubdivisionService().chercherSubdivisionParID(type, id, annee if annee else None)
                 return MenuUtilisateur(result)
 
-"""
+
             case "Obtenir une subdivision selon un point géographique":
                 latitude = inquirer.text("Entrez la première coordonnée de votre point (latitude) : ").execute()
                 longitude = inquirer.text("Entrez la deuxième coordonnée de votre point (longitude) : ").execute()
@@ -61,7 +61,7 @@ class MenuUtilisateur(VueAbstraite):
                 point = PointGeographique(float(latitude), float(longitude), coord if coord else "WGS84")
                 result = LocalisationService().localiserPointDansSubdivision(point, annee if annee else None)
                 return MenuUtilisateur(result)
-                
+"""                
             case "Obtenir un fichier regroupant les différentes subdivisions selon un point géographique":
                 fichier = inquirer.text("Entrez le chemin du fichier contenant les points géographiques (CSV) : ").execute()
                 if fichier.endswith('.csv'):

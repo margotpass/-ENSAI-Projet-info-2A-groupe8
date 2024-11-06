@@ -4,13 +4,15 @@ from src.business_object.pointgeographique import PointGeographique
 from src.business_object.Polygones.contour import Contour
 from src.dao.contourdao import ContourDAO
 from src.dao.subdivisiondao import SubdivisionDAO
+from src.dao.db_connection import DBConnection
+
 
 
 class LocalisationService:
 
-    def __init__(self, subdivision_dao, contour_dao):
-            self.subdivision_dao = subdivision_dao
-            self.contour_dao = contour_dao
+    def __init__(self):
+            self.subdivision_dao = SubdivisionDAO()
+            self.contour_dao = ContourDAO(DBConnection)
 
     def localiserPointDansSubdivision(self, code_insee, point: PointGeographique, annee: int = 2024) -> Optional[Subdivision]:
         # Étape 1 : Récupérer la table du type de subdivision correspondante au code insee
