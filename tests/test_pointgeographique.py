@@ -19,6 +19,28 @@ def point_commune():
     typecoordonnees = data_commune["type_coord"]
     return PointGeographique(latitude, longitude, typecoordonnees)
 
+def test_initialisation_point_geographique():
+    """Test pour vérifier l'initialisation d'un point géographique"""
+    point = PointGeographique(48.856578, 2.351828, "WGS84")
+    assert isinstance(point, PointGeographique)
+    assert point.latitude == 48.856578
+    assert point.longitude == 2.351828
+    assert point.typecoordonnees == "WGS84"
+
+def test_initialisation_point_geographique_erreur():
+    """Test pour vérifier l'initialisation d'un point géographique avec des valeurs incorrectes"""
+    with pytest.raises(TypeError):
+        PointGeographique("48.856578", 2.351828, "WGS84")
+    with pytest.raises(TypeError):
+        PointGeographique(48.856578, "2.351828", "WGS84")
+    with pytest.raises(ValueError):
+        PointGeographique(48.856578, 2.351828, "XYZ")
+
+def test_initialisation_point_geographique_vide():
+    """Test pour vérifier l'initialisation d'un point géographique sans type de coordonnées"""
+    point = PointGeographique(48.856578, 2.351828, "")
+    assert point.typecoordonnees == ""
+
 def test_point_geographique_commune(point_commune):
     """Test pour vérifier l'initialisation d'un point géographique"""
     assert isinstance(point_commune, PointGeographique)
