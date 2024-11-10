@@ -29,7 +29,7 @@ class MenuUtilisateur(VueAbstraite):
             Retourne la vue choisie par l'utilisateur dans le terminal
         """
 
-        print("\n" + "-" * 50 + "\nMenu Joueur\n" + "-" * 50 + "\n")
+        print("\n" + "-" * 50 + "\nMenu Utilisateur\n" + "-" * 50 + "\n")
 
         choix = inquirer.select(
             message="Choississez ce que vous souhaitez faire : ",
@@ -46,7 +46,7 @@ class MenuUtilisateur(VueAbstraite):
                 pass # en gros là il va retourner à l'accueil
 
             case "Obtenir une subdivision selon un code":
-                id = inquirer.text(message="Entrez le code de la subdivision dont vous souhaitez cnnaître le nom : ").execute()
+                id = inquirer.text(message="Entrez le code de la subdivision dont vous souhaitez connaître le nom : ").execute()
                 type = inquirer.text(message="Entrez le niveau de la subdivision (commune, département, etc.)").execute()
                 annee = inquirer.text(message="Entrez l'année si vous le souhaitez (laissez vide sinon) :").execute()
                 result = SubdivisionService().chercherSubdivisionParID(type, id, annee if annee else None)
