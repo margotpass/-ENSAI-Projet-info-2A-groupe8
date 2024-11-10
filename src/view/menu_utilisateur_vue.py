@@ -54,12 +54,14 @@ class MenuUtilisateur(VueAbstraite):
 
 
             case "Obtenir une subdivision selon un point géographique":
-                latitude = inquirer.text("Entrez la première coordonnée de votre point (latitude) : ").execute()
-                longitude = inquirer.text("Entrez la deuxième coordonnée de votre point (longitude) : ").execute()
+                latitude = inquirer.text(message="Entrez la première coordonnée de votre point (latitude) : ").execute()
+                longitude = inquirer.text(message="Entrez la deuxième coordonnée de votre point (longitude) : ").execute()
+                type_subdivision = inquirer.text(message="Choisissez le type de subdivision parmi : Arrondissement,"
+                                                 " Canton, Commune, Departement, EPCI et Region : ").execute()
                 annee = inquirer.text(message="Entrez l'année si vous le souhaitez (laissez vide sinon) : ").execute()
                 coord = inquirer.text(message="Entrez le type de coordonnées que vous utilisez (si WGS84, vous pouvez laisser vide) : ").execute()
                 point = PointGeographique(float(latitude), float(longitude), coord if coord else "WGS84")
-                result = LocalisationService().localiserPointDansSubdivision(point, annee if annee else None)
+                result = LocalisationService().localiserPointDansSubdivision(point, type_subdivision, annee if annee else None)
                 return MenuUtilisateur(result)
 """                
             case "Obtenir un fichier regroupant les différentes subdivisions selon un point géographique":

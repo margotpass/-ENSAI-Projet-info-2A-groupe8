@@ -1,4 +1,4 @@
-from src.business_object.Polygones.contourmm import ContourMM
+from src.business_object.Polygones.contour import Contour
 from src.dao.connexedao import ConnexeDAO
 from typing import List, Tuple
 from src.dao.db_connection import DBConnection
@@ -8,11 +8,11 @@ class ContourDAO:
     def __init__(self, db_connection):
         self.connexe_dao = ConnexeDAO(db_connection)
 
-    def get_all_contours(self, table_name: str, parent_id: str = None) -> List[Tuple[ContourMM, str]]:
+    def get_all_contours(self, table_name: str, parent_id: str = None) -> List[Tuple[Contour, str]]:
         """
         Récupère tous les contours pour une subdivision donnée (par ex. région, département).
         Si parent_id est fourni, filtre les subdivisions par leur parent (par exemple, les départements dans une région).
-        Renvoie une liste de tuples (ContourMM, subdivision_id)
+        Renvoie une liste de tuples (Contour, subdivision_id)
         """
         insee_column = self.get_insee_column(table_name)
 
@@ -35,7 +35,7 @@ class ContourDAO:
                     geom_type = result['geom_type']
                     subdivision_id = result[insee_column]
 
-                    # Transformation des coordonnées géométriques en ContourMM en passant par ConnexeDAO
+                    # Transformation des coordonnées géométriques en Contour en passant par ConnexeDAO
                     contour = self.transformer_geom_en_contour(geom_coordinates, geom_type)
                     contours.append((contour, subdivision_id))
 
@@ -55,13 +55,13 @@ class ContourDAO:
         }
         return columns.get(table_name, f"Nom de table inconnu : {table_name}")
 
-    def transformer_geom_en_contour(self, geom_coordinates: list, geom_type: str) -> ContourMM:
+    def transformer_geom_en_contour(self, geom_coordinates: list, geom_type: str) -> Contour:
         """
-        Convertit les données geom_coordinates (déjà au format JSON, sous forme de listes) en un objet ContourMM.
-        Appelle ConnexeDAO pour récupérer les connexes, puis construit un ContourMM.
+        Convertit les données geom_coordinates (déjà au format JSON, sous forme de listes) en un objet Contour.
+        Appelle ConnexeDAO pour récupérer les connexes, puis construit un Contour.
         """
         # Appel à ConnexeDAO pour récupérer la structure des connexes à partir des geom_coordinates
         connexes = self.connexe_dao.get_connexes_from_geom(geom_coordinates, geom_type)
 
-        # Création de l'objet ContourMM avec les connexes récupérés
-        return ContourMM(connexes)
+        # Création de l'objet Contour avec les connexes récupérés
+        return Contour(connexes)
