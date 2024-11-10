@@ -50,3 +50,70 @@ class ConnexeDAO:
 
                 # Retourner l'ID du Connexe ajouté
                 return connexe_id
+
+    def update_connexe(self, connexe_id, nouvelle_liste_polygones):
+        """Met à jour un Connexe existant en remplaçant ses polygones par une nouvelle liste."""
+        polygone_dao = PolygoneDAO()
+        nouveaux_polygones_ids = []
+        somme_sommes_controle = 0
+
+        # Ajouter les nouveaux polygones et calculer la somme des sommes de contrôle
+        for poly in nouvelle_liste_polygones:
+            polygone_id = polygone_dao.ajouter_polygone(poly)
+            nouveaux_polygones_ids.append(polygone_id)
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT somme_coordonnees FROM geodata.Polygones WHERE id = %s",
+                        (polygone_id,)
+                    )
+                    somme_coordonnees = cursor.fetchone()[0]
+                    somme_sommes_controle += somme_coordonnees
+
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                # Mettre à jour la somme des sommes de contrôle dans la table Connexes
+                cursor.execute(
+                    "UPDATE geodata.Connexes SET somme_sommes_controle = %s WHERE id = %s",
+                    (somme_sommes_controle, connexe_id)
+                )
+                if cursor.rowcount == 0:
+                    raise ValueError(f"Le connexe avec l'id {connexe_id} n'existe pas.")
+
+                # Supprimer les anciennes associations entre connexe et polygones
+                cursor.execute(
+                    "DELETE FROM geodata.connexe_polygone WHERE id_connexe = %s",
+                    (connexe_id,)
+                )
+
+                # Ajouter les nouvelles associations dans la table connexe_polygone
+                for ordre, polygone_id in enumerate(nouveaux_polygones_ids, start=1):
+                    cursor.execute(
+                        "INSERT INTO geodata.connexe_polygone (id_connexe, id_polygone, ordre) VALUES (%s, %s, %s)",
+                        (connexe_id, polygone_id, ordre)
+                    )
+
+                # Commit des modifications
+                connection.commit()
+
+    def delete_connexe(self, connexe_id):
+        """Supprime un Connexe de la base de données, y compris ses polygones associés et ses associations."""
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                # Supprimer les associations dans la table connexe_polygone
+                cursor.execute(
+                    "DELETE FROM geodata.connexe_polygone WHERE id_connexe = %s",
+                    (connexe_id,)
+                )
+
+                # Supprimer le connexe lui-même dans la table Connexes
+                cursor.execute(
+                    "DELETE FROM geodata.Connexes WHERE id = %s",
+                    (connexe_id,)
+                )
+
+                if cursor.rowcount == 0:
+                    raise ValueError(f"Le connexe avec l'id {connexe_id} n'existe pas.")
+
+                # Commit des modifications
+                connection.commit()

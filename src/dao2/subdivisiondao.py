@@ -108,3 +108,77 @@ class SubdivisionDAO:
 
                 # Commit des modifications dans la base de données
                 connection.commit()
+
+    def update_subdivision(self, subdivision):
+        """
+        Met à jour les informations d'une subdivision dans la base de données, y compris son contour associé.
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                # Mise à jour de la subdivision dans la table 'subdivision'
+                query_update_subdivision = """
+                UPDATE geodata.subdivision
+                SET nom = %s, insee_com = %s, insee_can = %s, insee_arr = %s,
+                    insee_dep = %s, insee_reg = %s, siren_epci = %s
+                WHERE id = %s AND type = %s
+                """
+                cursor.execute(query_update_subdivision, (
+                    subdivision.nom,
+                    subdivision.insee_com,
+                    subdivision.insee_can,
+                    subdivision.insee_arr,
+                    subdivision.insee_dep,
+                    subdivision.insee_reg,
+                    subdivision.siren_epci,
+                    subdivision.id,
+                    subdivision.__class__.__name__
+                ))
+
+                # Mise à jour du contour si spécifié
+                if subdivision.polygones:
+                    contour = subdivision.polygones
+                    self.contour_dao.update(contour)  # Utilise ContourDAO pour mettre à jour le contour
+                    query_assoc = """
+                    UPDATE geodata.subdivision_contour
+                    SET id_contour = %s
+                    WHERE id_subdivision = %s
+                    """
+                    cursor.execute(query_assoc, (contour.id, subdivision.id))
+
+                # Commit des modifications
+                connection.commit()
+
+    def delete_subdivision(self, subdivision_id, type_subdivision):
+        """
+        Supprime une subdivision et son contour associé de la base de données.
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                # Récupérer l'ID du contour associé pour le supprimer ensuite
+                query_get_contour_id = """
+                SELECT id_contour FROM geodata.subdivision_contour
+                WHERE id_subdivision = %s
+                """
+                cursor.execute(query_get_contour_id, (subdivision_id,))
+                contour_id = cursor.fetchone()
+
+                # Supprimer l'association entre la subdivision et le contour
+                query_delete_assoc = """
+                DELETE FROM geodata.subdivision_contour
+                WHERE id_subdivision = %s
+                """
+                cursor.execute(query_delete_assoc, (subdivision_id,))
+
+                # Supprimer la subdivision
+                query_delete_subdivision = """
+                DELETE FROM geodata.subdivision
+                WHERE id = %s AND type = %s
+                """
+                cursor.execute(query_delete_subdivision, (subdivision_id, type_subdivision))
+
+                # Supprimer le contour en utilisant ContourDAO si un contour est associé
+                if contour_id:
+                    self.contour_dao.delete(contour_id[0])
+
+                # Commit des modifications
+                connection.commit()

@@ -38,3 +38,62 @@ class PolygoneDAO:
 
                 # Retourner l'ID du Polygone ajouté
                 return polygone_id
+
+    def update_polygone(self, polygone_id, nouvelle_liste_points):
+        """Met à jour un PolygonePrimaire existant en remplaçant ses points par une nouvelle liste de points."""
+        point_dao = PointGeographiqueDAO()
+
+        # Créer de nouveaux points géographiques pour le polygone
+        nouveaux_points = [point_dao.creer_point(long, lat) for long, lat in nouvelle_liste_points]
+        somme_coordonnees = sum(point.longitude + point.latitude for point in nouveaux_points)
+
+        # Ajouter les nouveaux points et obtenir leurs IDs
+        nouveaux_points_ids = [point_dao.ajouter_point(point) for point in nouveaux_points]
+
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                # Mettre à jour la somme des coordonnées dans la table Polygones
+                cursor.execute(
+                    "UPDATE geodata.Polygones SET somme_coordonnees = %s WHERE id = %s",
+                    (somme_coordonnees, polygone_id)
+                )
+                if cursor.rowcount == 0:
+                    raise ValueError(f"Le polygone avec l'id {polygone_id} n'existe pas.")
+
+                # Supprimer les anciennes associations points-polygone
+                cursor.execute(
+                    "DELETE FROM geodata.polygone_point WHERE id_polygone = %s",
+                    (polygone_id,)
+                )
+
+                # Insérer les nouvelles associations dans la table polygone_point
+                for ordre, point_id in enumerate(nouveaux_points_ids, start=1):
+                    cursor.execute(
+                        "INSERT INTO geodata.polygone_point (id_polygone, id_point, ordre) VALUES (%s, %s, %s)",
+                        (polygone_id, point_id, ordre)
+                    )
+
+                # Commit des modifications
+                connection.commit()
+
+    def delete_polygone(self, polygone_id):
+        """Supprime un PolygonePrimaire de la base de données, y compris ses points associés et ses associations."""
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                # Supprimer les associations dans la table polygone_point
+                cursor.execute(
+                    "DELETE FROM geodata.polygone_point WHERE id_polygone = %s",
+                    (polygone_id,)
+                )
+
+                # Supprimer le polygone lui-même dans la table Polygones
+                cursor.execute(
+                    "DELETE FROM geodata.Polygones WHERE id = %s",
+                    (polygone_id,)
+                )
+
+                if cursor.rowcount == 0:
+                    raise ValueError(f"Le polygone avec l'id {polygone_id} n'existe pas.")
+
+                # Commit des modifications
+                connection.commit()
