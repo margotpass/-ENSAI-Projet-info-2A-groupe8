@@ -5,7 +5,6 @@ from src.business_object.Polygones.contour import Contour
 from src.dao.contourdao import ContourDAO
 from src.dao.subdivisiondao import SubdivisionDAO
 from src.dao.db_connection import DBConnection
-from src.business_object.Polygones.contourmm import ContourMM
 
 
 

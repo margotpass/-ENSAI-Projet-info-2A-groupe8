@@ -90,10 +90,9 @@ class Contour(Connexe):
     def estDansPolygone(self, point: PointGeographique) -> bool:
         
         #Vérifie si le point est dans l'un des polygones de ce contour.
-        
         for connexe in self.contour:
             for polygone in connexe.get_connexe():  # Remplace par la méthode appropriée
-                print("Polygone:", [f"({p.latitude}, {p.longitude})" for p in polygone.polygoneprimaire])  # Pour débogage
+                """print("Polygone:", [f"({p.latitude}, {p.longitude})" for p in polygone.polygoneprimaire])  # Pour débogage"""
                 if self.point_dans_polygone(point, polygone):
                     return True
         return False
