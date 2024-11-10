@@ -2,6 +2,7 @@ from src.business_object.Polygones.contour import Contour
 from src.dao2.connexedao import ConnexeDAO
 from src.dao.db_connection import DBConnection
 
+
 class ContourDAO:
     def creer_contour(self, liste_connexes):
         """Crée un objet Contour à partir d'une liste de connexes."""
