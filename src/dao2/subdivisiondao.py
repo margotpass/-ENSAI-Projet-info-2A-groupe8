@@ -20,7 +20,7 @@ class SubdivisionDAO:
     def creer_subdivision(self, type_subdivision, id, nom=None, annee=None,
                           insee_com=None, insee_can=None, insee_arr=None,
                           insee_dep=None, insee_reg=None, siren_epci=None,
-                          nature_epci=None, polygones=Contour):
+                          polygones=Contour):
         """
         Crée une instance de subdivision en fonction de son type et de ses attributs.
 
@@ -34,7 +34,7 @@ class SubdivisionDAO:
             Le nom de la subdivision (si applicable).
         annee : str, optionnel
             L'année associée à la subdivision.
-        insee_com, insee_can, insee_arr, insee_dep, insee_reg, siren_epci, nature_epci : str, optionnel
+        insee_com, insee_can, insee_arr, insee_dep, insee_reg, siren_epci : str, optionnel
             Les identifiants spécifiques à chaque type de subdivision.
         polygones : Contour, optionnel
             Un objet Contour représentant le polygone de la subdivision.
@@ -60,7 +60,7 @@ class SubdivisionDAO:
                                       insee_reg=insee_reg, polygones=polygones)
         elif type_subdivision == 'Epci':
             subdivision = Epci(id=id, nom=nom, annee=annee, siren=siren_epci,
-                               nature=nature_epci, polygones=polygones)
+                               nature='', polygones=polygones)  # nature='' pour Epci
         elif type_subdivision == 'Region':
             subdivision = Region(id=id, nom=nom, annee=annee, insee_reg=insee_reg,
                                  polygones=polygones)
@@ -79,8 +79,8 @@ class SubdivisionDAO:
                 # Insertion de la subdivision dans la table 'subdivision'
                 query_subdivision = """
                 INSERT INTO geodata.subdivision
-                (id, type, nom, insee_com, insee_can, insee_arr, insee_dep, insee_reg, siren_epci, nature_epci)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (id, type, nom, insee_com, insee_can, insee_arr, insee_dep, insee_reg, siren_epci)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 cursor.execute(query_subdivision, (
                     subdivision.id,
@@ -91,8 +91,7 @@ class SubdivisionDAO:
                     subdivision.insee_arr,
                     subdivision.insee_dep,
                     subdivision.insee_reg,
-                    subdivision.siren_epci,
-                    subdivision.nature_epci
+                    subdivision.siren_epci
                 ))
 
                 # Si un polygone est spécifié, l'ajouter dans la table 'contours' via ContourDAO
