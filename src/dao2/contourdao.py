@@ -2,7 +2,6 @@ from src.business_object.Polygones.contour import Contour
 from src.dao2.connexedao import ConnexeDAO
 from src.dao.db_connection import DBConnection
 
-
 class ContourDAO:
     def creer_contour(self, liste_connexes):
         """Crée un objet Contour à partir d'une liste de connexes."""
@@ -13,7 +12,9 @@ class ContourDAO:
     def ajouter_contour(self, contour, annee):
         """Ajoute un Contour dans la base de données avec une année."""
         connexe_dao = ConnexeDAO()
-        connexes_ids = [connexe_dao.ajouter_connexe(connexe) for connexe in contour.connexes]
+
+        # Obtenez les ID des connexes associés
+        connexes_ids = [connexe_dao.ajouter_connexe(connexe) for connexe in contour.contour]
 
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
@@ -25,10 +26,10 @@ class ContourDAO:
                 contour_id = cursor.fetchone()[0]  # L'ID du contour inséré
 
                 # Insérer les relations dans la table d'association contour_connexe
-                for connexe_id in connexes_ids:
+                for ordre, connexe_id in enumerate(connexes_ids):
                     cursor.execute(
-                        "INSERT INTO geodata.contour_connexe (id_contour, id_connexe) VALUES (%s, %s)",
-                        (contour_id, connexe_id)
+                        "INSERT INTO geodata.contour_connexe (id_contour, id_connexe, ordre) VALUES (%s, %s, %s)",
+                        (contour_id, connexe_id, ordre)
                     )
 
                 # Retourner l'ID du Contour ajouté
