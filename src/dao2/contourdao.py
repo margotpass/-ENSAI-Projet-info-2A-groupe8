@@ -10,7 +10,7 @@ class ContourDAO:
         connexes = [connexe_dao.creer_connexe(connexe) for connexe in liste_connexes]
         return Contour(connexes)
 
-    def ajouter_contour(self, contour, annee):
+    def ajouter_contour(self, contour, annee=2024):
         """Ajoute un Contour dans la base de données avec une année."""
         connexe_dao = ConnexeDAO()
 

@@ -97,7 +97,7 @@ class SubdivisionDAO:
                 # Si un polygone est spécifié, l'ajouter dans la table 'contours' via ContourDAO
                 if subdivision.polygones:
                     contour = subdivision.polygones  # polygones est un objet Contour
-                    self.contour_dao.ajouter(contour)  # Utilise ContourDAO pour ajouter le contour
+                    self.contour_dao.ajouter_contour(contour, subdivision.annee)  # Utilise ContourDAO pour ajouter le contour
 
                     # Ajout de l'association entre subdivision et contour dans la table 'subdivision_contour'
                     query_assoc = """
@@ -137,7 +137,7 @@ class SubdivisionDAO:
                 # Mise à jour du contour si spécifié
                 if subdivision.polygones:
                     contour = subdivision.polygones
-                    self.contour_dao.update(contour)  # Utilise ContourDAO pour mettre à jour le contour
+                    self.contour_dao.update_contour(contour)  # Utilise ContourDAO pour mettre à jour le contour
                     query_assoc = """
                     UPDATE geodata.subdivision_contour
                     SET id_contour = %s
@@ -178,7 +178,7 @@ class SubdivisionDAO:
 
                 # Supprimer le contour en utilisant ContourDAO si un contour est associé
                 if contour_id:
-                    self.contour_dao.delete(contour_id[0])
+                    self.contour_dao.delete_contour(contour_id[0])
 
                 # Commit des modifications
                 connection.commit()
