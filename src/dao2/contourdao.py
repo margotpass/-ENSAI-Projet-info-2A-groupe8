@@ -3,6 +3,8 @@ from src.dao2.connexedao import ConnexeDAO
 from src.dao.db_connection import DBConnection
 from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
 from src.business_object.pointgeographique import PointGeographique
+from src.business_object.Polygones.connexe import Connexe
+
 
 
 class ContourDAO:
