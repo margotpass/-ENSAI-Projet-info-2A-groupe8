@@ -13,7 +13,7 @@ class ContourMM:
         Vérifie si le point est dans l'un des polygones de ce contour.
         """
         for connexe in self.connexes:
-            for polygone in connexe.Connexe:  # `connexe` est une liste de Polygones
+            for polygone in connexe.connexe:  # `connexe` est une liste de Polygones
                 if self.point_dans_polygone(point, polygone):
                     return True
         return False

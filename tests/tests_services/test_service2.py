@@ -10,65 +10,65 @@ from src.services.localisation_service import LocalisationService
 
 @pytest.fixture
 def localisation_service():
-    # Créer des mocks pour SubdivisionDAO et ContourDAO
-    mock_subdivision_dao = MagicMock(spec=SubdivisionDAO)
-    mock_contour_dao = MagicMock(spec=ContourDAO)
-    # Initialiser le service avec les mocks
-    return LocalisationService(mock_subdivision_dao, mock_contour_dao), mock_subdivision_dao, mock_contour_dao
+    # Crée une instance de LocalisationService avec des DAO simulés
+    service = LocalisationService()
+    service.subdivision_dao = MagicMock()
+    service.contour_dao = MagicMock()
+    return service
 
-def test_initialisation(localisation_service):
-    service, mock_subdivision_dao, mock_contour_dao = localisation_service
-    # Vérifie que les objets subdivision_dao et contour_dao sont des instances de MagicMock
-    assert isinstance(service.subdivision_dao, MagicMock)
-    assert isinstance(service.contour_dao, MagicMock)
+@pytest.fixture
+def point_dans_contour():
+    return PointGeographique(5, 5, None)
 
+@pytest.fixture
+def point_hors_contour():
+    return PointGeographique(50, 50, None)
 
-from unittest.mock import MagicMock
+@pytest.fixture
+def contour_qui_contient_point():
+    # Crée un contour simulé qui contient le point
+    contour = (MagicMock(), "SubdivisionExistante")
+    contour[0].estDansPolygone.return_value = True
+    return contour
 
-def test_localiserPointDansSubdivision_point_in_contour(localisation_service):
-    service, mock_subdivision_dao, mock_contour_dao = localisation_service
+@pytest.fixture
+def contour_qui_ne_contient_pas_point():
+    # Crée un contour simulé qui ne contient pas le point
+    contour = (MagicMock(), "SubdivisionInexistante")
+    contour[0].estDansPolygone.return_value = False
+    return contour
 
-    # Configurer les mocks pour renvoyer une subdivision et un contour contenant le point
-    mock_point = PointGeographique(48.8566, 2.3522, typecoordonnees="WGS84")  # Exemple de point avec type de coordonnées
-    
-    # Créer un mock pour le contour et l'utiliser comme polygones
-    mock_polygone = MagicMock(spec=Contour)  # Utiliser un mock de Contour
-    
-    # Créer la subdivision avec un id, un nom, une année valide, et le mock pour polygones
-    mock_subdivision = Subdivision(id="75056", nom="Paris", annee=2024, polygones=mock_polygone)
+def test_point_dans_subdivision(localisation_service, point_dans_contour, contour_qui_contient_point, contour_qui_ne_contient_pas_point):
+    # Simule le retour de get_all_contours avec un contour contenant le point
+    localisation_service.contour_dao.get_all_contours.return_value = [
+        contour_qui_contient_point, 
+        contour_qui_ne_contient_pas_point
+    ]
 
-    # Configurer les mocks de DAO pour renvoyer cette subdivision et un contour
-    mock_subdivision_dao.find_by_code_insee.return_value = [mock_subdivision]
-    mock_contour_dao.get_all_contours.return_value = [mock_polygone]  # Utiliser mock_polygone ici
+    # Exécute la méthode à tester
+    result = localisation_service.localiserPointDansSubdivision(point_dans_contour, "commune")
 
-    # Configurer le contour pour qu'il contienne le point
-    mock_polygone.estDansPolygone.return_value = True
+    # Vérifie que le résultat est le nom de la subdivision correcte
+    assert result == "SubdivisionExistante"
 
-    # Appeler la méthode et vérifier le résultat
-    result = service.localiserPointDansSubdivision("75056", mock_point)
-    assert result == mock_subdivision
+def test_point_hors_subdivision(localisation_service, point_hors_contour, contour_qui_ne_contient_pas_point):
+    # Simule le retour de get_all_contours pour des contours ne contenant pas le point
+    localisation_service.contour_dao.get_all_contours.return_value = [
+        contour_qui_ne_contient_pas_point
+    ]
 
+    # Exécute la méthode avec un point hors des contours
+    result = localisation_service.localiserPointDansSubdivision(point_hors_contour, "commune")
 
+    # Vérifie que le résultat est None
+    assert result is None
 
+def test_type_subdivision_invalide(localisation_service, point_dans_contour):
+    # Simule le retour d'une liste vide pour un type de subdivision invalide
+    localisation_service.contour_dao.get_all_contours.return_value = []
 
+    # Exécute la méthode avec un type de subdivision invalide
+    result = localisation_service.localiserPointDansSubdivision(point_dans_contour, "type_invalide")
 
-def test_localiserPointDansSubdivision_point_not_in_any_contour(localisation_service):
-    service, mock_subdivision_dao, mock_contour_dao = localisation_service
-
-    # Configurer les mocks pour renvoyer une subdivision et un contour qui ne contient pas le point
-    mock_point = PointGeographique(48.8566, 2.3522, typecoordonnees="WGS84")  # Exemple de point
-    mock_contour = MagicMock(spec=Contour)  # Créer un mock pour Contour
-
-    # Créer la subdivision avec le mock_contour pour polygones
-    mock_subdivision = Subdivision(id="75056", nom="Paris", annee=2024, polygones=mock_contour)
-
-    # Simuler le comportement des méthodes de DAO
-    mock_subdivision_dao.find_by_code_insee.return_value = [mock_subdivision]
-    mock_contour_dao.get_all_contours.return_value = [mock_contour]
-
-    # Configurer le contour pour qu'il ne contienne pas le point
-    mock_contour.estDansPolygone.return_value = False
-
-    # Appeler la méthode et vérifier le résultat
-    result = service.localiserPointDansSubdivision("75056", mock_point)
+    # Vérifie que le résultat est None
     assert result is None
