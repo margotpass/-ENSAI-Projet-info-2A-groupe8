@@ -221,7 +221,7 @@ class SubdivisionDAO:
         query = f"""
         SELECT s.nom
         FROM geodata.subdivision s
-        WHERE s.type = %s AND s.{insee_field} = %s
+        WHERE UPPER(s.type) = UPPER(%s) AND s.{insee_field} = %s
         """
 
         with DBConnection().connection as connection:

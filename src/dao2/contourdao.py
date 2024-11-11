@@ -6,7 +6,6 @@ from src.business_object.pointgeographique import PointGeographique
 from src.business_object.Polygones.connexe import Connexe
 
 
-
 class ContourDAO:
     def creer_contour(self, liste_connexes):
         """Crée un objet Contour à partir d'une liste de connexes."""
@@ -132,7 +131,7 @@ class ContourDAO:
         query = f"""
         SELECT s.id, s.{insee_field} AS code_insee
         FROM geodata.subdivision s
-        WHERE s.type = %s
+        WHERE UPPER(s.type) = UPPER(%s)
         """
 
         contours_with_codes = []
