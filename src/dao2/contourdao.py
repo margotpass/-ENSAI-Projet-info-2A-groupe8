@@ -1,6 +1,8 @@
 from src.business_object.Polygones.contour import Contour
 from src.dao2.connexedao import ConnexeDAO
 from src.dao.db_connection import DBConnection
+from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
+from src.business_object.pointgeographique import PointGeographique
 
 
 class ContourDAO:
@@ -88,3 +90,125 @@ class ContourDAO:
 
                 # Commit des modifications
                 connection.commit()
+
+    def get_all_contours(self, type_subdivision, annee=2024):
+        """
+        Récupère tous les contours associés aux subdivisions du type spécifié, filtrés par année.
+        Chaque contour est retourné avec les connexes, les polygones associés et leurs points.
+
+        Paramètres:
+        -----------
+        type_subdivision : str
+            Le type de subdivision (par exemple, 'COMMUNE', 'DEPARTEMENT', 'REGION', etc.)
+        annee : int, optional
+            L'année des contours à récupérer. Par défaut, c'est 2024.
+
+        Retourne:
+        --------
+        List[Tuple[Contour, str]]
+            Une liste de tuples contenant un objet Contour et le code INSEE associé à la subdivision.
+        """
+        # Dictionnaire des champs INSEE associés aux types de subdivisions
+        insee_fields = {
+            'ARRONDISSEMENT': 'insee_arr',
+            'CANTON': 'insee_can',
+            'COMMUNE': 'insee_com',
+            'DEPARTEMENT': 'insee_dep',
+            'EPCI': 'siren_epci',
+            'REGION': 'insee_reg'
+        }
+
+        # Normalisation du type de subdivision
+        type_subdivision = type_subdivision.upper()
+
+        if type_subdivision not in insee_fields:
+            raise ValueError(f"Type de subdivision {type_subdivision} non reconnu")
+
+        insee_field = insee_fields[type_subdivision]
+
+        # Requête pour récupérer les subdivisions du type donné avec leur code INSEE
+        query = f"""
+        SELECT s.id, s.{insee_field} AS code_insee
+        FROM geodata.subdivision s
+        WHERE s.type = %s
+        """
+
+        contours_with_codes = []
+
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (type_subdivision,))
+                subdivisions = cursor.fetchall()
+
+                # Pour chaque subdivision, récupérer ses contours associés
+                for subdivision_id, code_insee in subdivisions:
+                    # Requête pour récupérer les contours associés à cette subdivision pour l'année spécifiée
+                    contours_query = """
+                    SELECT contour.id
+                    FROM geodata.subdivision_contour sc
+                    JOIN geodata.contour contour ON sc.id_contour = contour.id
+                    WHERE sc.id_subdivision = %s
+                    AND contour.annee = %s
+                    """
+                    cursor.execute(contours_query, (subdivision_id, annee))
+                    contours = cursor.fetchall()
+
+                    # Pour chaque contour, récupérer les connexes associés
+                    for contour_row in contours:
+                        contour_id = contour_row[0]
+
+                        # Requête pour récupérer les connexes associés à ce contour via contour_connexe
+                        connexes_query = """
+                        SELECT cc.id_connexe
+                        FROM geodata.contour_connexe cc
+                        WHERE cc.id_contour = %s
+                        """
+                        cursor.execute(connexes_query, (contour_id,))
+                        connexes = cursor.fetchall()
+
+                        # Pour chaque connexe, récupérer les polygones associés à ce connexe
+                        connexes_list = []
+                        for connexe_row in connexes:
+                            connexe_id = connexe_row[0]
+
+                            # Requête pour récupérer les polygones associés à ce connexe
+                            polygones_query = """
+                            SELECT cp.id_polygone
+                            FROM geodata.connexe_polygone cp
+                            WHERE cp.id_connexe = %s
+                            """
+                            cursor.execute(polygones_query, (connexe_id,))
+                            polygones = cursor.fetchall()
+
+                            # Pour chaque polygone, récupérer les points associés
+                            polygons_with_points = []
+                            for polygone_row in polygones:
+                                polygone_id = polygone_row[0]
+
+                                # Récupérer les points associés à ce polygone
+                                points_query = """
+                                SELECT p.lat, p.long
+                                FROM geodata.polygone_point pp
+                                JOIN geodata.points p ON pp.id_point = p.id
+                                WHERE pp.id_polygone = %s
+                                ORDER BY pp.ordre
+                                """
+                                cursor.execute(points_query, (polygone_id,))
+                                points = cursor.fetchall()
+
+                                # Convertir les points en une liste d'objets PointGeographique
+                                points_list = [PointGeographique(lat, long) for lat, long in points]
+
+                                # Ajouter un PolygonePrimaire contenant ces points
+                                polygons_with_points.append(PolygonePrimaire(points_list))
+
+                            # Ajouter ce connexe avec sa liste de PolygonePrimaire
+                            connexes_list.append(Connexe(polygons_with_points))
+
+                        # Créer l'objet Contour avec les connexes associés
+                        contour = self.creer_contour(connexes_list)
+
+                        # Ajouter le tuple (Contour, code_insee) à la liste des résultats
+                        contours_with_codes.append((contour, code_insee))
+
+        return contours_with_codes

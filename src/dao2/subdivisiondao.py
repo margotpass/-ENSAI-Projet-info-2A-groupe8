@@ -182,3 +182,55 @@ class SubdivisionDAO:
 
                 # Commit des modifications
                 connection.commit()
+
+    def find_by_code_insee(self, type_subdivision, code_insee):
+        """
+        Récupère le nom d'une subdivision en fonction de son type et de son code INSEE.
+
+        Paramètres:
+        -----------
+        type_subdivision : str
+            Le type de subdivision (par exemple, 'COMMUNE', 'DEPARTEMENT', 'REGION', etc.)
+        code_insee : str
+            Le code INSEE de la subdivision à rechercher.
+
+        Retourne:
+        --------
+        str
+            Le nom de la subdivision, ou None si aucune subdivision n'est trouvée.
+        """
+        # Dictionnaire des champs INSEE associés aux types de subdivisions
+        insee_fields = {
+            'ARRONDISSEMENT': 'insee_arr',
+            'CANTON': 'insee_can',
+            'COMMUNE': 'insee_com',
+            'DEPARTEMENT': 'insee_dep',
+            'EPCI': 'siren_epci',
+            'REGION': 'insee_reg'
+        }
+
+        # Normalisation du type de subdivision
+        type_subdivision = type_subdivision.upper()
+
+        if type_subdivision not in insee_fields:
+            raise ValueError(f"Type de subdivision {type_subdivision} non reconnu")
+
+        insee_field = insee_fields[type_subdivision]
+
+        # Requête pour récupérer le nom de la subdivision en fonction du type et du code INSEE
+        query = f"""
+        SELECT s.nom
+        FROM geodata.subdivision s
+        WHERE s.type = %s AND s.{insee_field} = %s
+        """
+
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (type_subdivision, code_insee))
+                result = cursor.fetchone()
+
+                # Retourner le nom de la subdivision ou None si non trouvé
+                if result:
+                    return result[0]
+                else:
+                    return None
