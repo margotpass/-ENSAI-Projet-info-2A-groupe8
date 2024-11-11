@@ -12,8 +12,7 @@ class MenuUtilisateur(VueAbstraite):
     Attributes
     ----------
     message=''
-        str
-
+        str 
     Returns
     ------
     view
@@ -65,12 +64,10 @@ class MenuUtilisateur(VueAbstraite):
                 return MenuUtilisateur(result)
 """                
             case "Obtenir un fichier regroupant les différentes subdivisions selon un point géographique":
-                fichier = inquirer.text("Entrez le chemin du fichier contenant les points géographiques (CSV) : ").execute()
-                if fichier.endswith('.csv'):
-                    format = "csv"
-                else:
-                    print("Format de fichier non supporté. Veuillez fournir un fichier au format csv.")
-                    return
+                fichier = inquirer.text("Entrez la liste des points géographiques : ").execute()
+
                 fichier_genere = Fichier().obtenir_fichier(fichier, format) #méthode pas encore créée donc faire attention à son nom
                 return fichier_genere
 """
+
+

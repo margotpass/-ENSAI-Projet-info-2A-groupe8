@@ -12,23 +12,16 @@ class FichierService:
     def __init__(self):
         self.point_dao = PointGeographiqueDAO()
         self.subdivision_dao = SubdivisionDao()
+        self.contour_dao = ContourDAO(DBConnection)
     
-    # importer la liste de points géographiques rentrée par l'utilisateur depuis le terminal
-    def importer_listepoints_utilisateur(self, liste_points: List[PointGeographique]) -> List[PointGeographique]:
-        # importer la liste de points géographiques rentrée par l'utilisateur depuis le terminal
-        # retourne une liste de point géographique
-        return liste_points
-    
-    # renvoie la réponse du niveau demandé pour chaque point de la liste donée par l'utilisateur en utilisant la méthode localiserPointDansSubdivision du servide localisation_service
-    def reponse_niveau_demande(self, liste_points: List[PointGeographique], niveau: str) -> List[PointGeographique]:
-        # renvoie la réponse du niveau demandé pour chaque point de la liste donée par l'utilisateur en utilisant la méthode localiserPointDansSubdivision du servide localisation_service
+    def reponse_niveau_demande(self, liste_point: List[PointGeographique], niveau: str) -> List[PointGeographique]:
+        # renvoie la réponse du niveau demandé pour chaque point de la liste donnée par l'utilisateur en utilisant la méthode localiserPointDansSubdivision du servide localisation_service
         liste_reponse = []
         for point in liste_points:
             subdivision = self.localisation_service.localiserPointDansSubdivision(point)
             liste_reponse.append(subdivision)
         return liste_reponse
     
-    # vérifier que la liste_reponse n'est composé que d'un même nom de subdivision et renvoyer le nom de subdivision
     def verifier_nom_subdivision_de_la_liste(self, liste_reponse: List[PointGeographique]) -> str:
         # vérifier que la liste_reponse n'est composé que d'un même nom de subdivision et renvoyer le nom de subdivision
         nom_subdivision = liste_reponse[0].nom
