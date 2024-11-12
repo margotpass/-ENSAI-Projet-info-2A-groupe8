@@ -97,7 +97,7 @@ class SubdivisionDAO:
                 # Si un polygone est spécifié, l'ajouter dans la table 'contours' via ContourDAO
                 if subdivision.polygones:
                     contour = subdivision.polygones  # polygones est un objet Contour
-                    self.contour_dao.ajouter(contour)  # Utilise ContourDAO pour ajouter le contour
+                    self.contour_dao.ajouter_contour(contour, subdivision.annee)  # Utilise ContourDAO pour ajouter le contour
 
                     # Ajout de l'association entre subdivision et contour dans la table 'subdivision_contour'
                     query_assoc = """
@@ -108,3 +108,129 @@ class SubdivisionDAO:
 
                 # Commit des modifications dans la base de données
                 connection.commit()
+
+    def update_subdivision(self, subdivision):
+        """
+        Met à jour les informations d'une subdivision dans la base de données, y compris son contour associé.
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                # Mise à jour de la subdivision dans la table 'subdivision'
+                query_update_subdivision = """
+                UPDATE geodata.subdivision
+                SET nom = %s, insee_com = %s, insee_can = %s, insee_arr = %s,
+                    insee_dep = %s, insee_reg = %s, siren_epci = %s
+                WHERE id = %s AND type = %s
+                """
+                cursor.execute(query_update_subdivision, (
+                    subdivision.nom,
+                    subdivision.insee_com,
+                    subdivision.insee_can,
+                    subdivision.insee_arr,
+                    subdivision.insee_dep,
+                    subdivision.insee_reg,
+                    subdivision.siren_epci,
+                    subdivision.id,
+                    subdivision.__class__.__name__
+                ))
+
+                # Mise à jour du contour si spécifié
+                if subdivision.polygones:
+                    contour = subdivision.polygones
+                    self.contour_dao.update_contour(contour)  # Utilise ContourDAO pour mettre à jour le contour
+                    query_assoc = """
+                    UPDATE geodata.subdivision_contour
+                    SET id_contour = %s
+                    WHERE id_subdivision = %s
+                    """
+                    cursor.execute(query_assoc, (contour.id, subdivision.id))
+
+                # Commit des modifications
+                connection.commit()
+
+    def delete_subdivision(self, subdivision_id, type_subdivision):
+        """
+        Supprime une subdivision et son contour associé de la base de données.
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                # Récupérer l'ID du contour associé pour le supprimer ensuite
+                query_get_contour_id = """
+                SELECT id_contour FROM geodata.subdivision_contour
+                WHERE id_subdivision = %s
+                """
+                cursor.execute(query_get_contour_id, (subdivision_id,))
+                contour_id = cursor.fetchone()
+
+                # Supprimer l'association entre la subdivision et le contour
+                query_delete_assoc = """
+                DELETE FROM geodata.subdivision_contour
+                WHERE id_subdivision = %s
+                """
+                cursor.execute(query_delete_assoc, (subdivision_id,))
+
+                # Supprimer la subdivision
+                query_delete_subdivision = """
+                DELETE FROM geodata.subdivision
+                WHERE id = %s AND type = %s
+                """
+                cursor.execute(query_delete_subdivision, (subdivision_id, type_subdivision))
+
+                # Supprimer le contour en utilisant ContourDAO si un contour est associé
+                if contour_id:
+                    self.contour_dao.delete_contour(contour_id[0])
+
+                # Commit des modifications
+                connection.commit()
+
+    def find_by_code_insee(self, type_subdivision, code_insee):
+        """
+        Récupère le nom d'une subdivision en fonction de son type et de son code INSEE.
+
+        Paramètres:
+        -----------
+        type_subdivision : str
+            Le type de subdivision (par exemple, 'COMMUNE', 'DEPARTEMENT', 'REGION', etc.)
+        code_insee : str
+            Le code INSEE de la subdivision à rechercher.
+
+        Retourne:
+        --------
+        str
+            Le nom de la subdivision, ou None si aucune subdivision n'est trouvée.
+        """
+        # Dictionnaire des champs INSEE associés aux types de subdivisions
+        insee_fields = {
+            'ARRONDISSEMENT': 'insee_arr',
+            'CANTON': 'insee_can',
+            'COMMUNE': 'insee_com',
+            'DEPARTEMENT': 'insee_dep',
+            'EPCI': 'siren_epci',
+            'REGION': 'insee_reg'
+        }
+
+        # Normalisation du type de subdivision
+        type_subdivision = type_subdivision.upper()
+
+        if type_subdivision not in insee_fields:
+            raise ValueError(f"Type de subdivision {type_subdivision} non reconnu")
+
+        insee_field = insee_fields[type_subdivision]
+
+        # Requête pour récupérer le nom de la subdivision en fonction du type et du code INSEE
+        query = f"""
+        SELECT s.nom
+        FROM geodata.subdivision s
+        WHERE UPPER(s.type) = UPPER(%s) AND s.{insee_field} = %s
+        """
+
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (type_subdivision, code_insee))
+                result = cursor.fetchone()
+
+                # Retourner le nom de la subdivision ou None si non trouvé
+                if result:
+                    return result[0]
+                else:
+                    return None
