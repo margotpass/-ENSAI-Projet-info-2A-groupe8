@@ -44,24 +44,24 @@ class SubdivisionDAO:
         Une instance de la subdivision correspondant au type donné, avec les attributs appropriés.
         """
         # Créer la subdivision en fonction de son type
-        if type_subdivision == 'Arrondissement':
+        if type_subdivision.upper()== 'ARRONDISSEMENT':
             subdivision = Arrondissement(id=id, nom=nom, annee=annee, insee_arr=insee_arr,
                                          insee_dep=insee_dep, insee_reg=insee_reg, polygones=polygones)
-        elif type_subdivision == 'Canton':
+        elif type_subdivision.upper() == 'CANTON':
             subdivision = Canton(id=id, nom=nom, annee=annee, insee_can=insee_can,
                                  insee_dep=insee_dep, insee_reg=insee_reg, polygones=polygones)
-        elif type_subdivision == 'Commune':
+        elif type_subdivision.upper() == 'COMMUNE':
             subdivision = Commune(id=id, nom=nom, annee=annee, insee_com=insee_com,
                                    statut='', insee_can=insee_can, insee_arr=insee_arr,
                                    insee_dep=insee_dep, insee_reg=insee_reg,
                                    siren_epci=siren_epci, polygones=polygones)
-        elif type_subdivision == 'Departement':
+        elif type_subdivision.upper() == 'DEPARTEMENT':
             subdivision = Departement(id=id, nom=nom, annee=annee, insee_dep=insee_dep,
                                       insee_reg=insee_reg, polygones=polygones)
-        elif type_subdivision == 'Epci':
+        elif type_subdivision.upper() == 'EPCI':
             subdivision = Epci(id=id, nom=nom, annee=annee, siren=siren_epci,
                                nature='', polygones=polygones)  # nature='' pour Epci
-        elif type_subdivision == 'Region':
+        elif type_subdivision == 'REGION':
             subdivision = Region(id=id, nom=nom, annee=annee, insee_reg=insee_reg,
                                  polygones=polygones)
         else:
