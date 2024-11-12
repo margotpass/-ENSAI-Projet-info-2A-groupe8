@@ -35,7 +35,7 @@ class PolygoneDAO:
                         "INSERT INTO geodata.polygone_point (id_polygone, id_point, ordre) VALUES (%s, %s, %s)",
                         (polygone_id, point_id, ordre)
                     )
-
+                connection.commit()
                 # Retourner l'ID du Polygone ajouté
                 return polygone_id
 

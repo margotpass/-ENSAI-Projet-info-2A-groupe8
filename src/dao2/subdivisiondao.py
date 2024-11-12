@@ -85,13 +85,12 @@ class SubdivisionDAO:
                 cursor.execute(query_subdivision, (
                     subdivision.id,
                     subdivision.__class__.__name__,
-                    subdivision.nom,
-                    subdivision.insee_com,
-                    subdivision.insee_can,
-                    subdivision.insee_arr,
-                    subdivision.insee_dep,
-                    subdivision.insee_reg,
-                    subdivision.siren_epci
+                    getattr(subdivision, 'insee_com', None),
+                    getattr(subdivision, 'insee_can', None),
+                    getattr(subdivision, 'insee_arr', None),
+                    getattr(subdivision, 'insee_dep', None),
+                    getattr(subdivision, 'insee_reg', None),
+                    getattr(subdivision, 'siren_epci', None)
                 ))
 
                 # Si un polygone est spécifié, l'ajouter dans la table 'contours' via ContourDAO
@@ -124,16 +123,15 @@ class SubdivisionDAO:
                 """
                 cursor.execute(query_update_subdivision, (
                     subdivision.nom,
-                    subdivision.insee_com,
-                    subdivision.insee_can,
-                    subdivision.insee_arr,
-                    subdivision.insee_dep,
-                    subdivision.insee_reg,
-                    subdivision.siren_epci,
+                    getattr(subdivision, 'insee_com', None),
+                    getattr(subdivision, 'insee_can', None),
+                    getattr(subdivision, 'insee_arr', None),
+                    getattr(subdivision, 'insee_dep', None),
+                    getattr(subdivision, 'insee_reg', None),
+                    getattr(subdivision, 'siren_epci', None),
                     subdivision.id,
                     subdivision.__class__.__name__
                 ))
-
                 # Mise à jour du contour si spécifié
                 if subdivision.polygones:
                     contour = subdivision.polygones

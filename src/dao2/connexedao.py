@@ -47,7 +47,7 @@ class ConnexeDAO:
                         "INSERT INTO geodata.connexe_polygone (id_connexe, id_polygone, ordre) VALUES (%s, %s, %s)",
                         (connexe_id, polygone_id, ordre)
                     )
-
+                connection.commit()
                 # Retourner l'ID du Connexe ajouté
                 return connexe_id
 

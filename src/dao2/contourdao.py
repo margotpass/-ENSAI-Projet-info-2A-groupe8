@@ -28,7 +28,6 @@ class ContourDAO:
                     (annee,)
                 )
                 contour_id = cursor.fetchone()[0]  # L'ID du contour inséré
-
                 # Insérer les relations dans la table d'association contour_connexe
                 for ordre, connexe_id in enumerate(connexes_ids):
                     cursor.execute(
@@ -37,6 +36,7 @@ class ContourDAO:
                     )
 
                 # Retourner l'ID du Contour ajouté
+                connection.commit()
                 return contour_id
 
     def update_contour(self, contour_id, nouvelle_liste_connexes, nouvelle_annee):
