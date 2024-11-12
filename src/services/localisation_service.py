@@ -5,6 +5,7 @@ from src.business_object.Polygones.contour import Contour
 from src.dao.contourdao import ContourDAO
 from src.dao.subdivisiondao import SubdivisionDAO
 from src.dao.db_connection import DBConnection
+from src.services.subdivision_service import SubdivisionService
 
 
 class LocalisationService:
@@ -29,7 +30,8 @@ class LocalisationService:
         for contour in table_contours :
             # Regarder si le point est dans le contour de la table
             if contour[0].estDansPolygone(point):
-                return contour[1]  # Retourner nom de la subdivision dans la table si le point est dans le contour
+                nom_subdivision = SubdivisionService().chercherSubdivisionParID(type_subdivision, contour[1], annee)
+                return contour[1], nom_subdivision  # Retourner n° et le nom de la subdivision dans la table si le point est dans le contour
 
         # Si aucun contour ne contient le point, retourner None
         return None
