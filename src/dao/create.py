@@ -30,7 +30,7 @@ with connection.cursor() as cursor:
         );
 
         CREATE TABLE IF NOT EXISTS geodata.Subdivision (
-            id SERIAL PRIMARY KEY,
+            id VARCHAR(100) NOT NULL,
             nom VARCHAR(50) NOT NULL,
             type VARCHAR(15) NOT NULL,
             insee_com CHAR(5),

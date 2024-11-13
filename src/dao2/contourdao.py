@@ -9,35 +9,35 @@ from src.business_object.Polygones.connexe import Connexe
 class ContourDAO:
     def creer_contour(self, liste_connexes):
         """Crée un objet Contour à partir d'une liste de connexes."""
-        connexe_dao = ConnexeDAO()
-        connexes = [connexe_dao.creer_connexe(connexe) for connexe in liste_connexes]
-        return Contour(connexes)
+        #connexe_dao = ConnexeDAO()
+        #connexes = [connexe_dao.creer_connexe(connexe) for connexe in liste_connexes]
+        return Contour(liste_connexes)
 
-    def ajouter_contour(self, contour, annee=2024):
+    def ajouter_contour(self, contour, annee=2024, connection=DBConnection().connection):
         """Ajoute un Contour dans la base de données avec une année."""
         connexe_dao = ConnexeDAO()
 
         # Obtenez les ID des connexes associés
         connexes_ids = [connexe_dao.ajouter_connexe(connexe) for connexe in contour.contour]
 
-        with DBConnection().connection as connection:
-            with connection.cursor() as cursor:
-                # Insérer le Contour dans la table Contours avec l'année
-                cursor.execute(
-                    "INSERT INTO geodata.Contours (annee) VALUES (%s) RETURNING id",
-                    (annee,)
-                )
-                contour_id = cursor.fetchone()[0]  # L'ID du contour inséré
-                # Insérer les relations dans la table d'association contour_connexe
-                for ordre, connexe_id in enumerate(connexes_ids):
-                    cursor.execute(
-                        "INSERT INTO geodata.contour_connexe (id_contour, id_connexe, ordre) VALUES (%s, %s, %s)",
-                        (contour_id, connexe_id, ordre)
-                    )
 
-                # Retourner l'ID du Contour ajouté
-                connection.commit()
-                return contour_id
+        with connection.cursor() as cursor:
+            # Insérer le Contour dans la table Contours avec l'année
+            cursor.execute(
+                "INSERT INTO geodata.Contours (annee) VALUES (%s) RETURNING id",
+                (annee,)
+            )
+            contour_id = list(cursor.fetchall())[0]['id']  # L'ID du contour inséré
+            # Insérer les relations dans la table d'association contour_connexe
+            for ordre, connexe_id in enumerate(connexes_ids):
+                cursor.execute(
+                    "INSERT INTO geodata.contour_connexe (id_contour, id_connexe, ordre) VALUES (%s, %s, %s)",
+                    (contour_id, connexe_id, ordre)
+                )
+
+            # Retourner l'ID du Contour ajouté
+            connection.commit()
+            return contour_id
 
     def update_contour(self, contour_id, nouvelle_liste_connexes, nouvelle_annee):
         """Met à jour un Contour existant en remplaçant ses connexes et en modifiant son année si nécessaire."""

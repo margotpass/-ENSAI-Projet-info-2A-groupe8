@@ -44,26 +44,26 @@ class SubdivisionDAO:
         Une instance de la subdivision correspondant au type donné, avec les attributs appropriés.
         """
         # Créer la subdivision en fonction de son type
-        if type_subdivision.upper()== 'ARRONDISSEMENT':
-            subdivision = Arrondissement(id=id, nom=nom, annee=annee, insee_arr=insee_arr,
-                                         insee_dep=insee_dep, insee_reg=insee_reg, polygones=polygones)
+        if type_subdivision.upper() == 'ARRONDISSEMENT':
+            subdivision = Arrondissement(id, nom, annee, insee_arr,
+                                         insee_dep, insee_reg, polygones)
         elif type_subdivision.upper() == 'CANTON':
-            subdivision = Canton(id=id, nom=nom, annee=annee, insee_can=insee_can,
-                                 insee_dep=insee_dep, insee_reg=insee_reg, polygones=polygones)
+            subdivision = Canton(id, nom, annee,insee_can,
+                                 insee_dep, insee_reg,polygones)
         elif type_subdivision.upper() == 'COMMUNE':
-            subdivision = Commune(id=id, nom=nom, annee=annee, insee_com=insee_com,
-                                   statut='', insee_can=insee_can, insee_arr=insee_arr,
-                                   insee_dep=insee_dep, insee_reg=insee_reg,
-                                   siren_epci=siren_epci, polygones=polygones)
+            subdivision = Commune(id, nom, annee, insee_com,
+                                  '', insee_can, insee_arr,
+                                  insee_dep, insee_reg,
+                                  siren_epci, polygones)
         elif type_subdivision.upper() == 'DEPARTEMENT':
-            subdivision = Departement(id=id, nom=nom, annee=annee, insee_dep=insee_dep,
-                                      insee_reg=insee_reg, polygones=polygones)
+            subdivision = Departement(id, nom, annee, insee_dep,
+                                      insee_reg, polygones)
         elif type_subdivision.upper() == 'EPCI':
-            subdivision = Epci(id=id, nom=nom, annee=annee, siren=siren_epci,
-                               nature='', polygones=polygones)  # nature='' pour Epci
+            subdivision = Epci(id, nom, annee, siren_epci,
+                               '', polygones)  # nature='' pour Epci
         elif type_subdivision == 'REGION':
-            subdivision = Region(id=id, nom=nom, annee=annee, insee_reg=insee_reg,
-                                 polygones=polygones)
+            subdivision = Region(id, nom, annee, insee_reg,
+                                 polygones)
         else:
             raise ValueError("Type de subdivision inconnu")
 
@@ -85,6 +85,7 @@ class SubdivisionDAO:
                 cursor.execute(query_subdivision, (
                     subdivision.id,
                     subdivision.__class__.__name__,
+                    subdivision.nom,
                     getattr(subdivision, 'insee_com', None),
                     getattr(subdivision, 'insee_can', None),
                     getattr(subdivision, 'insee_arr', None),
@@ -96,14 +97,14 @@ class SubdivisionDAO:
                 # Si un polygone est spécifié, l'ajouter dans la table 'contours' via ContourDAO
                 if subdivision.polygones:
                     contour = subdivision.polygones  # polygones est un objet Contour
-                    self.contour_dao.ajouter_contour(contour, subdivision.annee)  # Utilise ContourDAO pour ajouter le contour
+                    contour_id = self.contour_dao.ajouter_contour(contour, subdivision.annee)  # Utilise ContourDAO pour ajouter le contour
 
                     # Ajout de l'association entre subdivision et contour dans la table 'subdivision_contour'
                     query_assoc = """
                     INSERT INTO geodata.subdivision_contour (id_subdivision, id_contour)
                     VALUES (%s, %s)
                     """
-                    cursor.execute(query_assoc, (subdivision.id, contour.id))
+                    cursor.execute(query_assoc, (subdivision.id, contour_id))
 
                 # Commit des modifications dans la base de données
                 connection.commit()
