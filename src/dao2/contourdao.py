@@ -20,24 +20,38 @@ class ContourDAO:
         # Obtenez les ID des connexes associés
         connexes_ids = [connexe_dao.ajouter_connexe(connexe) for connexe in contour.contour]
 
-
-        with connection.cursor() as cursor:
-            # Insérer le Contour dans la table Contours avec l'année
-            cursor.execute(
-                "INSERT INTO geodata.Contours (annee) VALUES (%s) RETURNING id",
-                (annee,)
-            )
-            contour_id = list(cursor.fetchall())[0]['id']  # L'ID du contour inséré
-            # Insérer les relations dans la table d'association contour_connexe
-            for ordre, connexe_id in enumerate(connexes_ids):
+        try:
+            with connection.cursor() as cursor:
+                # Insérer le Contour dans la table Contours avec l'année
                 cursor.execute(
-                    "INSERT INTO geodata.contour_connexe (id_contour, id_connexe, ordre) VALUES (%s, %s, %s)",
-                    (contour_id, connexe_id, ordre)
+                    "INSERT INTO geodata.Contours (annee) VALUES (%s) RETURNING id",
+                    (annee,)
                 )
+                contour_id = list(cursor.fetchall())[0]['id']  # Récupérer l'ID du contour inséré
 
-            # Retourner l'ID du Contour ajouté
-            connection.commit()
-            return contour_id
+                # Insérer les relations dans la table d'association contour_connexe
+                for ordre, connexe_id in enumerate(connexes_ids):
+                    # Vérifier si la relation existe déjà dans contour_connexe
+                    cursor.execute(
+                        "SELECT 1 FROM geodata.contour_connexe WHERE id_contour = %s AND id_connexe = %s",
+                        (contour_id, connexe_id)
+                    )
+                    if cursor.fetchone() is None:  # Si la relation n'existe pas déjà
+                        cursor.execute(
+                            "INSERT INTO geodata.contour_connexe (id_contour, id_connexe, ordre) VALUES (%s, %s, %s)",
+                            (contour_id, connexe_id, ordre)
+                        )
+
+                # Commit final après toutes les insertions
+                connection.commit()
+
+                # Retourner l'ID du Contour ajouté
+                return contour_id
+
+        except Exception as e:
+            connection.rollback()
+            print(f"Erreur lors de l'insertion dans contour_connexe : {e}")
+
 
     def update_contour(self, contour_id, nouvelle_liste_connexes, nouvelle_annee):
         """Met à jour un Contour existant en remplaçant ses connexes et en modifiant son année si nécessaire."""

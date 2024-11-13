@@ -25,5 +25,5 @@ class Region(Subdivision):
         if not isinstance(INSEE_REG, str):
             raise TypeError("Le code INSEE de la région doit être un str")
 
-        super.__init__(ID_R, NOM_M, ANNEE, Polygons)
+        super().__init__(ID_R, NOM_M, ANNEE, Polygons)
         self.insee_reg = INSEE_REG

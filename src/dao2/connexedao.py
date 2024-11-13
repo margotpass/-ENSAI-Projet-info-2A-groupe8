@@ -1,6 +1,7 @@
 from src.business_object.Polygones.connexe import Connexe
 from src.dao2.polygonedao import PolygoneDAO
 from src.dao.db_connection import DBConnection
+from psycopg2.errors import UniqueViolation
 
 
 class ConnexeDAO:
@@ -11,7 +12,9 @@ class ConnexeDAO:
         return Connexe(liste_polygones)
 
     def ajouter_connexe(self, connexe, connection=DBConnection().connection):
-        """Ajoute un Connexe dans la base de données avec ses polygones et la somme de contrôle totale."""
+        """Ajoute un Connexe dans la base de données avec ses polygones et la somme de contrôle totale.
+        Si un connexe avec la même somme de contrôle existe déjà, retourne son ID sans réinsertion."""
+
         polygone_dao = PolygoneDAO()
 
         # Calcul de la somme des sommes de contrôle des polygones
@@ -23,33 +26,57 @@ class ConnexeDAO:
             polygones_ids.append(polygone_id)
 
             # Récupérer la somme de contrôle depuis la table Polygones pour le polygone ajouté
-
             with connection.cursor() as cursor:
                 cursor.execute(
                     "SELECT somme_coordonnees FROM geodata.Polygones WHERE id = %s",
                     (polygone_id,)
                 )
                 somme_coordonnees = list(cursor.fetchall())[0]['somme_coordonnees']
-                #print(f"sommecoordonneesm: {somme_coordonnees}")
                 somme_sommes_controle += somme_coordonnees
 
+        # Vérifier si un Connexe existe déjà avec cette somme_sommes_controle
+        connexe_id = None
         with connection.cursor() as cursor:
-            # Insérer le Connexe dans la table Connexes avec la somme totale des sommes de contrôle
             cursor.execute(
-                "INSERT INTO geodata.Connexes (somme_sommes_controle) VALUES (%s) RETURNING id",
+                "SELECT id FROM geodata.Connexes WHERE somme_sommes_controle = %s",
                 (somme_sommes_controle,)
             )
-            connexe_id = list(cursor.fetchall())[0]['id']
-
-            # Insérer les relations dans la table d'association connexe_polygone avec l'ordre des polygones
-            for ordre, polygone_id in enumerate(polygones_ids, start=1):
+            result = list(cursor.fetchall())
+            print(f"resultmmresult: {result}")
+            if result:
+                connexe_id = result[0]['id']
+            else:
+                # Si le Connexe n'existe pas, on l'insère
                 cursor.execute(
-                    "INSERT INTO geodata.connexe_polygone (id_connexe, id_polygone, ordre) VALUES (%s, %s, %s)",
-                    (connexe_id, polygone_id, ordre)
+                    "INSERT INTO geodata.Connexes (somme_sommes_controle) VALUES (%s) RETURNING id",
+                    (somme_sommes_controle,)
                 )
-            connection.commit()
-            # Retourner l'ID du Connexe ajouté
-            return connexe_id
+                connexe_id = list(cursor.fetchall())[0]['id']
+
+        # Insérer les relations dans la table connexe_polygone, même si le Connexe existe déjà
+        try:
+            with connection.cursor() as cursor:
+                for ordre, polygone_id in enumerate(polygones_ids, start=1):
+                    cursor.execute(
+                        "SELECT 1 FROM geodata.connexe_polygone WHERE id_connexe = %s AND id_polygone = %s",
+                        (connexe_id, polygone_id)
+                    )
+                    if cursor.fetchone() is None:  # Si la relation n'existe pas déjà
+                        cursor.execute(
+                            "INSERT INTO geodata.connexe_polygone (id_connexe, id_polygone, ordre) VALUES (%s, %s, %s)",
+                            (connexe_id, polygone_id, ordre)
+                        )
+
+        except Exception as e:
+            print(f"Erreur lors de l'insertion des relations connexe_polygone: {e}")
+            # Ne pas lever d'exception, continuer l'exécution
+
+        # Commit final après toutes les insertions
+        connection.commit()
+
+        return connexe_id
+
+
 
     def update_connexe(self, connexe_id, nouvelle_liste_polygones):
         """Met à jour un Connexe existant en remplaçant ses polygones par une nouvelle liste."""

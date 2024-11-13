@@ -86,9 +86,9 @@ dossier_donnees = os.path.join(
 )
 
 # Spécifiez le nom de votre fichier shapefile ici
-nom_fichier_shapefile = "DEPARTEMENT.shp"  # Remplacez par le nom réel du fichier shapefile
+nom_fichier_shapefile = "REGION.shp"  # Remplacez par le nom réel du fichier shapefile
 
 chemin_shapefile = os.path.join(dossier_donnees, nom_fichier_shapefile)
 
 # Appel de la fonction pour traiter le shapefile
-traiter_shapefile("DEPARTEMENT",chemin_shapefile)
+traiter_shapefile("REGION",chemin_shapefile)

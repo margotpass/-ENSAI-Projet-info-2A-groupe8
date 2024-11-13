@@ -17,12 +17,12 @@ class PointGeographiqueDAO:
                 "SELECT id FROM geodata.Points WHERE lat = %s AND long = %s",
                 (point.latitude, point.longitude)
             )
-            result = cursor.fetchone()
+            result = cursor.fetchall()
 
-            if result is not None:
+            if len(list(result)) != 0:
                 # Le point existe déjà, renvoyer l'ID existant
                 #print(f"Point déjà existant : latitude={point.latitude}, longitude={point.longitude}, id={list(result)[0]}")
-                return list(result)[0]
+                return list(result)[0]['id']
 
             # Si le point n'existe pas, insérer le nouveau point
             cursor.execute(
@@ -32,9 +32,9 @@ class PointGeographiqueDAO:
             #print(f"Insertion du point : latitude={point.latitude}, longitude={point.longitude}")
 
             # Récupérer l'ID du nouveau point inséré
-            point.id = list(cursor.fetchall())[0]['id']
+            point_id = list(cursor.fetchall())[0]['id']
             connection.commit()
-            return point.id
+            return point_id
 
     def update_point(self, point_id, new_latitude, new_longitude):
         """Met à jour les coordonnées d'un PointGeographique dans la base de données."""

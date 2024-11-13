@@ -1,6 +1,7 @@
 from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
 from src.dao2.pointgeographiquedao import PointGeographiqueDAO
 from src.dao.db_connection import DBConnection
+from psycopg2.errors import UniqueViolation
 
 
 class PolygoneDAO:
@@ -11,35 +12,53 @@ class PolygoneDAO:
         return PolygonePrimaire(points)
 
     def ajouter_polygone(self, polygone, connection=DBConnection().connection):
-        """Ajoute un PolygonePrimaire dans la base de données avec ses points et calcule la colonne de contrôle."""
+        """Ajoute un PolygonePrimaire dans la base de données avec ses points et calcule la colonne de contrôle.
+        Si un polygone avec la même somme de coordonnées existe déjà, retourne son ID sans réinsertion."""
+
         point_dao = PointGeographiqueDAO()
 
         # Calcul de la somme des coordonnées pour la colonne de contrôle
         somme_coordonnees = sum(point.longitude + point.latitude for point in polygone.polygoneprimaire)
 
-        # Ajoute chaque point et récupère les IDs
-        points_ids = [point_dao.ajouter_point(point, DBConnection().connection) for point in polygone.polygoneprimaire]
-
         with connection.cursor() as cursor:
+            try:
+                # Essayer d'insérer le nouveau polygone
+                cursor.execute(
+                    "INSERT INTO geodata.Polygones (somme_coordonnees) VALUES (%s) RETURNING id",
+                    (somme_coordonnees,)
+                )
+                polygone_id = list(cursor.fetchall())[0]['id']
 
-            # Insérer le Polygone dans la table Polygones avec la somme des coordonnées
-            cursor.execute(
-                "INSERT INTO geodata.Polygones (somme_coordonnees) VALUES (%s) RETURNING id",
-                (somme_coordonnees,)
-            )
-            polygone_id = list(cursor.fetchall())[0]['id']
-            #print(f"Polygone_idm: {polygone_id}")
-            # Insérer les relations dans la table d'association polygone_point avec l'ordre des points
-            for ordre, point_id in enumerate(points_ids, start=1):
-                #print(f"Ordrem: {ordre}, PointIDm: {point_id}")
-                if point_id != 'id':
-                    cursor.execute(
-                        "INSERT INTO geodata.polygone_point (id_polygone, id_point, ordre) VALUES (%s, %s, %s)",
-                        (polygone_id, point_id, ordre)
-                    )
-            connection.commit()
+                # Ajouter chaque point et récupérer les IDs
+                points_ids = [point_dao.ajouter_point(point, connection) for point in polygone.polygoneprimaire]
+
+                # Insérer les relations entre polygones et points
+                for ordre, point_id in enumerate(points_ids, start=1):
+                    if point_id != 'id':  # Vérifier que l'ID est valide
+                        # Vérifier si la relation (id_polygone, id_point) existe déjà dans la table polygone_point
+                        cursor.execute(
+                            "SELECT 1 FROM geodata.polygone_point WHERE id_polygone = %s AND id_point = %s",
+                            (polygone_id, point_id)
+                        )
+                        if cursor.fetchone() is None:  # Si la relation n'existe pas déjà
+                            cursor.execute(
+                                "INSERT INTO geodata.polygone_point (id_polygone, id_point, ordre) VALUES (%s, %s, %s)",
+                                (polygone_id, point_id, ordre)
+                            )
+                connection.commit()
+
+            except UniqueViolation:
+                # Si un polygone avec la même somme des coordonnées existe déjà, récupérer son ID
+                cursor.execute(
+                    "SELECT id FROM geodata.Polygones WHERE somme_coordonnees = %s",
+                    (somme_coordonnees,)
+                )
+                polygone_id = list(cursor.fetchall())[0]['id']
+                connection.commit()
+
             # Retourner l'ID du Polygone ajouté
             return polygone_id
+
 
     def update_polygone(self, polygone_id, nouvelle_liste_points):
         """Met à jour un PolygonePrimaire existant en remplaçant ses points par une nouvelle liste de points."""
