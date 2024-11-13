@@ -1,10 +1,6 @@
 import pytest
-from unittest.mock import MagicMock
-from src.business_object.subdivision import Subdivision
+from unittest.mock import MagicMock, patch
 from src.business_object.pointgeographique import PointGeographique
-from src.business_object.Polygones.contour import Contour
-from src.dao.contourdao import ContourDAO
-from src.dao.subdivisiondao import SubdivisionDAO
 from src.services.localisation_service import LocalisationService
 
 
@@ -38,7 +34,8 @@ def contour_qui_ne_contient_pas_point():
     contour[0].estDansPolygone.return_value = False
     return contour
 
-def test_point_dans_subdivision(localisation_service, point_dans_contour, contour_qui_contient_point, contour_qui_ne_contient_pas_point):
+@patch('src.services.subdivision_service.SubdivisionService.chercherSubdivisionParID', return_value="NomSubdivision")
+def test_point_dans_subdivision(mock_chercherSubdivisionParID, localisation_service, point_dans_contour, contour_qui_contient_point, contour_qui_ne_contient_pas_point):
     # Simule le retour de get_all_contours avec un contour contenant le point
     localisation_service.contour_dao.get_all_contours.return_value = [
         contour_qui_contient_point, 
@@ -48,8 +45,9 @@ def test_point_dans_subdivision(localisation_service, point_dans_contour, contou
     # Exécute la méthode à tester
     result = localisation_service.localiserPointDansSubdivision(point_dans_contour, "commune")
 
-    # Vérifie que le résultat est le nom de la subdivision correcte
-    assert result == "SubdivisionExistante"
+    # Vérifie que le résultat est le tuple avec le numéro et le nom de la subdivision correcte
+    assert result == ("SubdivisionExistante", "NomSubdivision")
+    mock_chercherSubdivisionParID.assert_called_once_with("commune", "SubdivisionExistante", 2024)
 
 def test_point_hors_subdivision(localisation_service, point_hors_contour, contour_qui_ne_contient_pas_point):
     # Simule le retour de get_all_contours pour des contours ne contenant pas le point

@@ -315,7 +315,7 @@ class SubdivisionDAO:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (insee_arr,))
-                return cursor.fetchone()
+                return cursor.fetchone()['nom_m']
 
     def find_canton_by_insee(self, insee_can):
         query = """
@@ -335,7 +335,7 @@ class SubdivisionDAO:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (insee_com,))
-                return cursor.fetchone()
+                return cursor.fetchone()['nom_m']
 
     def find_departement_by_insee(self, insee_dep):
         query = """
@@ -345,7 +345,7 @@ class SubdivisionDAO:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (insee_dep,))
-                return cursor.fetchone()
+                return cursor.fetchone()['nom_m']
 
     def find_epci_by_siren(self, siren):
         query = """
@@ -355,7 +355,7 @@ class SubdivisionDAO:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (siren,))
-                return cursor.fetchone()
+                return cursor.fetchone()['nom']
 
     def find_region_by_insee(self, insee_reg):
         query = """
@@ -365,4 +365,4 @@ class SubdivisionDAO:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (insee_reg,))
-                return cursor.fetchone()
+                return cursor.fetchone()['nom_m']
