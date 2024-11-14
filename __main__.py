@@ -21,3 +21,4 @@ if __name__ == "__main__":
     # Lorsque l on quitte l application
     print("----------------------------------")
     print("Au revoir")
+    
