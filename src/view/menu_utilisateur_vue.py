@@ -7,7 +7,7 @@ from src.services.fichier_service import FichierService
 
 
 class MenuUtilisateur(VueAbstraite):
-    """Vue du menu du joueur
+    """Vue du menu du utilisateur
 
     Attributes
     ----------
@@ -42,11 +42,12 @@ class MenuUtilisateur(VueAbstraite):
 
         match choix:
             case "Quitter":
-                pass # en gros là il va retourner à l'accueil
+                pass # Retourner à l'accueil
 
             case "Obtenir une subdivision selon un code":
                 id = inquirer.text(message="Entrez le code de la subdivision dont vous souhaitez connaître le nom : ").execute()
-                type = inquirer.text(message="Entrez le niveau de la subdivision (commune, département, etc.)").execute()
+                type = inquirer.text(message="Entrez le niveau de la subdivision parmi : Arrondissement,"
+                                                 " Canton, Commune, Departement, EPCI et Region : ").execute()
                 annee = inquirer.text(message="Entrez l'année si vous le souhaitez (laissez vide sinon) :").execute()
                 result = SubdivisionService().chercherSubdivisionParID(type, id, annee if annee else None)
                 return MenuUtilisateur(result)

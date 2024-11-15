@@ -15,13 +15,17 @@ class LocalisationService:
             self.contour_dao = ContourDAO(DBConnection)
 
     def localiserPointDansSubdivision(self, point: PointGeographique, type_subdivision, annee: int = 2024):
-        """# Étape 1 : Récupérer la table du type de subdivision entré
-        table_subdivisions = None
+        """Localise un point dans une subdivision
 
-        try:
-            table_subdivisions = self.subdivision_dao.find_by_code_insee(type_subdivision, code_insee = "02")
-        except:
-            return None"""
+        Args:
+            point (PointGeographique): instance de PointGeographique
+            type_subdivision (_type_): str parmi Arrondissement, Canton, Commune, Departement, EPCI et Region
+            annee (int, optional): année souhaitée de la recherche. Défaut à 2024.
+
+        Returns:
+            contour[1]: numéro de la subdivision
+            nom_subdivision: nom de la subdivision
+        """
 
         # Étape 1 : Récupérer la table (contours, nom de la subdivision) associés au type de subdivision entré
         table_contours = self.contour_dao.get_all_contours(type_subdivision.lower())

@@ -9,7 +9,22 @@ class PointGeographique():
     typecoordonnees -- type de coordonnées (str) : soit Lamb93 soit WGS84
     """
     def __init__(self, latitude, longitude, typecoordonnees="WGS84"):
-        """ Initialise les coordonnées géographiques du point """
+        """Initialisation de la classe PointGeographique (initialise les coordonnées géographiques du point)
+
+        Args:
+            latitude (int): latitude du point géographique
+            longitude (int): longitude du point géographique
+            typecoordonnees (str, optional): type de coordonnées renseignées parmi . Défaut à "WGS84".
+
+        Raises:
+            TypeError: saisir un nombre décimal pour la latitude
+            TypeError: saisir un nombre décimal pour la longitude
+            ValueError: type de coordonnées n'est pas "Lamb93", "WGS84", "", None, "None", "lam93" ou "wgs84"
+
+        Returns:
+            _type_: _description_
+        """ 
+
         if not isinstance(latitude, (int, float)):
             raise TypeError("La latitude doit être un nombre")
         self.latitude = latitude
