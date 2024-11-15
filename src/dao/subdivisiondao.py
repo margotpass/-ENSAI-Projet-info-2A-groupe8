@@ -329,7 +329,7 @@ class SubdivisionDAO:
 
     def find_commune_by_insee(self, insee_com):
         query = """
-        SELECT * FROM commune 
+        SELECT * FROM geodata2.commune 
         WHERE insee_com = %s
         """
         with DBConnection().connection as connection:
@@ -349,7 +349,7 @@ class SubdivisionDAO:
 
     def find_epci_by_siren(self, siren):
         query = """
-        SELECT * FROM epci 
+        SELECT * FROM geodata2.epci 
         WHERE siren = %s
         """
         with DBConnection().connection as connection:
@@ -359,7 +359,7 @@ class SubdivisionDAO:
 
     def find_region_by_insee(self, insee_reg):
         query = """
-        SELECT * FROM region 
+        SELECT * FROM geodata2.region 
         WHERE insee_reg = %s
         """
         with DBConnection().connection as connection:
