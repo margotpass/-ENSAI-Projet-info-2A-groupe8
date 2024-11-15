@@ -9,7 +9,15 @@ class Connexe(PolygonePrimaire):
     """
 
     def __init__(self, connexe=None):
-        """ Initialise la liste de polygones convexes """
+        """Initialise la liste de polygones connexe
+
+        Args:
+            connexe (liste): liste de connexes. Défault à None.
+
+        Raises:
+            TypeError: Pas une instance de PolygonePrimaire
+        """
+        
         # Par défaut, une liste vide de polygones
         if connexe is None:
             self.connexe = []
