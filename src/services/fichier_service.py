@@ -3,6 +3,7 @@ from typing import List
 from src.dao.pointgeographiquedao import PointGeographiqueDAO
 from src.business_objects.pointgeographique import PointGeographique
 from src.dao.subdivisiondao import SubdivisionDao
+from src.services.localisation_service import LocalisationService
 
 class FichierService:
     """ Ce service doit récupérer une liste de points (plusieurs ou un seul point) et le niveau souhaité
@@ -13,6 +14,7 @@ class FichierService:
         self.point_dao = PointGeographiqueDAO()
         self.subdivision_dao = SubdivisionDao()
         self.contour_dao = ContourDAO(DBConnection)
+        self.localisation_service = LocalisationService()
     
     def reponse_niveau_demande(self, liste_point: List[PointGeographique], niveau: str) -> List[PointGeographique]:
         # renvoie la réponse du niveau demandé pour chaque point de la liste donnée par l'utilisateur en utilisant la méthode localiserPointDansSubdivision du servide localisation_service
