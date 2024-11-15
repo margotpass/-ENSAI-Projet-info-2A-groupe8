@@ -3,7 +3,7 @@ from src.view.vue_abstraite import VueAbstraite
 from src.services.subdivision_service import SubdivisionService
 from src.services.localisation_service import LocalisationService
 from src.business_object.pointgeographique import PointGeographique
-from src.services.fichier import Fichier
+from src.services.fichier_service import FichierService
 
 
 class MenuUtilisateur(VueAbstraite):
@@ -35,7 +35,7 @@ class MenuUtilisateur(VueAbstraite):
             choices=[
                 "Obtenir une subdivision selon un code",
                 "Obtenir une subdivision selon un point géographique",
-                #"Obtenir un fichier regroupant les différentes subdivisions selon un point géographique",
+                "Obtenir un fichier regroupant les différentes subdivisions selon un point géographique",
                 "Quitter",
             ],
         ).execute()
@@ -62,12 +62,11 @@ class MenuUtilisateur(VueAbstraite):
                 point = PointGeographique(float(latitude), float(longitude), coord if coord else "WGS84")
                 result = LocalisationService().localiserPointDansSubdivision(point, type_subdivision, annee if annee else None)
                 return MenuUtilisateur(result)
-"""                
+            
             case "Obtenir un fichier regroupant les différentes subdivisions selon un point géographique":
-                fichier = inquirer.text("Entrez la liste des points géographiques : ").execute()
-
-                fichier_genere = Fichier().obtenir_fichier(fichier, format) #méthode pas encore créée donc faire attention à son nom
-                return fichier_genere
-"""
-
-
+                liste_coordonnees = inquirer.text(message = "Entrez la liste des points géographiques de type []: ").execute()
+                type_subdivision = inquirer.text(message ="Choisissez le type de subdivision parmi : Arrondissement,"
+                                                 " Canton, Commune, Departement, EPCI et Region : ").execute()  
+                annee = inquirer.text(message="Entrez l'année si vous le souhaitez (laissez vide sinon) : ").execute()            
+                result = FichierService().mettre_reponse_dans_csv(liste_coordonnees, type_subdivision, annee if annee else None) 
+                return MenuUtilisateur(result)

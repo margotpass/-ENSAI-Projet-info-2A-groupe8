@@ -59,7 +59,7 @@ class PointGeographique():
         else:
             print("Type de coordonnées non reconnu")
 
-# Test de la classe
+"""# Test de la classe
 coord = PointGeographique(48.856578, 2.351828, "WGS84")
 print(coord)
 coord.convertir_type_coordonnees()
@@ -69,3 +69,4 @@ coord2 = PointGeographique(48.86516571317747, 2.3320684023104286, "Lamb93")
 print(coord2)
 coord2.convertir_type_coordonnees()
 print(coord2)
+"""
