@@ -19,7 +19,7 @@ class SubdivisionService(metaclass=Singleton):
     def _genererCodeINSEE(self, typeSubdivision: str, id: str) -> str:
         # Génère le code INSEE en fonction du type de subdivision
 
-        if typeSubdivision == "Commmune":
+        if typeSubdivision == "Commune":
             return id.zfill(5) # code INSEE commune formater pour compléter avec 0 à gauche
 
         elif typeSubdivision == "Departement":

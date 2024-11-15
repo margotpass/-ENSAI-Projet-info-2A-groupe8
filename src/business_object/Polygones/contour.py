@@ -27,7 +27,15 @@ class Contour(Connexe):
         return self.contour
 
     def ajout_connexe(self, connexe):
-        """Ajoute un Connexe au contour, ce qui représente ajouter une enclave par exemple"""
+        """Ajoute un Connexe au contour, ce qui représente ajouter une enclave par exemple
+
+        Raises:
+            TypeError: L'objet à ajouter doit être une instance de Connexe
+
+        Returns:
+            list : liste de connexe augmentée du nouveau
+        """        
+
         if not isinstance(connexe, Connexe):
             raise TypeError("L'objet ajouté doit être une instance de Connexe")
 
@@ -43,9 +51,14 @@ class Contour(Connexe):
         if connexe in self.contour:
             self.contour.remove(connexe)
 
-    # Les deux méthodes suivantes sont liées pour vérifier si un point est dans un polygone
+
     def point_dans_polygone(self, point: PointGeographique, polygone: PolygonePrimaire) -> bool:
-        """Vérifie si le point est à l'intérieur du polygone ou sur ses bords."""
+        """Vérifie si le point est à l'intérieur du polygone ou sur ses bords
+
+        Returns:
+            bool : True si le point est dans le polygone
+                   False si le point n'est pas dans le polygone
+        """
         x, y = point.longitude, point.latitude
         inside = False
         n = len(polygone.polygoneprimaire)
@@ -71,6 +84,18 @@ class Contour(Connexe):
         return inside
 
     def point_sur_segment(self, point: PointGeographique, p1: tuple, p2: tuple) -> bool:
+        """Vérifie si un point apartient à un semgent
+
+        Args:
+            point (PointGeographique): instance de PointGéographique
+            p1 (tuple): extrémité 1 du segment
+            p2 (tuple): extrémité 2 du segment
+
+        Returns:
+            bool: True si le PointGeographique est sur le segment
+                  False sinon
+        """
+
         x, y = point.longitude, point.latitude
         p1x, p1y = p1
         p2x, p2y = p2
@@ -88,11 +113,18 @@ class Contour(Connexe):
 
 
     def estDansPolygone(self, point: PointGeographique) -> bool:
+        """Vérifie si le point est dans l'un des polygones de ce contour.
+
+        Args:
+            point (PointGeographique): Instance de PointGeographique
+
+        Returns:
+            bool: True si le point entré est dans le polygone
+                  False sinon
+        """
         
-        #Vérifie si le point est dans l'un des polygones de ce contour.
         for connexe in self.contour:
-            for polygone in connexe.get_connexe():  # Remplace par la méthode appropriée
-                """print("Polygone:", [f"({p.latitude}, {p.longitude})" for p in polygone.polygoneprimaire])  # Pour débogage"""
+            for polygone in connexe.get_connexe():
                 if self.point_dans_polygone(point, polygone):
                     return True
         return False
