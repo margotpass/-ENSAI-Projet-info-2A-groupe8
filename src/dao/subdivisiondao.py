@@ -309,7 +309,7 @@ class SubdivisionDAO:
 
     def find_arrondissement_by_insee(self, insee_arr):
         query = """
-        SELECT * FROM arrondissement 
+        SELECT * FROM geodata2.arrondissement 
         WHERE insee_arr = %s
         """
         with DBConnection().connection as connection:
@@ -319,7 +319,7 @@ class SubdivisionDAO:
 
     def find_canton_by_insee(self, insee_can):
         query = """
-        SELECT * FROM canton 
+        SELECT * FROM geodata2.canton 
         WHERE insee_can = %s
         """
         with DBConnection().connection as connection:
