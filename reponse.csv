@@ -1,2 +1,3 @@
-Point,Subdivision
-Latitude: 48.856578 Longitude: 2.351828 Type de coordonn�es: WGS84,PARIS
+Latitude,Longitude,Système de coordonnées,Subdivision
+48.856578,2.351828,WGS84,Paris
+45.764043,4.835659,WGS84,Lyon

@@ -56,28 +56,29 @@ class FichierService:
                 raise ValueError("La liste de points est composée de plusieurs subdivisions")
         return nom_subdivision"""
 
-    # mettre dans un fichier sous format csv la réponse du niveau demandé donnée par verifier_nom_subdivision_de_la_liste
-    def mettre_reponse_dans_csv(self, liste_points, type_subdivision: str, annee : int = 2024) -> None:
-        # mettre dans un fichier sous format csv la réponse du niveau demandé donnée par verifier_nom_subdivision_de_la_liste
+
+    def mettre_reponse_dans_csv(self, liste_points, type_subdivision: str, annee: int = 2024) -> None:
+        """Mettre la réponse du niveau demandé dans un fichier CSV."""
         liste_reponse = self.reponse_niveau_demande(liste_points, type_subdivision, annee)
         liste = self.creer_points_a_partir_de_coordonnees(liste_points)
-        with open('reponse.csv', mode='w', newline='') as file:
+        
+        # Ouvre le fichier CSV avec l'encodage 'utf-8'
+        with open('reponse.csv', mode='w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
-            writer.writerow(["Point", "Subdivision"])
+            
+            # En-tête avec plus d'explications
+            writer.writerow(["Latitude", "Longitude", "Système de coordonnées", "Subdivision"])
+            
+            # Ajouter les données point par point
             for point, subdivision in zip(liste, liste_reponse):
-                writer.writerow([point, subdivision])
+                writer.writerow([point.latitude, point.longitude, point.typecoordonnees, subdivision])
         
         print(f"Les résultats ont été enregistrés dans 'reponse.csv' pour la subdivision '{type_subdivision}'.")
 
 
 
 
-
-
     
 """ 
-[[48.856578, 2.351828, "WGS84"]]
-,
- (51.507351, -0.127758, "WGS84"),
- (40.712776, -74.005974, "WGS84")]
+[[48.856578, 2.351828, "WGS84"], [45.764043, 4.835659, "WGS84"]]
 """
