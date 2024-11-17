@@ -56,7 +56,6 @@ class FichierService:
                 raise ValueError("La liste de points est composée de plusieurs subdivisions")
         return nom_subdivision"""
 
-
     def mettre_reponse_dans_csv(self, liste_points, type_subdivision: str, annee: int = 2024) -> None:
         """Mettre la réponse du niveau demandé dans un fichier CSV."""
         liste_reponse = self.reponse_niveau_demande(liste_points, type_subdivision, annee)
@@ -68,8 +67,9 @@ class FichierService:
             
             # En-tête avec plus d'explications
             writer.writerow(["Latitude", "Longitude", "Système de coordonnées", "Subdivision"])
-            
-            # Ajouter les données point par point
+          
+            assert len(liste) == len(liste_reponse), "Mismatch between points and subdivisions"
+            # Ajouter les données point par point 
             for point, subdivision in zip(liste, liste_reponse):
                 writer.writerow([point.latitude, point.longitude, point.typecoordonnees, subdivision])
         
