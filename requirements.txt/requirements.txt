@@ -9,3 +9,5 @@ unittest.mock
 csv
 pytest
 fastapi
+uvicorn
+python-multipart
