@@ -65,7 +65,7 @@ class MenuUtilisateur(VueAbstraite):
                 return MenuUtilisateur(result)
             
             case "Obtenir un fichier regroupant les différentes subdivisions selon un point géographique":
-                liste_coordonnees = inquirer.text(message = "Entrez la liste des points géographiques de type []: ").execute()
+                liste_coordonnees = inquirer.text(message = 'Entrez la liste des points géographiques de type [[latitude, lonngitude, "système"],...]]: ').execute()
                 type_subdivision = inquirer.text(message ="Choisissez le type de subdivision parmi : Arrondissement,"
                                                  " Canton, Commune, Departement, EPCI et Region : ").execute()  
                 annee = inquirer.text(message="Entrez l'année si vous le souhaitez (laissez vide sinon) : ").execute()            
