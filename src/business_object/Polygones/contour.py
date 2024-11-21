@@ -1,8 +1,3 @@
-
-Mouhamadou Moustapha Kane <mouhamadoumoustaphakane11@gmail.com>
-8:29 PM (26 minutes ago)
-to me
-
 from src.business_object.Polygones.connexe import Connexe
 from src.business_object.pointgeographique import PointGeographique
 from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
