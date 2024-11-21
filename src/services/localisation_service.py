@@ -14,7 +14,7 @@ class LocalisationService:
             self.subdivision_dao = SubdivisionDAO()
             self.contour_dao = ContourDAO(DBConnection)
 
-    def localiserPointDansSubdivision(self, point: PointGeographique, type_subdivision, annee: int = 2024):
+    def localiserPointDansSubdivision(self, point: PointGeographique, type_subdivision, dep, annee: int = 2024):
         """Localise un point dans une subdivision
 
         Args:
@@ -34,7 +34,7 @@ class LocalisationService:
         for contour in table_contours :
             # Regarder si le point est dans le contour de la table
             if contour[0].estDansPolygone(point):
-                nom_subdivision = SubdivisionService().chercherSubdivisionParID(type_subdivision, contour[1], annee)
+                nom_subdivision = SubdivisionService().chercherSubdivisionParID(type_subdivision, contour[1], annee, dep)
                 return contour[1], nom_subdivision  # Retourner n° et le nom de la subdivision dans la table si le point est dans le contour
 
         # Si aucun contour ne contient le point, retourner None

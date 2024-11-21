@@ -63,7 +63,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(epci.polygones)
         
         query = """
-        INSERT INTO epci (nom_m, nom, siren, insee_dep, insee_reg, geom_type, geom_coordinates) 
+        INSERT INTO epci (nom_m, nom, code_siren, insee_dep, insee_reg, geom_type, geom_coordinates) 
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
         with DBConnection().connection as connection:
@@ -291,9 +291,9 @@ class SubdivisionDAO:
                 cursor.execute(query, (insee_reg,))
 
     # Méthodes de recherche
-    def find_by_code_insee(self, type_subdivision, code_insee):
+    def find_by_code_insee(self, type_subdivision, code_insee, code_dep =None):
         if type_subdivision == "Arrondissement":
-            return self.find_arrondissement_by_insee(code_insee)
+            return self.find_arrondissement_by_insee(code_insee, code_dep)
         elif type_subdivision == "Canton":
             return self.find_canton_by_insee(code_insee)
         elif type_subdivision == "Commune":
@@ -307,14 +307,14 @@ class SubdivisionDAO:
         else:
             raise ValueError("Type de subdivision inconnue")
 
-    def find_arrondissement_by_insee(self, insee_arr):
+    def find_arrondissement_by_insee(self, insee_arr, insee_dep):
         query = """
         SELECT * FROM geodata2.arrondissement 
-        WHERE insee_arr = %s
+        WHERE insee_arr = %s AND insee_dep = %s
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                cursor.execute(query, (insee_arr,))
+                cursor.execute(query, (insee_arr, insee_dep))
                 return cursor.fetchone()['nom_m']
 
     def find_canton_by_insee(self, insee_can):
@@ -350,7 +350,7 @@ class SubdivisionDAO:
     def find_epci_by_siren(self, siren):
         query = """
         SELECT * FROM geodata2.epci 
-        WHERE siren = %s
+        WHERE code_siren = %s
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:

@@ -45,11 +45,16 @@ class MenuUtilisateur(VueAbstraite):
                 pass # Retourner à l'accueil
 
             case "Obtenir une subdivision selon un code":
-                id = inquirer.text(message="Entrez le code de la subdivision dont vous souhaitez connaître le nom : ").execute()
+                dep = None
+                id = inquirer.text(message="Entrez le code de la subdivision dont vous souhaitez connaître le nom (s'il s'agit d'un Arrondissement, "
+                                   "merci de rentrer le numéro de l'arrondissement au sein du département et non le code INSEE (par exemple, si vous "
+                                   "souhaitez connaître le nom du premier arrondissement de l'Ille-et-Vilaine, rentrez 1)): ").execute()
                 type = inquirer.text(message="Entrez le niveau de la subdivision parmi : Arrondissement,"
                                                  " Canton, Commune, Departement, EPCI et Region : ").execute()
+                if type == "Arrondissement":
+                    dep = inquirer.text(message="Entrez le code insee du département : ").execute()
                 annee = inquirer.text(message="Entrez l'année si vous le souhaitez (laissez vide sinon) :").execute()
-                result = SubdivisionService().chercherSubdivisionParID(type, id, annee if annee else None)
+                result = SubdivisionService().chercherSubdivisionParID(type, id, annee if annee else None,  dep)
                 return MenuUtilisateur(result)
 
 
@@ -58,10 +63,14 @@ class MenuUtilisateur(VueAbstraite):
                 longitude = inquirer.text(message="Entrez la deuxième coordonnée de votre point (longitude) : ").execute()
                 type_subdivision = inquirer.text(message="Choisissez le type de subdivision parmi : Arrondissement,"
                                                  " Canton, Commune, Departement, EPCI et Region : ").execute()
+                if type_subdivision == "Arrondissement" :
+                    dep = inquirer.text(message="Entrez le code insee du département : ").execute()
+                else :
+                    dep=None
                 annee = inquirer.text(message="Entrez l'année si vous le souhaitez (laissez vide sinon) : ").execute()
                 coord = inquirer.text(message="Entrez le type de coordonnées que vous utilisez (si WGS84, vous pouvez laisser vide) : ").execute()
                 point = PointGeographique(float(latitude), float(longitude), coord if coord else "WGS84")
-                result = LocalisationService().localiserPointDansSubdivision(point, type_subdivision, annee if annee else None)
+                result = LocalisationService().localiserPointDansSubdivision(point, type_subdivision, dep, annee if annee else None)
                 return MenuUtilisateur(result)
 """                
             case "Obtenir un fichier regroupant les différentes subdivisions selon un point géographique":
