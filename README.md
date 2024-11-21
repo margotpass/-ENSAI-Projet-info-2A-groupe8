@@ -28,6 +28,8 @@ unittest.mock: Mocks objects for testing Python code.
 csv: Reads and writes CSV (comma-separated values) files.
 pytest : powerful testing framework for Python.
 fastapi : FastAPI is a modern web framework for building APIs with high performance.
+uvicorn : Uvicorn is a lightning-fast ASGI server implementation.
+python-multipart : handles encoding/decoding of multipart/form-data for HTTP requests.
 
 Run
 python src/__main__.py

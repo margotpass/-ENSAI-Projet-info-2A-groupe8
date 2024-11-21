@@ -1,11 +1,8 @@
 inquirerPy
 pyproj
 typing
-dotenv
-psycopg2
-psycopg2.extras
 fiona
-unittest.mock
-csv
 pytest
 fastapi
+uvicorn
+python-multipart
