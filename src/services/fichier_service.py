@@ -7,6 +7,7 @@ from src.services.localisation_service import LocalisationService
 from src.dao.db_connection import DBConnection
 from src.dao.contourdao import ContourDAO
 
+
 class FichierService:
     """ Ce service doit récupérer une liste de points (plusieurs ou un seul point) et le niveau souhaité
     Puis du niveau demandé, on renvoit un fichier csv qui contient la réponse du niveau demandé en utilisant le servide localisation_service
@@ -74,11 +75,3 @@ class FichierService:
                 writer.writerow([point.latitude, point.longitude, point.typecoordonnees, subdivision])
         
         print(f"Les résultats ont été enregistrés dans 'reponse.csv' pour la subdivision '{type_subdivision}'.")
-
-
-
-
-    
-""" 
-[[48.856578, 2.351828, "WGS84"], [45.764043, 4.835659, "WGS84"]]
-"""

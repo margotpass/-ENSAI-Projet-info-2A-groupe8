@@ -1,3 +1,8 @@
+
+Mouhamadou Moustapha Kane <mouhamadoumoustaphakane11@gmail.com>
+8:29 PM (26 minutes ago)
+to me
+
 from src.business_object.Polygones.connexe import Connexe
 from src.business_object.pointgeographique import PointGeographique
 from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
@@ -124,7 +129,10 @@ class Contour(Connexe):
         """
         
         for connexe in self.contour:
-            for polygone in connexe.get_connexe():
-                if self.point_dans_polygone(point, polygone):
+            polygones = connexe.get_connexe()
+            if isinstance(polygones, (list, tuple)):
+                polygone_exterieur = polygones[0]
+                if self.point_dans_polygone(point, polygone_exterieur):
                     return True
-        return False
+                return False
+
