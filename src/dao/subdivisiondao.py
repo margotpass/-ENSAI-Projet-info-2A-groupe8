@@ -219,21 +219,27 @@ class SubdivisionDAO:
 
     def get_geom_coordinates(polygones: Contour) -> list[list[list[float]]]:
         """
-        Retourne une liste imbriquée représentant les coordonnées géométriques d'un polygone.
+        Retourne une liste imbriquée représentant les coordonnées
+        géométriques d'un polygone.
 
         Args:
-            polygone (Contour): Un objet de type Contour contenant les structures imbriquées.
+            polygone (Contour): Un objet de type Contour contenant
+            les structures imbriquées.
 
         Returns:
-            list[list[list[float]]]: Une liste de listes représentant les coordonnées des points.
+            list[list[list[float]]]: Une liste de listes représentant
+            les coordonnées des points.
         """
         # Parcourt les connexes dans le contour
         return [
             [
-                [point.longitude, point.latitude]  # Récupère les coordonnées d'un PointGeographique
-                for point in connexe.connexe       # Parcourt les points d'un Connexe
+                [point.longitude, point.latitude]
+                # Récupère les coordonnées d'un PointGeographique
+                for point in connexe.connexe
+                # Parcourt les points d'un Connexe
             ]
-            for connexe in polygones.contour        # Parcourt les connexes dans le Contour
+            for connexe in polygones.contour
+            # Parcourt les connexes dans le Contour
         ]
 
     def delete_arrondissement(self, insee_arr):
