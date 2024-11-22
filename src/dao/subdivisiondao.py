@@ -1,8 +1,15 @@
 from src.dao.db_connection import DBConnection
+from src.business_object.subdivisions.arrondissement import Arrondissement
+from src.business_object.subdivisions.region import Region
+from src.business_object.subdivisions.epci import Epci
+from src.business_object.subdivisions.commune import Commune
+from src.business_object.subdivisions.canton import Canton
+from src.business_object.subdivisions.departement import Departement
+from src.business_object.Polygones.contour import Contour
 
 
 class SubdivisionDAO:
-    def insert_arrondissement(self, arrondissement):
+    def insert_arrondissement(self, arrondissement: Arrondissement):
         geom_type = self.get_geom_type(arrondissement.polygones)
         geom_coordinates = self.get_geom_coordinates(arrondissement.polygones)
 
@@ -20,7 +27,7 @@ class SubdivisionDAO:
                     geom_type,
                     geom_coordinates))
 
-    def insert_canton(self, canton):
+    def insert_canton(self, canton: Canton):
         geom_type = self.get_geom_type(canton.polygones)
         geom_coordinates = self.get_geom_coordinates(canton.polygones)
 
@@ -32,10 +39,11 @@ class SubdivisionDAO:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (
-                    canton.insee_can, canton.insee_dep, canton.insee_reg, geom_type,
+                    canton.insee_can, canton.insee_dep, canton.insee_reg,
+                    geom_type,
                     geom_coordinates))
 
-    def insert_commune(self, commune):
+    def insert_commune(self, commune: Commune):
         geom_type = self.get_geom_type(commune.polygones)
         geom_coordinates = self.get_geom_coordinates(commune.polygones)
 
@@ -53,7 +61,7 @@ class SubdivisionDAO:
                     commune.insee_arr, commune.insee_dep, commune.insee_reg,
                     commune.siren_epci, geom_type, geom_coordinates))
 
-    def insert_departement(self, departement):
+    def insert_departement(self, departement: Departement):
         geom_type = self.get_geom_type(departement.polygones)
         geom_coordinates = self.get_geom_coordinates(departement.polygones)
 
@@ -68,7 +76,7 @@ class SubdivisionDAO:
                     departement.nom_m, departement.nom, departement.insee_dep,
                     departement.insee_reg, geom_type, geom_coordinates))
 
-    def insert_epci(self, epci):
+    def insert_epci(self, epci: Epci):
         geom_type = self.get_geom_type(epci.polygones)
         geom_coordinates = self.get_geom_coordinates(epci.polygones)
 
@@ -84,7 +92,7 @@ class SubdivisionDAO:
                     epci.insee_reg,
                     geom_type, geom_coordinates))
 
-    def insert_region(self, region):
+    def insert_region(self, region: Region):
         geom_type = self.get_geom_type(region.polygones)
         geom_coordinates = self.get_geom_coordinates(region.polygones)
 
@@ -203,18 +211,30 @@ class SubdivisionDAO:
 
     # Méthodes pour déterminer le type et les coordonnées
     def get_geom_type(self, polygones):
-        if isinstance(polygones, Polygon):
+        if len(polygones.contour) == 1:
             return 'Polygon'
-        elif isinstance(polygones, MultiPolygon):
+        else:
             return 'MultiPolygon'
         return 'Unknown'
 
-    def get_geom_coordinates(self, polygones):
-        if isinstance(polygones, Polygon):
-            return list(polygones.exterior.coords)
-        elif isinstance(polygones, MultiPolygon):
-            return [list(p.exterior.coords) for p in polygones.geoms]
-        return []
+    def get_geom_coordinates(polygones: Contour) -> list[list[list[float]]]:
+        """
+        Retourne une liste imbriquée représentant les coordonnées géométriques d'un polygone.
+
+        Args:
+            polygone (Contour): Un objet de type Contour contenant les structures imbriquées.
+
+        Returns:
+            list[list[list[float]]]: Une liste de listes représentant les coordonnées des points.
+        """
+        # Parcourt les connexes dans le contour
+        return [
+            [
+                [point.longitude, point.latitude]  # Récupère les coordonnées d'un PointGeographique
+                for point in connexe.connexe       # Parcourt les points d'un Connexe
+            ]
+            for connexe in polygones.contour        # Parcourt les connexes dans le Contour
+        ]
 
     def delete_arrondissement(self, insee_arr):
         query = """
@@ -269,7 +289,8 @@ class SubdivisionDAO:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (insee_reg,))
-   # Méthodes de recherche
+    # Méthodes de recherche
+
     def find_region_by_insee(self, insee_reg: str):
         """
         Trouve une région par son code INSEE.
@@ -380,7 +401,7 @@ class SubdivisionDAO:
         Trouve un EPCI par son code SIREN.
         """
         query = """
-        SELECT code_siren, nom, insee_dep, insee_reg
+        SELECT code_siren, nom, nature
         FROM geodata2.epci
         WHERE code_siren = %s
         """
@@ -392,8 +413,7 @@ class SubdivisionDAO:
                     return {
                         "code_siren": result["code_siren"],
                         "nom": result["nom"],
-                        "insee_dep": result["insee_dep"],
-                        "insee_reg": result["insee_reg"],
+                        "nature_epci": result["nature"],
                     }
                 return None  # Aucun résultat trouvé
 
