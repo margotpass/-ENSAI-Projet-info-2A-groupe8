@@ -31,9 +31,6 @@ class SubdivisionService(metaclass=Singleton):
         if not type_subdivision or not isinstance(type_subdivision, str):
             raise ValueError("Le type de subdivision doit être une chaîne "
                              "non vide.")
-        if not id or not isinstance(id, str) or not id.isdigit():
-            raise ValueError("L'ID doit être une chaîne de caractères "
-                             "numériques.")
         if type_subdivision in ["Canton", "Arrondissement"] and not insee_dep:
             raise ValueError(f"Le type '{type_subdivision}' nécessite un code "
                              "INSEE départemental (insee_dep).")
@@ -58,9 +55,7 @@ class SubdivisionService(metaclass=Singleton):
 
         # Gestion des cas où la subdivision n'est pas trouvée
         if not subdivision:
-            raise ValueError(f"Aucune subdivision trouvée pour le "
-                             f"type {type_subdivision}, ID {id}, et "
-                             f"code INSEE '{code_insee}'.")
+            raise ValueError(f"Aucune subdivision trouvée pour le type {type_subdivision}, ID {id}, et code INSEE '{code_insee}'.")
 
         return subdivision
 
@@ -144,13 +139,8 @@ class SubdivisionService(metaclass=Singleton):
             return [
                 ("Region", "insee_reg"),
             ]
-        elif typeSubdivision == "Region":
+        elif typeSubdivision in ["Region", "EPCI"]:
             return []
-        elif typeSubdivision == "EPCI":
-            return [
-                ("Departement", "insee_dep"),
-                ("Region", "insee_reg"),
-            ]
         else:
             raise ValueError("Type de subdivision inconnu.")
 
@@ -170,10 +160,6 @@ class SubdivisionService(metaclass=Singleton):
             ValueError: Si le type de subdivision est inconnu ou si l'ID
             est invalide.
         """
-        # Validation de l'ID
-        if not id or not isinstance(id, str) or not id.isdigit():
-            raise ValueError("L'ID doit être une chaîne de caractères "
-                             "numériques non vide.")
 
         # Génération du code INSEE en fonction du type de subdivision
         if typeSubdivision == "Commune":
