@@ -94,6 +94,3 @@ class PointGeographique():
             print("Les coordonnées sont déjà en WGS84")
         else:
             print("Type de coordonnées non reconnu")
-
-
-
