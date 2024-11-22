@@ -2,7 +2,7 @@ import fiona
 import json
 import gzip
 import base64
-from db_connection import DBConnection
+from src.dao.db_connection import DBConnection
 
 
 class FichierShp:
