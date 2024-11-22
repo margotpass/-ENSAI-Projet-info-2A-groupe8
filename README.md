@@ -10,7 +10,7 @@ This application allows you to obtain information about a subdivision or locate 
 
 Service 1: Retrieve a subdivision based on a code
 Service 2: Retrieve a subdivision based on a geographic point
-Service 3: Retrieve a file containing various subdivisions based on a geographic point
+Service 3: Retrieve a file containing the subdivision of a list of geographic points
 
 Install
 Install the required packages with the following bash commands :
