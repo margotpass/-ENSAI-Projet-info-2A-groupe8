@@ -1,6 +1,7 @@
 from src.utils.db_connection import DBConnection
 
-# Liste des tables dans l'ordre des dépendances pour éviter les erreurs de contrainte
+# Liste des tables dans l'ordre des dépendances pour éviter les erreurs de
+# contrainte
 tables = [
     "geodata.Polygone_Point",
     "geodata.Connexe_Polygone",

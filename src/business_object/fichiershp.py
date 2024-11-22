@@ -128,7 +128,8 @@ class FichierShp:
 
                 db.commit()
         except Exception as e:
-            print(f"Erreur lors de l'importation dans la base de données : {e}")
+            print(f"Erreur lors de l'importation dans la base de données : {e}"
+                  )
         finally:
             cursor.close()
             db.close()

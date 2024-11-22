@@ -8,15 +8,22 @@ class ContourDAO:
     def __init__(self, db_connection):
         self.connexe_dao = ConnexeDAO(db_connection)
 
-    def get_all_contours(self, table_name: str, parent_id: str = None) -> List[Tuple[Contour, str]]:
+    def get_all_contours(
+        self, table_name: str, parent_id: str = None
+    ) -> List[Tuple[Contour, str]]:
         """
-        Récupère tous les contours pour une subdivision donnée (par ex. région, département).
-        Si parent_id est fourni, filtre les subdivisions par leur parent (par exemple, les départements dans une région).
+        Récupère tous les contours pour une subdivision donnée
+        (par ex. région, département).
+        Si parent_id est fourni, filtre les subdivisions par leur parent
+        (par exemple, les départements dans une région).
         Renvoie une liste de tuples (Contour, subdivision_id)
         """
         insee_column = self.get_insee_column(table_name)
 
-        query = f"SELECT geom_coordinates, geom_type, {insee_column} FROM geodata2.{table_name}"
+        query = (
+            f"SELECT geom_coordinates, geom_type, {insee_column} "
+            f"FROM geodata2.{table_name}"
+        )
 
         if parent_id:
             query += f" WHERE {insee_column} = %s"
@@ -31,12 +38,16 @@ class ContourDAO:
                 results = cursor.fetchall()
 
                 for result in results:
-                    geom_coordinates = result['geom_coordinates']  # Données déjà au format JSON (liste)
-                    geom_type = result['geom_type']
+                    geom_coordinates = result["geom_coordinates"]
+                    # Données déjà au format JSON (liste)
+                    geom_type = result["geom_type"]
                     subdivision_id = result[insee_column]
 
-                    # Transformation des coordonnées géométriques en Contour en passant par ConnexeDAO
-                    contour = self.transformer_geom_en_contour(geom_coordinates, geom_type)
+                    # Transformation des coordonnées géométriques en Contour
+                    # en passant par ConnexeDAO
+                    contour = self.transformer_geom_en_contour(
+                        geom_coordinates, geom_type
+                    )
                     contours.append((contour, subdivision_id))
 
         return contours
@@ -51,17 +62,23 @@ class ContourDAO:
             "arrondissement": "insee_arr",
             "canton": "insee_can",
             "commune": "insee_com",
-            "epci": "code_siren"
+            "epci": "code_siren",
         }
         return columns.get(table_name, f"Nom de table inconnu : {table_name}")
 
-    def transformer_geom_en_contour(self, geom_coordinates: list, geom_type: str) -> Contour:
+    def transformer_geom_en_contour(
+        self, geom_coordinates: list, geom_type: str
+    ) -> Contour:
         """
-        Convertit les données geom_coordinates (déjà au format JSON, sous forme de listes) en un objet Contour.
-        Appelle ConnexeDAO pour récupérer les connexes, puis construit un Contour.
+        Convertit les données geom_coordinates
+        (déjà au format JSON, sous forme de listes)
+        en un objet Contour. Appelle ConnexeDAO pour récupérer les connexes,
+        puis construit un Contour.
         """
-        # Appel à ConnexeDAO pour récupérer la structure des connexes à partir des geom_coordinates
-        connexes = self.connexe_dao.get_connexes_from_geom(geom_coordinates, geom_type)
+        # Appel à ConnexeDAO pour récupérer la structure des connexes
+        # à partir des geom_coordinates
+        connexes = self.connexe_dao.get_connexes_from_geom(geom_coordinates,
+                                                           geom_type)
 
         # Création de l'objet Contour avec les connexes récupérés
         return Contour(connexes)
