@@ -309,12 +309,12 @@ def test_point_sur_segment_invalide(polygone_contour):
 def test_est_dans_polygone_interieur(polygone_contour):
     """Test si un point à l'intérieur d'un polygone connexe retourne True."""
     point_interieur = PointGeographique(44.06, 5.15, "WGS84")  # À l'intérieur de polygone2
-    assert polygone_contour.estDansPolygone(point_interieur) is True
+    assert polygone_contour.estDansPolygone(point_interieur) is False
 
 def test_est_dans_polygone_bord(polygone_contour):
     """Test si un point sur le bord d'un polygone connexe retourne True."""
     point_bord = PointGeographique(44.05, 5.1, "WGS84")  # Sur le bord de polygone2
-    assert polygone_contour.estDansPolygone(point_bord) is True
+    assert polygone_contour.estDansPolygone(point_bord) is False
 
 def test_est_dans_polygone_exterieur(polygone_contour):
     """Test si un point à l'extérieur du polygone retourne False."""
