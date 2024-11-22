@@ -6,7 +6,20 @@ import csv
 
 
 class Fichier:
+    """Classe représentant un fichier de données géographiques
+
+    Paramètres:
+    -----------
+    nom : str
+    format : str
+    chemin_fichier : str
+
+    retourne:
+    -----------
+    Fichier
+    """
     def __init__(self, nom: str, format: str, chemin_fichier: str):
+        """ Initialisation de la classe Fichier """
         self.nom = nom
         self.format = format
         self.chemin_fichier = chemin_fichier
@@ -15,10 +28,10 @@ class Fichier:
         """
         Convertit un fichier du format actuel à un nouveau format.
 
-        Args:
-            format_final (str): Le format final souhaité (par exemple, "csv", "json").
+        Paramètres:
+            format_final (str): Le format final souhaité
 
-        Returns:
+        Retourne:
             Fichier: Un nouvel objet Fichier avec le format converti.
         """
         if self.format == format_final:
@@ -26,7 +39,7 @@ class Fichier:
             return self
 
         # Effectuer la conversion en fonction des formats
-        # (csv -> json ou vice versa)
+        # supportés (CSV et JSON)
         nouvelle_chemin = self.chemin_fichier.replace(self.format,
                                                       format_final)
 
@@ -65,7 +78,7 @@ class Fichier:
         Le format d'entrée attendu est soit CSV, soit JSON.
         Cette méthode retourne une liste d'objets PointGeographique.
 
-        Returns:
+        Retourne:
             List[PointGeographique]: Liste d'objets PointGeographique importés.
         """
         points = []
@@ -85,16 +98,21 @@ class Fichier:
                     points.append(PointGeographique(lat, long))
 
         else:
-            raise ValueError(f"Format {self.format} non supporté pour l'importation.")
+            raise ValueError(f"Format {self.format} non supporté "
+                             f"pour l'importation.")
 
         return points
 
-    def exporter(self, map_points_subdivisions: Map[PointGeographique, Subdivision]):
+    def exporter(self,
+                 map_points_subdivisions: Map[PointGeographique, Subdivision]):
         """
-        Exporte des points géographiques associés à une subdivision dans le fichier.
+        Exporte des points géographiques associés à une subdivision
+        dans le fichier.
 
-        Args:
-            map_points_subdivisions (Map[PointGeographique, Subdivision]): Dictionnaire associant chaque point géographique à une subdivision.
+        Paramètres:
+            map_points_subdivisions (Map[PointGeographique, Subdivision]):
+                Dictionnaire associant chaque point géographique
+                à une subdivision.
 
         Retourne:
             None
@@ -117,8 +135,11 @@ class Fichier:
                     'subdivision': subdivision.nom
                 })
 
-            with open(self.chemin_fichier, mode='w') as file:
+            with open(self.chemin_fichier,
+                      mode='w') as file:
                 json.dump(data, file)
 
         else:
-            raise ValueError(f"Format {self.format} non supporté pour l'exportation.")
+            raise ValueError(
+                f"Format {self.format} non supporté pour l'exportation."
+            )

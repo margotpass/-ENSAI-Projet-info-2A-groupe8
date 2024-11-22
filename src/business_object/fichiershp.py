@@ -6,6 +6,17 @@ from src.dao.db_connection import DBConnection
 
 
 class FichierShp:
+    """ Classe représentant un fichier shapefile
+
+    Paramètres:
+    -----------
+    chemin : str
+        Chemin du fichier shapefile
+
+    retourne:
+    -----------
+    FichierShp
+    """
     def __init__(self, chemin: str):
         """
         Initialise une instance de FichierShp.

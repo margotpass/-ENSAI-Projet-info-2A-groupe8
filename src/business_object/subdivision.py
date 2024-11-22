@@ -2,14 +2,33 @@ from src.business_object.Polygones.contour import Contour
 
 
 class Subdivision:
+    """Classe représentant une subdivision administrative
+
+    paramètres:
+    -----------
+    id : str
+        identifiant de la subdivision
+    nom : str
+        nom de la subdivision
+    annee : int
+        année de recherche dans la table
+    polygones : list(PointGeographique)
+        liste de points géographiques
+
+    retourne:
+    ---------
+    Subdivision
+    """
     def __init__(self, id, nom=None, annee=None, polygones=None):
         """Initialise la casse Subdivision
 
-        Args:
+        Paramètres:
             id (str): identifiant de la subdivision
             nom (str): nom de la subdivision. Défaut à None.
-            annee (int, optional): année de recherche dans la table. Défaut à None.
-            polygones (list(PointGeographique), optional): Liste de points géographiques. Défaut à None
+            annee (int, optional):
+                année de recherche dans la table. Défaut à None.
+            polygones (list(PointGeographique), optional):
+                Liste de points géographiques. Défaut à None
 
         Raises:
             TypeError: l'id est un string
