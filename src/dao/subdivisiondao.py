@@ -269,3 +269,151 @@ class SubdivisionDAO:
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (insee_reg,))
+   # Méthodes de recherche
+    def find_region_by_insee(self, insee_reg: str):
+        """
+        Trouve une région par son code INSEE.
+        """
+        query = """
+        SELECT insee_reg, nom
+        FROM geodata2.region
+        WHERE insee_reg = %s
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (insee_reg,))
+                result = cursor.fetchone()
+                if result:  # Vérifie si un résultat est trouvé
+                    return {"insee_reg": result["insee_reg"], "nom": result["nom"]}
+                return None  # Aucun résultat trouvé
+
+    def find_departement_by_insee(self, insee_dep: str, ):
+        """
+        Trouve un département par son code INSEE.
+        """
+        query = """
+        SELECT insee_dep, nom, insee_reg
+        FROM geodata2.departement
+        WHERE insee_dep = %s
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (insee_dep,))
+                result = cursor.fetchone()
+                if result:  # Vérifie si un résultat est trouvé
+                    return {
+                        "insee_dep": result["insee_dep"],
+                        "nom": result["nom"],
+                        "insee_reg": result["insee_reg"],
+                    }
+                return None  # Aucun résultat trouvé
+
+    def find_arrondissement_by_insee(self, insee_arr: str, insee_dep:str):
+        """
+        Trouve un arrondissement par son code INSEE.
+        """
+        query = """
+        SELECT insee_arr, nom, insee_dep, insee_reg
+        FROM geodata2.arrondissement
+        WHERE insee_arr = %s AND insee_dep = %s
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (insee_arr,insee_dep))
+                result = cursor.fetchone()
+                if result:  # Vérifie si un résultat est trouvé
+                    return {
+                        "insee_arr": result["insee_arr"],
+                        "nom": result["nom"],
+                        "insee_dep": result["insee_dep"],
+                        "insee_reg": result["insee_reg"],
+                    }
+                return None  # Aucun résultat trouvé
+
+    def find_canton_by_insee(self, insee_can: str, insee_dep: str =None):
+        """
+        Trouve un canton par son code INSEE.
+        """
+        query = """
+        SELECT insee_can, insee_dep, insee_reg
+        FROM geodata2.canton
+        WHERE insee_can = %s AND insee_dep = %s
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (insee_can,insee_dep))
+                result = cursor.fetchone()
+                if result:  # Vérifie si un résultat est trouvé
+                    return {
+                        "insee_can": result["insee_can"],
+                        "insee_dep": result["insee_dep"],
+                        "insee_reg": result["insee_reg"],
+                    }
+                return None  # Aucun résultat trouvé
+
+    def find_commune_by_insee(self, insee_com: str):
+        """
+        Trouve une commune par son code INSEE.
+        """
+        query = """
+        SELECT insee_com, nom, insee_can, insee_arr, insee_dep, insee_reg
+        FROM geodata2.commune
+        WHERE insee_com = %s
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (insee_com,))
+                result = cursor.fetchone()
+                if result:  # Vérifie si un résultat est trouvé
+                    return {
+                        "insee_com": result["insee_com"],
+                        "nom": result["nom"],
+                        "insee_can": result["insee_can"],
+                        "insee_arr": result["insee_arr"],
+                        "insee_dep": result["insee_dep"],
+                        "insee_reg": result["insee_reg"],
+                    }
+                return None  # Aucun résultat trouvé
+
+    def find_epci_by_siren(self, code_siren: str):
+        """
+        Trouve un EPCI par son code SIREN.
+        """
+        query = """
+        SELECT code_siren, nom, insee_dep, insee_reg
+        FROM geodata2.epci
+        WHERE code_siren = %s
+        """
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (code_siren,))
+                result = cursor.fetchone()
+                if result:  # Vérifie si un résultat est trouvé
+                    return {
+                        "code_siren": result["code_siren"],
+                        "nom": result["nom"],
+                        "insee_dep": result["insee_dep"],
+                        "insee_reg": result["insee_reg"],
+                    }
+                return None  # Aucun résultat trouvé
+
+    def find_by_code_insee(self, type_subdivision: str, code_insee: str,
+                           code_dep=None):
+        """
+        Trouve une subdivision par son type et son code INSEE.
+        Utilise les méthodes dédiées pour chaque type de subdivision.
+        """
+        if type_subdivision == "Region":
+            return self.find_region_by_insee(code_insee)
+        elif type_subdivision == "Departement":
+            return self.find_departement_by_insee(code_insee)
+        elif type_subdivision == "Arrondissement":
+            return self.find_arrondissement_by_insee(code_insee, code_dep)
+        elif type_subdivision == "Canton":
+            return self.find_canton_by_insee(code_insee, code_dep)
+        elif type_subdivision == "Commune":
+            return self.find_commune_by_insee(code_insee)
+        elif type_subdivision == "EPCI":
+            return self.find_epci_by_siren(code_insee)
+        else:
+            raise ValueError("Type de subdivision inconnu.")
