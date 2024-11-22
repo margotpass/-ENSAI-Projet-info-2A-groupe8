@@ -52,7 +52,7 @@ class LocalisationService:
                     # Retourner n° et le nom de
                     # la subdivision dans la table si le point
                     # est dans le contour
-                elif type_subdivision == "Arrondissement":
+                elif type_subdivision in ["Arrondissement", "Canton"]:
                     departement = self.localiserPointDansSubdivision(
                         point=point, type_subdivision="Departement",
                         annee=annee
@@ -60,21 +60,10 @@ class LocalisationService:
                     insee_depart = departement[0]
                     nom_subdivision = SubdivisionService(
                     ).chercherSubdivisionParID(
-                        type_subdivision="Arrondissement", id=contour[1],
+                        type_subdivision=type_subdivision, id=contour[1],
                         annee=annee, insee_dep=insee_depart
                     )
                     return contour[1], nom_subdivision, insee_depart
-                elif type_subdivision == "Canton":
-                    departement = self.localiserPointDansSubdivision(
-                        point=point, type_subdivision="Departement",
-                        annee=annee
-                    )
-                    insee_departement = departement.get("insee_dep")
-                    nom_subdivision = SubdivisionService(
-                                            ).chercherSubdivisionParID(
-                        type_subdivision="Canton", id=contour[1], annee=annee,
-                        insee_dep=insee_departement
-                    )
-                    return contour[1], nom_subdivision, insee_departement
+
         # Si aucun contour ne contient le point, retourner None
         return None
