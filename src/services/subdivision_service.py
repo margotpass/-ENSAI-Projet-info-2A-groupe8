@@ -58,7 +58,9 @@ class SubdivisionService(metaclass=Singleton):
 
         # Gestion des cas où la subdivision n'est pas trouvée
         if not subdivision:
-            raise ValueError(f"Aucune subdivision trouvée pour le type {type_subdivision}, ID {id}, et code INSEE '{code_insee}'.")
+            raise ValueError(f"Aucune subdivision trouvée pour le "
+                             f"type {type_subdivision}, ID {id}, et "
+                             f"code INSEE '{code_insee}'.")
 
         return subdivision
 

@@ -1,5 +1,4 @@
 import dotenv
-from src.view.vue_abstraite import VueAbstraite
 from src.view.menu_utilisateur_vue import MenuUtilisateur
 
 
@@ -21,4 +20,3 @@ if __name__ == "__main__":
     # Lorsque l on quitte l application
     print("----------------------------------")
     print("Au revoir")
-    
