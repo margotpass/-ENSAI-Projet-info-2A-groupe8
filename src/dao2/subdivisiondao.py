@@ -13,7 +13,8 @@ class SubdivisionDAO:
 
     def __init__(self):
         """
-        Initialisation de la classe SubdivisionDAO avec une instance de ContourDAO pour la gestion des contours.
+        Initialisation de la classe SubdivisionDAO avec une instance de
+        ContourDAO pour la gestion des contours.
         """
         self.contour_dao = ContourDAO()
 
@@ -22,34 +23,38 @@ class SubdivisionDAO:
                           insee_dep=None, insee_reg=None, siren_epci=None,
                           polygones=Contour):
         """
-        Crée une instance de subdivision en fonction de son type et de ses attributs.
+        Crée une instance de subdivision en fonction de son type et de ses
+        attributs.
 
         Paramètres:
         -----------
         type_subdivision : str
-            Le type de subdivision ('Arrondissement', 'Canton', 'Commune', 'Departement', 'Epci', 'Region').
+            Le type de subdivision ('Arrondissement', 'Canton', 'Commune',
+            'Departement', 'Epci', 'Region').
         id : str
             L'identifiant de la subdivision.
         nom : str, optionnel
             Le nom de la subdivision (si applicable).
         annee : str, optionnel
             L'année associée à la subdivision.
-        insee_com, insee_can, insee_arr, insee_dep, insee_reg, siren_epci : str, optionnel
+        insee_com, insee_can, insee_arr, insee_dep, insee_reg,
+        siren_epci : str, optionnel
             Les identifiants spécifiques à chaque type de subdivision.
         polygones : Contour, optionnel
             Un objet Contour représentant le polygone de la subdivision.
 
         Retourne:
         --------
-        Une instance de la subdivision correspondant au type donné, avec les attributs appropriés.
+        Une instance de la subdivision correspondant au type donné, avec les
+        attributs appropriés.
         """
         # Créer la subdivision en fonction de son type
         if type_subdivision.upper() == 'ARRONDISSEMENT':
             subdivision = Arrondissement(id, nom, annee, insee_arr,
                                          insee_dep, insee_reg, polygones)
         elif type_subdivision.upper() == 'CANTON':
-            subdivision = Canton(id, nom, annee,insee_can,
-                                 insee_dep, insee_reg,polygones)
+            subdivision = Canton(id, nom, annee, insee_can,
+                                 insee_dep, insee_reg, polygones)
         elif type_subdivision.upper() == 'COMMUNE':
             subdivision = Commune(id, nom, annee, insee_com,
                                   '', insee_can, insee_arr,
@@ -71,15 +76,17 @@ class SubdivisionDAO:
 
     def ajouter_subdivision(self, subdivision):
         """
-        Ajoute une subdivision et son polygone associé dans les tables 'subdivision', 'contours', et
-        'subdivision_contour' en respectant les liens entre ces tables.
+        Ajoute une subdivision et son polygone associé dans les tables
+        'subdivision', 'contours', et 'subdivision_contour' en
+        respectant les liens entre ces tables.
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 # Insertion de la subdivision dans la table 'subdivision'
                 query_subdivision = """
                 INSERT INTO geodata.subdivision
-                (id, type, nom, insee_com, insee_can, insee_arr, insee_dep, insee_reg, siren_epci)
+                (id, type, nom, insee_com, insee_can, insee_arr,"
+                " insee_dep, insee_reg, siren_epci)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 cursor.execute(query_subdivision, (
@@ -94,14 +101,20 @@ class SubdivisionDAO:
                     getattr(subdivision, 'siren_epci', None)
                 ))
 
-                # Si un polygone est spécifié, l'ajouter dans la table 'contours' via ContourDAO
+                # Si un polygone est spécifié, l'ajouter dans la table
+                # 'contours' via ContourDAO
                 if subdivision.polygones:
-                    contour = subdivision.polygones  # polygones est un objet Contour
-                    contour_id = self.contour_dao.ajouter_contour(contour, subdivision.annee)  # Utilise ContourDAO pour ajouter le contour
+                    contour = subdivision.polygones
+                    # polygones est un objet Contour
+                    contour_id = self.contour_dao.ajouter_contour(
+                        contour, subdivision.annee
+                    )  # Utilise ContourDAO pour ajouter le contour
 
-                    # Ajout de l'association entre subdivision et contour dans la table 'subdivision_contour'
+                    # Ajout de l'association entre subdivision et contour dans
+                    # la table 'subdivision_contour'
                     query_assoc = """
-                    INSERT INTO geodata.subdivision_contour (id_subdivision, id_contour)
+                    INSERT INTO geodata.subdivision_contour "
+                    "(id_subdivision, id_contour)
                     VALUES (%s, %s)
                     """
                     cursor.execute(query_assoc, (subdivision.id, contour_id))
@@ -111,7 +124,8 @@ class SubdivisionDAO:
 
     def update_subdivision(self, subdivision):
         """
-        Met à jour les informations d'une subdivision dans la base de données, y compris son contour associé.
+        Met à jour les informations d'une subdivision dans la base de données,
+        y compris son contour associé.
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
@@ -136,7 +150,8 @@ class SubdivisionDAO:
                 # Mise à jour du contour si spécifié
                 if subdivision.polygones:
                     contour = subdivision.polygones
-                    self.contour_dao.update_contour(contour)  # Utilise ContourDAO pour mettre à jour le contour
+                    self.contour_dao.update_contour(contour)
+                    # Utilise ContourDAO pour mettre à jour le contour
                     query_assoc = """
                     UPDATE geodata.subdivision_contour
                     SET id_contour = %s
@@ -173,9 +188,13 @@ class SubdivisionDAO:
                 DELETE FROM geodata.subdivision
                 WHERE id = %s AND type = %s
                 """
-                cursor.execute(query_delete_subdivision, (subdivision_id, type_subdivision))
+                cursor.execute(
+                    query_delete_subdivision,
+                    (subdivision_id, type_subdivision)
+                )
 
-                # Supprimer le contour en utilisant ContourDAO si un contour est associé
+                # Supprimer le contour en utilisant ContourDAO si un contour
+                # est associé
                 if contour_id:
                     self.contour_dao.delete_contour(contour_id[0])
 
@@ -184,19 +203,22 @@ class SubdivisionDAO:
 
     def find_by_code_insee(self, type_subdivision, code_insee):
         """
-        Récupère le nom d'une subdivision en fonction de son type et de son code INSEE.
+        Récupère le nom d'une subdivision en fonction de son type et de son
+        code INSEE.
 
         Paramètres:
         -----------
         type_subdivision : str
-            Le type de subdivision (par exemple, 'COMMUNE', 'DEPARTEMENT', 'REGION', etc.)
+            Le type de subdivision (par exemple, 'COMMUNE', 'DEPARTEMENT',
+            'REGION', etc.)
         code_insee : str
             Le code INSEE de la subdivision à rechercher.
 
         Retourne:
         --------
         str
-            Le nom de la subdivision, ou None si aucune subdivision n'est trouvée.
+            Le nom de la subdivision, ou None si aucune subdivision n'est
+            trouvée.
         """
         # Dictionnaire des champs INSEE associés aux types de subdivisions
         insee_fields = {
@@ -212,11 +234,13 @@ class SubdivisionDAO:
         type_subdivision = type_subdivision.upper()
 
         if type_subdivision not in insee_fields:
-            raise ValueError(f"Type de subdivision {type_subdivision} non reconnu")
+            raise ValueError(f"Type de subdivision {type_subdivision}"
+                             f" non reconnu")
 
         insee_field = insee_fields[type_subdivision]
 
-        # Requête pour récupérer le nom de la subdivision en fonction du type et du code INSEE
+        # Requête pour récupérer le nom de la subdivision en fonction du type
+        # et du code INSEE
         query = f"""
         SELECT s.nom
         FROM geodata.subdivision s

@@ -117,7 +117,8 @@ class ConnexeDAO:
                 # Supprimer les anciennes associations entre connexe et
                 # polygones
                 cursor.execute(
-                    "DELETE FROM geodata.connexe_polygone WHERE id_connexe = %s",
+                    "DELETE FROM geodata.connexe_polygone "
+                    "WHERE id_connexe = %s",
                     (connexe_id,)
                 )
 
@@ -141,7 +142,8 @@ class ConnexeDAO:
             with connection.cursor() as cursor:
                 # Supprimer les associations dans la table connexe_polygone
                 cursor.execute(
-                    "DELETE FROM geodata.connexe_polygone WHERE id_connexe = %s",
+                    "DELETE FROM geodata.connexe_polygone "
+                    "WHERE id_connexe = %s",
                     (connexe_id,)
                 )
 

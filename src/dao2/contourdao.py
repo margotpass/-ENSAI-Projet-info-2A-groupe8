@@ -11,12 +11,16 @@ class ContourDAO:
         """Crée un objet Contour à partir d'une liste de connexes."""
         return Contour(liste_connexes)
 
-    def ajouter_contour(self, contour, annee=2024, connection=DBConnection().connection):
+    def ajouter_contour(self, contour, annee=2024,
+                        connection=DBConnection().connection):
         """Ajoute un Contour dans la base de données avec une année."""
         connexe_dao = ConnexeDAO()
 
         # Obtenez les ID des connexes associés
-        connexes_ids = [connexe_dao.ajouter_connexe(connexe) for connexe in contour.contour]
+        connexes_ids = [
+            connexe_dao.ajouter_connexe(connexe)
+            for connexe in contour.contour
+        ]
 
         try:
             with connection.cursor() as cursor:
@@ -27,7 +31,8 @@ class ContourDAO:
                 )
                 contour_id = list(cursor.fetchall())[0]['id']
 
-                # Insérer les relations dans la table d'association contour_connexe
+                # Insérer les relations dans la table d'association
+                # contour_connexe
                 for ordre, connexe_id in enumerate(connexes_ids):
                     # Vérifier si la relation existe déjà dans contour_connexe
                     cursor.execute(
@@ -35,10 +40,12 @@ class ContourDAO:
                         "WHERE id_contour = %s AND id_connexe = %s",
                         (contour_id, connexe_id)
                     )
-                    if cursor.fetchone() is None:  # Si la relation n'existe pas déjà
+                    if cursor.fetchone() is None:
+                        # Si la relation n'existe pas déjà
                         cursor.execute(
                             "INSERT INTO geodata.contour_connexe "
-                            "(id_contour, id_connexe, ordre) VALUES (%s, %s, %s)",
+                            "(id_contour, id_connexe, ordre) "
+                            "VALUES (%s, %s, %s)",
                             (contour_id, connexe_id, ordre)
                         )
 
@@ -52,10 +59,15 @@ class ContourDAO:
             connection.rollback()
             print(f"Erreur lors de l'insertion dans contour_connexe : {e}")
 
-    def update_contour(self, contour_id, nouvelle_liste_connexes, nouvelle_annee):
-        """Met à jour un Contour existant en remplaçant ses connexes et en modifiant son année si nécessaire."""
+    def update_contour(self, contour_id, nouvelle_liste_connexes,
+                       nouvelle_annee):
+        """Met à jour un Contour existant en remplaçant ses connexes et
+        en modifiant son année si nécessaire."""
         connexe_dao = ConnexeDAO()
-        nouveaux_connexes_ids = [connexe_dao.ajouter_connexe(connexe) for connexe in nouvelle_liste_connexes]
+        nouveaux_connexes_ids = [
+            connexe_dao.ajouter_connexe(connexe)
+            for connexe in nouvelle_liste_connexes
+        ]
 
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
@@ -65,16 +77,21 @@ class ContourDAO:
                     (nouvelle_annee, contour_id)
                 )
                 if cursor.rowcount == 0:
-                    raise ValueError(f"Le contour avec l'id {contour_id} n'existe pas.")
+                    raise ValueError(f"Le contour avec l'id {contour_id}"
+                                     f" n'existe pas.")
 
-                # Supprimer les anciennes associations dans la table contour_connexe
+                # Supprimer les anciennes associations dans la table
+                # contour_connexe
                 cursor.execute(
-                    "DELETE FROM geodata.contour_connexe WHERE id_contour = %s",
+                    "DELETE FROM geodata.contour_connexe"
+                    " WHERE id_contour = %s",
                     (contour_id,)
                 )
 
-                # Ajouter les nouvelles associations avec la liste mise à jour de connexes
-                for ordre, connexe_id in enumerate(nouveaux_connexes_ids, start=1):
+                # Ajouter les nouvelles associations avec la liste
+                # mise à jour de connexes
+                for ordre, connexe_id in enumerate(nouveaux_connexes_ids,
+                                                   start=1):
                     cursor.execute(
                         "INSERT INTO geodata.contour_connexe "
                         "(id_contour, id_connexe, ordre) VALUES (%s, %s, %s)",
@@ -85,12 +102,14 @@ class ContourDAO:
                 connection.commit()
 
     def delete_contour(self, contour_id):
-        """Supprime un Contour de la base de données, y compris ses connexes associés et ses relations."""
+        """Supprime un Contour de la base de données, y compris ses connexes
+        associés et ses relations."""
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
                 # Supprimer les associations dans la table contour_connexe
                 cursor.execute(
-                    "DELETE FROM geodata.contour_connexe WHERE id_contour = %s",
+                    "DELETE FROM geodata.contour_connexe "
+                    "WHERE id_contour = %s",
                     (contour_id,)
                 )
 
@@ -101,7 +120,8 @@ class ContourDAO:
                 )
 
                 if cursor.rowcount == 0:
-                    raise ValueError(f"Le contour avec l'id {contour_id} n'existe pas.")
+                    raise ValueError(f"Le contour avec l'id {contour_id}"
+                                     f" n'existe pas.")
 
                 # Commit des modifications
                 connection.commit()
@@ -124,7 +144,8 @@ class ContourDAO:
         type_subdivision = type_subdivision.upper()
 
         if type_subdivision not in insee_fields:
-            raise ValueError(f"Type de subdivision {type_subdivision} non reconnu")
+            raise ValueError(f"Type de subdivision {type_subdivision}"
+                             f" non reconnu")
 
         insee_field = insee_fields[type_subdivision]
 
@@ -191,9 +212,14 @@ class ContourDAO:
                                 cursor.execute(points_query, (polygone_id,))
                                 points = cursor.fetchall()
 
-                                points_list = [PointGeographique(lat, long) for lat, long in points]
+                                points_list = [
+                                    PointGeographique(lat, long)
+                                    for lat, long in points
+                                ]
 
-                                polygons_with_points.append(PolygonePrimaire(points_list))
+                                polygons_with_points.append(
+                                    PolygonePrimaire(points_list)
+                                )
 
                             connexes_list.append(Connexe(polygons_with_points))
 

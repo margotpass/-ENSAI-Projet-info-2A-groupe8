@@ -37,8 +37,8 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(canton.polygones)
 
         query = """
-        INSERT INTO geodata2.canton (insee_can, insee_dep, insee_reg, geom_type,
-        geom_coordinates)
+        INSERT INTO geodata2.canton (insee_can, insee_dep, insee_reg,
+        geom_type, geom_coordinates)
         VALUES (%s, %s, %s, %s, %s)
         """
         with DBConnection().connection as connection:
@@ -53,9 +53,9 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(commune.polygones)
 
         query = """
-        INSERT INTO geodata2.commune (nom, nom_m, insee_com, statut, population,
-        insee_can, insee_arr, insee_dep, insee_reg, siren_epci, geom_type,
-        geom_coordinates)
+        INSERT INTO geodata2.commune (nom, nom_m, insee_com, statut,
+        population, insee_can, insee_arr, insee_dep, insee_reg,
+        siren_epci, geom_type, geom_coordinates)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         with DBConnection().connection as connection:
@@ -71,8 +71,8 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(departement.polygones)
 
         query = """
-        INSERT INTO geodata2.departement (nom_m, nom, insee_dep, insee_reg, geom_type,
-        geom_coordinates)
+        INSERT INTO geodata2.departement (nom_m, nom, insee_dep, insee_reg,
+        geom_type, geom_coordinates)
         VALUES (%s, %s, %s, %s, %s, %s)
         """
         with DBConnection().connection as connection:
@@ -102,7 +102,8 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(region.polygones)
 
         query = """
-        INSERT INTO geodata2.region (nom_m, nom, insee_reg, geom_type, geom_coordinates)
+        INSERT INTO geodata2.region (nom_m, nom, insee_reg, geom_type,
+        geom_coordinates)
         VALUES (%s, %s, %s, %s, %s)
         """
         with DBConnection().connection as connection:
@@ -118,7 +119,8 @@ class SubdivisionDAO:
 
         query = """
         UPDATE geodata2.arrondissement
-        SET nom_m = %s, nom = %s, insee_dep = %s, insee_reg = %s, geom_type = %s,
+        SET nom_m = %s, nom = %s, insee_dep = %s, insee_reg = %s,
+            geom_type = %s,
         geom_coordinates = %s WHERE insee_arr = %s
         """
         with DBConnection().connection as connection:
@@ -135,7 +137,8 @@ class SubdivisionDAO:
 
         query = """
         UPDATE geodata2.canton
-        SET insee_dep = %s, insee_reg = %s, geom_type = %s, geom_coordinates = %s
+        SET insee_dep = %s, insee_reg = %s, geom_type = %s,
+            geom_coordinates = %s
         WHERE insee_can = %s
         """
         with DBConnection().connection as connection:
@@ -316,7 +319,10 @@ class SubdivisionDAO:
                 cursor.execute(query, (insee_reg,))
                 result = cursor.fetchone()
                 if result:  # Vérifie si un résultat est trouvé
-                    return {"insee_reg": result["insee_reg"], "nom": result["nom"]}
+                    return {
+                        "insee_reg": result["insee_reg"],
+                        "nom": result["nom"]
+                    }
                 return None  # Aucun résultat trouvé
 
     def find_departement_by_insee(self, insee_dep: str, ):
@@ -362,7 +368,7 @@ class SubdivisionDAO:
                     }
                 return None  # Aucun résultat trouvé
 
-    def find_canton_by_insee(self, insee_can: str, insee_dep: str =None):
+    def find_canton_by_insee(self, insee_can: str, insee_dep: str = None):
         """
         Trouve un canton par son code INSEE.
         """
@@ -449,7 +455,9 @@ class SubdivisionDAO:
         else:
             raise ValueError("Type de subdivision inconnu.")
 
-    def get_all_contours_inf_in_sup(self, type_sup: str, type_inf: str, code_insee_sup: str) -> List[Tuple[Contour, str]]:
+    def get_all_contours_inf_in_sup(
+            self, type_sup: str, type_inf: str, code_insee_sup: str
+    ) -> List[Tuple[Contour, str]]:
         """
         Récupère les contours d'une subdivision enfant basée sur son parent.
 
@@ -459,13 +467,16 @@ class SubdivisionDAO:
             code_insee_sup (str): Code INSEE de la subdivision parent.
 
         Returns:
-            List[Tuple[Contour, str]]: Liste de tuples contenant le contour et le code INSEE de la subdivision enfant.
+            List[Tuple[Contour, str]]: Liste de tuples contenant le contour et
+            le code INSEE de la subdivision enfant.
         """
         # Détermine la colonne de relation parent-enfant
-        relation_column = f"insee_{type_sup[:3].lower()}"  # Extrait 'reg', 'dep', 'arr', etc.
+        relation_column = f"insee_{type_sup[:3].lower()}"
+        # Extrait 'reg', 'dep', 'arr', etc.
 
         # Colonne de l'identifiant de l'enfant
-        child_column = f"insee_{type_inf[:3].lower()}"  # Extrait 'reg', 'dep', 'arr', etc.
+        child_column = f"insee_{type_inf[:3].lower()}"
+        # Extrait 'reg', 'dep', 'arr', etc.
 
         # Construction de la requête SQL
         query = (
@@ -483,10 +494,13 @@ class SubdivisionDAO:
                 for result in results:
                     geom_coordinates = result["geom_coordinates"]
                     geom_type = result["geom_type"]
-                    code_insee_inf = result[child_column]  # Nom explicite pour refléter le code INSEE enfant
+                    code_insee_inf = result[child_column]
+                    # Nom explicite pour refléter le code INSEE enfant
 
                     # Transformation des coordonnées géométriques en Contour
-                    contour = self.contour_dao.transformer_geom_en_contour(geom_coordinates, geom_type)
+                    contour = self.contour_dao.transformer_geom_en_contour(
+                        geom_coordinates, geom_type
+                    )
                     # Inclure le code INSEE enfant dans le résultat
                     contours.append((contour, code_insee_inf))
 

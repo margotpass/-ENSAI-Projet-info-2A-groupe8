@@ -35,13 +35,18 @@ class PointGeographique():
             raise TypeError("La longitude doit être un nombre")
         self.longitude = longitude
         # les coordonnées sont soit en Lambert 93 soit en WGS84 soit vide
-        if typecoordonnees not in ["Lamb93", "WGS84", "", None, "None", "lam93", "wgs84"]:
+        if typecoordonnees not in [
+            "Lamb93", "WGS84", "", None, "None", "lam93", "wgs84"
+        ]:
             raise ValueError("Type de coordonnées non reconnu")
         self.typecoordonnees = typecoordonnees
 
     def __str__(self):
         """Affiche les informations du point géographique"""
-        return "Latitude: " + str(self.latitude) + " Longitude: " + str(self.longitude) + " Type de coordonnées: " + str(self.typecoordonnees)
+        return (
+            "Latitude: " + str(self.latitude) + " Longitude: "
+            + str(self.longitude)
+            + " Type de coordonnées: " + str(self.typecoordonnees))
 
     def get_latitude(self):
         """Retourne la latitude du point"""
@@ -62,15 +67,22 @@ class PointGeographique():
             lambert = pyproj.CRS.from_epsg(2154)  # EPSG code for Lambert 93
             # WGS84 CRS (référentiel géographique)
             wgs84 = pyproj.CRS.from_epsg(4326)    # EPSG code for WGS84
-            # Initialisation du transformeur avec un ordre de coordonnées (latitude, longitude)
-            transformer = pyproj.Transformer.from_crs(lambert, wgs84, always_xy=True)
+            # Initialisation du transformeur avec un ordre de coordonnées
+            # (latitude, longitude)
+            transformer = pyproj.Transformer.from_crs(
+                lambert, wgs84, always_xy=True
+            )
 
-            # Transformer attend (longitude, latitude) pour la projection Lambert 93
-            self.longitude, self.latitude = transformer.transform(self.longitude, self.latitude)
+            # Transformer attend (longitude, latitude) pour la projection
+            # Lambert 93
+            self.longitude, self.latitude = transformer.transform(
+                self.longitude, self.latitude
+            )
             self.typecoordonnees = "WGS84"
 
             # Debugging : Affichage des valeurs après transformation
-            print(f"Transformation réussie: Latitude = {self.latitude}, Longitude = {self.longitude}")
+            print(f"Transformation réussie: Latitude = {self.latitude},"
+                  f" Longitude = {self.longitude}")
             return self.latitude, self.longitude
 
         elif self.typecoordonnees == "WGS84":
