@@ -40,6 +40,7 @@ def contour_qui_ne_contient_pas_point():
     contour[0].estDansPolygone.return_value = False
     return contour
 
+
 @patch('src.services.subdivision_service.SubdivisionService.'
        'chercherSubdivisionParID')
 def test_point_dans_subdivision(mock_chercherSubdivisionParID,
