@@ -1,7 +1,7 @@
-import fiona
 import json
 import gzip
 import base64
+import fiona
 from src.dao.db_connection import DBConnection
 
 

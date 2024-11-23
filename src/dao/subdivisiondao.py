@@ -1,3 +1,4 @@
+from typing import List, Tuple
 from src.dao.db_connection import DBConnection
 from src.business_object.subdivisions.arrondissement import Arrondissement
 from src.business_object.subdivisions.region import Region
@@ -6,7 +7,6 @@ from src.business_object.subdivisions.commune import Commune
 from src.business_object.subdivisions.canton import Canton
 from src.business_object.subdivisions.departement import Departement
 from src.business_object.Polygones.contour import Contour
-from typing import List, Tuple
 from src.dao.contourdao import ContourDAO
 
 

@@ -1,6 +1,6 @@
+from typing import List, Tuple
 from src.business_object.Polygones.contour import Contour
 from src.dao.connexedao import ConnexeDAO
-from typing import List, Tuple
 from src.dao.db_connection import DBConnection
 
 

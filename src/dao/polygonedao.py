@@ -1,6 +1,6 @@
+from typing import List
 from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
 from src.dao.pointgeographiquedao import PointGeographiqueDAO
-from typing import List
 
 
 class PolygoneDAO:

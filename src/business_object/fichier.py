@@ -1,8 +1,8 @@
 from typing import List, Map
-from src.business_object.pointgeographique import PointGeographique
-from src.business_object.subdivision import Subdivision
 import json
 import csv
+from src.business_object.pointgeographique import PointGeographique
+from src.business_object.subdivision import Subdivision
 
 
 class Fichier:

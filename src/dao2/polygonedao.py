@@ -1,7 +1,7 @@
+from psycopg2.errors import UniqueViolation
 from src.business_object.Polygones.polygoneprimaire import PolygonePrimaire
 from src.dao2.pointgeographiquedao import PointGeographiqueDAO
 from src.dao.db_connection import DBConnection
-from psycopg2.errors import UniqueViolation
 
 
 class PolygoneDAO:
