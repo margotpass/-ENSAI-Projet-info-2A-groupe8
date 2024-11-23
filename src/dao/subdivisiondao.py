@@ -6,15 +6,20 @@ from src.business_object.subdivisions.commune import Commune
 from src.business_object.subdivisions.canton import Canton
 from src.business_object.subdivisions.departement import Departement
 from src.business_object.Polygones.contour import Contour
+from typing import List, Tuple
+from src.dao.contourdao import ContourDAO
 
 
 class SubdivisionDAO:
+    def __init__(self):
+        self.contour_dao = ContourDAO(DBConnection)
+
     def insert_arrondissement(self, arrondissement: Arrondissement):
         geom_type = self.get_geom_type(arrondissement.polygones)
         geom_coordinates = self.get_geom_coordinates(arrondissement.polygones)
 
         query = """
-        INSERT INTO arrondissement (nom_m, nom, insee_arr, insee_dep,
+        INSERT INTO geodata2.arrondissement (nom_m, nom, insee_arr, insee_dep,
         insee_reg, geom_type, geom_coordinates)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
@@ -32,7 +37,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(canton.polygones)
 
         query = """
-        INSERT INTO canton (insee_can, insee_dep, insee_reg, geom_type,
+        INSERT INTO geodata2.canton (insee_can, insee_dep, insee_reg, geom_type,
         geom_coordinates)
         VALUES (%s, %s, %s, %s, %s)
         """
@@ -48,7 +53,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(commune.polygones)
 
         query = """
-        INSERT INTO commune (nom, nom_m, insee_com, statut, population,
+        INSERT INTO geodata2.commune (nom, nom_m, insee_com, statut, population,
         insee_can, insee_arr, insee_dep, insee_reg, siren_epci, geom_type,
         geom_coordinates)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -66,7 +71,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(departement.polygones)
 
         query = """
-        INSERT INTO departement (nom_m, nom, insee_dep, insee_reg, geom_type,
+        INSERT INTO geodata2.departement (nom_m, nom, insee_dep, insee_reg, geom_type,
         geom_coordinates)
         VALUES (%s, %s, %s, %s, %s, %s)
         """
@@ -81,7 +86,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(epci.polygones)
 
         query = """
-        INSERT INTO epci (nom_m, nom, code_siren, insee_dep, insee_reg,
+        INSERT INTO geodata2.epci (nom_m, nom, code_siren
         geom_type, geom_coordinates)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
@@ -97,7 +102,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(region.polygones)
 
         query = """
-        INSERT INTO region (nom_m, nom, insee_reg, geom_type, geom_coordinates)
+        INSERT INTO geodata2.region (nom_m, nom, insee_reg, geom_type, geom_coordinates)
         VALUES (%s, %s, %s, %s, %s)
         """
         with DBConnection().connection as connection:
@@ -112,7 +117,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(arrondissement.polygones)
 
         query = """
-        UPDATE arrondissement
+        UPDATE geodata2.arrondissement
         SET nom_m = %s, nom = %s, insee_dep = %s, insee_reg = %s, geom_type = %s,
         geom_coordinates = %s WHERE insee_arr = %s
         """
@@ -129,7 +134,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(canton.polygones)
 
         query = """
-        UPDATE canton
+        UPDATE geodata2.canton
         SET insee_dep = %s, insee_reg = %s, geom_type = %s, geom_coordinates = %s
         WHERE insee_can = %s
         """
@@ -145,7 +150,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(commune.polygones)
 
         query = """
-        UPDATE commune
+        UPDATE geodata2.commune
         SET nom = %s, nom_m = %s, statut = %s, population = %s, insee_can = %s,
         insee_arr = %s, insee_dep = %s, insee_reg = %s, siren_epci = %s,
         geom_type = %s,
@@ -166,7 +171,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(departement.polygones)
 
         query = """
-        UPDATE departement
+        UPDATE geodata2.departement
         SET nom_m = %s, nom = %s, insee_reg = %s, geom_type = %s,
         geom_coordinates = %s
         WHERE insee_dep = %s
@@ -182,8 +187,8 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(epci.polygones)
 
         query = """
-        UPDATE epci
-        SET nom_m = %s, nom = %s, insee_dep = %s, insee_reg = %s,
+        UPDATE geodata2.epci
+        SET nom_m = %s, nom = %s,
         geom_type = %s,
         geom_coordinates = %s WHERE siren = %s
         """
@@ -199,7 +204,7 @@ class SubdivisionDAO:
         geom_coordinates = self.get_geom_coordinates(region.polygones)
 
         query = """
-        UPDATE region
+        UPDATE geodata2.region
         SET nom_m = %s, nom = %s, geom_type = %s, geom_coordinates = %s
         WHERE insee_reg = %s
         """
@@ -244,7 +249,7 @@ class SubdivisionDAO:
 
     def delete_arrondissement(self, insee_arr):
         query = """
-        DELETE FROM arrondissement
+        DELETE FROM geodata2.arrondissement
         WHERE insee_arr = %s
         """
         with DBConnection().connection as connection:
@@ -253,7 +258,7 @@ class SubdivisionDAO:
 
     def delete_canton(self, insee_can):
         query = """
-        DELETE FROM canton
+        DELETE FROM geodata2.canton
         WHERE insee_can = %s
         """
         with DBConnection().connection as connection:
@@ -262,7 +267,7 @@ class SubdivisionDAO:
 
     def delete_commune(self, insee_com):
         query = """
-        DELETE FROM commune
+        DELETE FROM geodata2.commune
         WHERE insee_com = %s
         """
         with DBConnection().connection as connection:
@@ -271,7 +276,7 @@ class SubdivisionDAO:
 
     def delete_departement(self, insee_dep):
         query = """
-        DELETE FROM departement
+        DELETE FROM geodata2.departement
         WHERE insee_dep = %s
         """
         with DBConnection().connection as connection:
@@ -280,8 +285,8 @@ class SubdivisionDAO:
 
     def delete_epci(self, siren):
         query = """
-        DELETE FROM epci
-        WHERE siren = %s
+        DELETE FROM geodata2.epci
+        WHERE code_siren = %s
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
@@ -289,7 +294,7 @@ class SubdivisionDAO:
 
     def delete_region(self, insee_reg):
         query = """
-        DELETE FROM region
+        DELETE FROM geodata2.region
         WHERE insee_reg = %s
         """
         with DBConnection().connection as connection:
@@ -335,7 +340,7 @@ class SubdivisionDAO:
                     }
                 return None  # Aucun résultat trouvé
 
-    def find_arrondissement_by_insee(self, insee_arr: str, insee_dep:str):
+    def find_arrondissement_by_insee(self, insee_arr: str, insee_dep: str):
         """
         Trouve un arrondissement par son code INSEE.
         """
@@ -346,7 +351,7 @@ class SubdivisionDAO:
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                cursor.execute(query, (insee_arr,insee_dep))
+                cursor.execute(query, (insee_arr, insee_dep))
                 result = cursor.fetchone()
                 if result:  # Vérifie si un résultat est trouvé
                     return {
@@ -368,7 +373,7 @@ class SubdivisionDAO:
         """
         with DBConnection().connection as connection:
             with connection.cursor() as cursor:
-                cursor.execute(query, (insee_can,insee_dep))
+                cursor.execute(query, (insee_can, insee_dep))
                 result = cursor.fetchone()
                 if result:  # Vérifie si un résultat est trouvé
                     return {
@@ -443,3 +448,46 @@ class SubdivisionDAO:
             return self.find_epci_by_siren(code_insee)
         else:
             raise ValueError("Type de subdivision inconnu.")
+
+    def get_all_contours_inf_in_sup(self, type_sup: str, type_inf: str, code_insee_sup: str) -> List[Tuple[Contour, str]]:
+        """
+        Récupère les contours d'une subdivision enfant basée sur son parent.
+
+        Args:
+            type_sup (str): Type de la subdivision parent (ex : "Region").
+            type_inf (str): Type de la subdivision enfant (ex : "Departement").
+            code_insee_sup (str): Code INSEE de la subdivision parent.
+
+        Returns:
+            List[Tuple[Contour, str]]: Liste de tuples contenant le contour et le code INSEE de la subdivision enfant.
+        """
+        # Détermine la colonne de relation parent-enfant
+        relation_column = f"insee_{type_sup[:3].lower()}"  # Extrait 'reg', 'dep', 'arr', etc.
+
+        # Colonne de l'identifiant de l'enfant
+        child_column = f"insee_{type_inf[:3].lower()}"  # Extrait 'reg', 'dep', 'arr', etc.
+
+        # Construction de la requête SQL
+        query = (
+            f"SELECT geom_coordinates, geom_type, {child_column} "
+            f"FROM geodata2.{type_inf.lower()} "
+            f"WHERE {relation_column} = %s"
+        )
+
+        contours = []
+        with DBConnection().connection as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query, (code_insee_sup,))
+                results = cursor.fetchall()
+
+                for result in results:
+                    geom_coordinates = result["geom_coordinates"]
+                    geom_type = result["geom_type"]
+                    code_insee_inf = result[child_column]  # Nom explicite pour refléter le code INSEE enfant
+
+                    # Transformation des coordonnées géométriques en Contour
+                    contour = self.contour_dao.transformer_geom_en_contour(geom_coordinates, geom_type)
+                    # Inclure le code INSEE enfant dans le résultat
+                    contours.append((contour, code_insee_inf))
+
+        return contours

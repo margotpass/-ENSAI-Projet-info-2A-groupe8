@@ -73,6 +73,44 @@ async def localisation_point(type_subdivision: str, lat: float,
                             detail="Point non localisé dans une subdivision.")
 
 
+@app.get("/localiser")
+async def localiser(lat: float, long: float, annee: int = 2024, typecoordonnees: str = "WGS84"):
+    """
+    Localise un point géographique dans une hiérarchie complète :
+    Région → Département → Arrondissement → Commune.
+
+    Args:
+        lat (float): Latitude du point (ou coordonnée X en Lambert93).
+        long (float): Longitude du point (ou coordonnée Y en Lambert93).
+        annee (int): Année pour la localisation (défaut : 2024).
+        typecoordonnees (str): Type de coordonnées (WGS84 ou Lamb93, par défaut WGS84).
+
+    Returns:
+        dict: Informations hiérarchiques sur la localisation (Région, Département, etc.).
+    """
+    # Étape 1 : Conversion des coordonnées si nécessaire
+    if typecoordonnees != "WGS84":
+        if typecoordonnees == "Lamb93":
+            lat, long = PointGeographique(lat, long, typecoordonnees).convertir_type_coordonnees()
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Type de coordonnées inconnu : {typecoordonnees}"
+            )
+
+    # Étape 2 : Création du point géographique
+    point = PointGeographique(latitude=lat, longitude=long, typecoordonnees="WGS84")
+
+    # Étape 3 : Utilisation du service de localisation
+    try:
+        localisation = LocalisationService().localiser_point(point, annee)
+
+        # Étape 4 : Retourner la localisation complète
+        return localisation
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/localisation-liste/")
 async def localisation_liste_points(file: UploadFile = File(...),
                                     type_subdivision: str = "Commune",
