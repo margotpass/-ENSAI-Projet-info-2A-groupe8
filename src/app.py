@@ -5,7 +5,18 @@ from src.business_object.pointgeographique import PointGeographique
 from src.services.localisation_service import LocalisationService
 from src.services.subdivision_service import SubdivisionService
 
-app = FastAPI(title="API de Géolocalisation")
+app = FastAPI(
+    title="API de Géolocalisation - Vous Êtes Ici",
+    description=(
+        "Cette API permet de :\n"
+        "- Localiser un point géographique et identifier la subdivision "
+        "administrative correspondante.\n"
+        "- Charger et traiter des fichiers géographiques (CSV, SHP).\n"
+        "- Extraire des informations sur des subdivisions administratives "
+        "(commune, canton, arrondissement, etc.)."
+    ),
+    version="1.0.O"
+)
 subdivision_service = SubdivisionService()
 
 
