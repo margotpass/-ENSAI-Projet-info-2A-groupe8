@@ -4,11 +4,11 @@
 Source code for the ENSAI project *"Vous êtes ici..."*
 
 ### **Authors**
-- Passard Margot  
 - Courtel Juliette  
 - Guizani Maryem  
 - Kane Mouhamadou Moustapha  
-- Lefrançois Marion  
+- Lefrançois Marion
+- Passard Margot  
 
 **Tutors** : Thierry Mathé  
 
