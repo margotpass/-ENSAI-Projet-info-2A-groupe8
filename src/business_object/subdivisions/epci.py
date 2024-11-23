@@ -30,6 +30,6 @@ class Epci(Subdivision):
         if not isinstance(NATURE, str):
             raise TypeError("La nature de l'EPCI doit être un str")
 
-        super.__init__(ID_E, NOM, ANNEE, Polygons)
+        super().__init__(ID_E, NOM, ANNEE, Polygons)
         self.siren = SIREN
         self.nature = NATURE

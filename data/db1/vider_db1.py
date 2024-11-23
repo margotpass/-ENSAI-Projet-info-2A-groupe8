@@ -1,4 +1,4 @@
-from src.utils.db_connection import DBConnection
+from src.dao.db_connection import DBConnection
 
 # Liste des tables à vider, dans l'ordre des dépendances (les enfants avant
 # les parents)

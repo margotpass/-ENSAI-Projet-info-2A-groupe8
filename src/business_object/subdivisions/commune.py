@@ -57,7 +57,7 @@ class Commune(Subdivision):
         if not isinstance(SIREN_EPCI, str):
             raise TypeError("Le code SIREN doit être un str")
 
-        super.__init__(ID_CO, NOM_M, ANNEE, Polygons)
+        super().__init__(ID_CO, NOM_M, ANNEE, Polygons)
         self.insee_com = INSEE_COM
         self.statut = STATUT
         self.insee_can = INSEE_CAN

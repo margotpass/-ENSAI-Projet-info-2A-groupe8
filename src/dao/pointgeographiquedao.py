@@ -1,5 +1,5 @@
-from src.business_object.pointgeographique import PointGeographique
 from typing import List
+from src.business_object.pointgeographique import PointGeographique
 
 
 class PointGeographiqueDAO:

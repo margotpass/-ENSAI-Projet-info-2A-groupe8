@@ -1,4 +1,4 @@
-from src.utils.db_connection import DBConnection
+from src.dao.db_connection import DBConnection
 
 # Liste des tables dans l'ordre des dépendances pour éviter les erreurs de
 # contrainte

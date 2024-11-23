@@ -7,7 +7,6 @@ from src.business_object.pointgeographique import PointGeographique
 
 
 @pytest.fixture
-
 def subdivision_kwargs():
     point1 = PointGeographique(44.0, 5.0, "WGS84")
     point2 = PointGeographique(44.0, 6.0, "WGS84")
@@ -23,7 +22,7 @@ def subdivision_kwargs():
         annee=2024,
         polygones=contour
     )
-    
+
 
 # Test méthode __init__()
 @pytest.mark.parametrize(

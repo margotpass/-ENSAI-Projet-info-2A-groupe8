@@ -12,12 +12,16 @@ data_commune = {
     "type_coord": "WGS84"
 }
 
+
 @pytest.fixture
 def point_commune():
-    """Fixture pour créer un point géographique à partir des coordonnées de la commune"""
-    latitude, longitude = data_commune["point"][1], data_commune["point"][0]  # On extrait latitude et longitude
+    """Fixture pour créer un point géographique à partir des coordonnées
+    de la commune"""
+    latitude, longitude = data_commune["point"][1], data_commune["point"][0]
+    # On extrait latitude et longitude
     typecoordonnees = data_commune["type_coord"]
     return PointGeographique(latitude, longitude, typecoordonnees)
+
 
 def test_initialisation_point_geographique():
     """Test pour vérifier l'initialisation d'un point géographique"""
@@ -27,8 +31,10 @@ def test_initialisation_point_geographique():
     assert point.longitude == 2.351828
     assert point.typecoordonnees == "WGS84"
 
+
 def test_initialisation_point_geographique_erreur():
-    """Test pour vérifier l'initialisation d'un point géographique avec des valeurs incorrectes"""
+    """Test pour vérifier l'initialisation d'un point géographique
+    avec des valeurs incorrectes"""
     with pytest.raises(TypeError):
         PointGeographique("48.856578", 2.351828, "WGS84")
     with pytest.raises(TypeError):
@@ -36,10 +42,13 @@ def test_initialisation_point_geographique_erreur():
     with pytest.raises(ValueError):
         PointGeographique(48.856578, 2.351828, "XYZ")
 
+
 def test_initialisation_point_geographique_vide():
-    """Test pour vérifier l'initialisation d'un point géographique sans type de coordonnées"""
+    """Test pour vérifier l'initialisation d'un point géographique
+    sans type de coordonnées"""
     point = PointGeographique(48.856578, 2.351828, "")
     assert point.typecoordonnees == ""
+
 
 def test_point_geographique_commune(point_commune):
     """Test pour vérifier l'initialisation d'un point géographique"""
@@ -48,9 +57,11 @@ def test_point_geographique_commune(point_commune):
     assert point_commune.longitude == -3.5993130297423552
     assert point_commune.typecoordonnees == "WGS84"
 
+
 def test_conversion_lamb93_to_wgs84():
     """Test pour vérifier la conversion des coordonnées Lambert 93 à WGS84"""
-    point_lamb93 = PointGeographique(6863000, 651000, "Lamb93") # Longitude en premier, puis latitude
+    point_lamb93 = PointGeographique(6863000, 651000, "Lamb93")
+    # Longitude en premier, puis latitude
     print(f"Coordonnées avant conversion: Latitude = {point_lamb93.latitude}, Longitude = {point_lamb93.longitude}")
 
     # Appel de la conversion
@@ -62,4 +73,3 @@ def test_conversion_lamb93_to_wgs84():
     print(f"Latitude obtenue: {point_lamb93.latitude}, Longitude obtenue: {point_lamb93.longitude}")
     assert abs(point_lamb93.latitude - expected_lat) < 1e-5, f"Erreur dans la latitude: {point_lamb93.latitude}"
     assert abs(point_lamb93.longitude - expected_long) < 1e-5, f"Erreur dans la longitude: {point_lamb93.longitude}"
-

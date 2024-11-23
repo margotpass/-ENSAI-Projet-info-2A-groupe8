@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from src.services.fichier_service import FichierService
 from src.business_object.pointgeographique import PointGeographique
 
+
 @pytest.fixture
 def fichier_service():
     """Fixture pour initialiser l'objet FichierService avec des mocks."""
@@ -17,7 +18,7 @@ def test_creer_points_a_partir_de_coordonnees(fichier_service):
     points = fichier_service.creer_points_a_partir_de_coordonnees(
         liste_coordonnees
     )
-    
+
     assert len(points) == 2
     assert isinstance(points[0], PointGeographique)
     assert points[0].latitude == 48.856578

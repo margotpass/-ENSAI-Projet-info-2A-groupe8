@@ -6,7 +6,7 @@ from src.business_object.Polygones.connexe import Connexe
 
 @pytest.fixture
 def polygones_connexes():
-    """Fixture pour créer un ensemble de polygones connexes avec des polygones 
+    """Fixture pour créer un ensemble de polygones connexes avec des polygones
     primaires pour les tests"""
     point1 = PointGeographique(48.858844, 2.294351, "WGS84")
     point2 = PointGeographique(51.507351, -0.127758, "WGS84")
@@ -53,7 +53,8 @@ def test_initialisation_connexe_avec_polygones_invalides():
 
 
 def test_str_connexe_avec_polygones(polygones_connexes):
-    """Test pour vérifier la méthode __str__ d'une liste connexe avec des polygones primaires"""
+    """Test pour vérifier la méthode __str__ d'une liste connexe
+    avec des polygones primaires"""
     point1 = PointGeographique(48.858844, 2.294351, "WGS84")
     point2 = PointGeographique(51.507351, -0.127758, "WGS84")
     polygone1 = PolygonePrimaire([point1, point2])
@@ -83,6 +84,7 @@ def test_ajout_polygone_dans_connexe(polygones_connexes):
     assert len(polygones_connexes.get_connexe()) == 3
     assert polygones_connexes.get_connexe()[-1] == nouveau_polygone
 
+
 def test_ajout_polygone_invalide():
     """Test pour vérifier qu'un polygone non valide génère une erreur"""
     connexe = Connexe()
@@ -102,6 +104,7 @@ def test_ajout_polygone_vers_connexe_vide():
 
 
 def test_get_connexe(polygones_connexes):
-    """Test pour vérifier que get_connexe retourne la liste actuelle 
+    """Test pour vérifier que get_connexe retourne la liste actuelle
     des polygones"""
-    assert polygones_connexes.get_connexe() == [polygones_connexes.get_connexe()[0], polygones_connexes.get_connexe()[1]]
+    assert polygones_connexes.get_connexe() == [polygones_connexes.get_connexe(
+    )[0], polygones_connexes.get_connexe()[1]]

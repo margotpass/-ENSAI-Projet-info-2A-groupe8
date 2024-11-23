@@ -1,6 +1,6 @@
+from typing import List
 from src.business_object.Polygones.connexe import Connexe
 from src.dao.polygonedao import PolygoneDAO
-from typing import List
 
 
 class ConnexeDAO:

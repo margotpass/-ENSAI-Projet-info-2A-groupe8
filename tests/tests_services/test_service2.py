@@ -1,12 +1,12 @@
-import pytest
 from unittest.mock import MagicMock, patch
+import pytest
 from src.business_object.pointgeographique import PointGeographique
 from src.services.localisation_service import LocalisationService
 
 
 @pytest.fixture
 def localisation_service():
-    # Crée une instance de LocalisationService avec des DAO simulés
+    """Crée une instance de LocalisationService avec des DAO simulés"""
     service = LocalisationService()
     service.subdivision_dao = MagicMock()
     service.contour_dao = MagicMock()
@@ -15,11 +15,13 @@ def localisation_service():
 
 @pytest.fixture
 def point_dans_contour():
+    """ un point qui appartient au contour"""
     return PointGeographique(5, 5, None)
 
 
 @pytest.fixture
 def point_hors_contour():
+    """ un point qui est hors contour"""
     return PointGeographique(50, 50, None)
 
 
@@ -90,7 +92,8 @@ def test_point_hors_subdivision(localisation_service, point_hors_contour,
 
 
 def test_type_subdivision_invalide(localisation_service, point_dans_contour):
-    # Simule le retour d'une liste vide pour un type de subdivision invalide
+    """Simule le retour d'une liste vide pour un type de subdivision
+    invalide"""
     localisation_service.contour_dao.get_all_contours.return_value = []
 
     # Exécute la méthode avec un type de subdivision invalide
