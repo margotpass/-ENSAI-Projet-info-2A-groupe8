@@ -11,12 +11,14 @@ def polygone():
     point2 = PointGeographique(51.507351, -0.127758, "WGS84")
     return PolygonePrimaire([point1, point2])
 
+
 # Tests de la fonction __init__ de la classe PolygonePrimaire
 def test_initialisation_polygone_vide():
     """Test pour vérifier l'initialisation d'un polygone vide"""
     polygone_vide = PolygonePrimaire()
     assert isinstance(polygone_vide, PolygonePrimaire)
     assert len(polygone_vide.get_polygoneprimaire()) == 0
+
 
 def test_initialisation_polygone_avec_points():
     """Test pour vérifier l'initialisation d'un polygone avec des points"""
@@ -29,6 +31,7 @@ def test_initialisation_polygone_avec_points():
     assert isinstance(polygone.get_polygoneprimaire()[0], PointGeographique)
     assert isinstance(polygone.get_polygoneprimaire()[1], PointGeographique)
 
+
 def test_initialisation_polygone_avec_point_invalide():
     """Test pour vérifier qu'un polygone ne peut pas être initialisé avec un point invalide."""
     class PointInvalide:
@@ -37,6 +40,7 @@ def test_initialisation_polygone_avec_point_invalide():
 
     with pytest.raises(TypeError, match="Tous les points doivent être des instances de PointGeographique"):
         PolygonePrimaire([PointInvalide()])  # Essaye d'initialiser avec un point invalide
+
 
 # Tests de la fonction __str__ de la classe PolygonePrimaire
 def test_str_polygone_avec_points():
@@ -53,6 +57,7 @@ def test_str_polygone_avec_points():
     )
     assert str(polygone) == expected_str, f"La représentation en chaîne du polygone devrait être '{expected_str}'"
 
+
 # Tests de la fonction ajouter_point de la classe PolygonePrimaire
 def test_ajout_point_dans_polygone(polygone):
     """Test pour vérifier l'ajout d'un point géographique dans le polygone"""
@@ -61,11 +66,13 @@ def test_ajout_point_dans_polygone(polygone):
     assert len(polygone.get_polygoneprimaire()) == 3
     assert polygone.get_polygoneprimaire()[-1].latitude == 45.7640
 
+
 def test_ajout_point_invalide():
     """Test pour vérifier qu'un point non valide génère une erreur"""
     polygone = PolygonePrimaire()
     with pytest.raises(TypeError, match="L'objet ajouté doit être une instance de PointGeographique"):
         polygone.ajouter_point("non_point")
+
 
 # Tests de la fonction get_polygoneprimaire de la classe PolygonePrimaire
 def test_get_polygoneprimaire():
