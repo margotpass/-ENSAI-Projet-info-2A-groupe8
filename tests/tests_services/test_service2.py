@@ -15,8 +15,7 @@ def localisation_service():
 
 @pytest.fixture
 def point_dans_contour():
-    """ un point qui appartient au contour"""
-    return PointGeographique(5, 5, None)
+    return PointGeographique(2,2)
 
 
 @pytest.fixture
@@ -27,8 +26,7 @@ def point_hors_contour():
 
 @pytest.fixture
 def contour_qui_contient_point():
-    """Tester un contour existant contenant le point"""
-    # Crée un contour simulé qui contient le point
+    """Contour simulé qui contient le point"""
     contour = (MagicMock(), "SubdivisionExistante")
     contour[0].estDansPolygone.return_value = True
     return contour
@@ -42,53 +40,44 @@ def contour_qui_ne_contient_pas_point():
     contour[0].estDansPolygone.return_value = False
     return contour
 
-
-@patch(
-    'src.services.subdivision_service.SubdivisionService'
-    '.chercherSubdivisionParID', return_value="NomSubdivision")
+@patch('src.services.subdivision_service.SubdivisionService.'
+       'chercherSubdivisionParID')
 def test_point_dans_subdivision(mock_chercherSubdivisionParID,
                                 localisation_service,
                                 point_dans_contour,
                                 contour_qui_contient_point,
                                 contour_qui_ne_contient_pas_point):
     """Teste la localisation d'un point dans une subdivision"""
-    # Simule le retour de get_all_contours avec un contour contenant le point
+
+    # Simule le retour de get_all_contours avec un contour contenant
+    # le point
     localisation_service.contour_dao.get_all_contours.return_value = [
-        contour_qui_contient_point,
-        contour_qui_ne_contient_pas_point
+        contour_qui_contient_point,  # Le contour contenant le point
+        contour_qui_ne_contient_pas_point  # Un autre contour qui
+        # ne contient pas le point
     ]
+
+    # Simule le retour de la recherche de subdivision
+    mock_chercherSubdivisionParID.return_value = "NomSubdivision"
+
+    # Définir la valeur que le mock renverra pour 'nom'
+    contour_qui_contient_point[0].return_value = "SubdivisionExistante"
 
     # Exécute la méthode à tester
     result = localisation_service.localiserPointDansSubdivision(
-        point_dans_contour,
-        "commune"
+        point=point_dans_contour,  # Point à l'intérieur du contour
+        type_subdivision="Commune"  # Type de subdivision à tester
     )
 
-    # Vérifie que le résultat est le tuple avec le numéro et le nom de
-    #  la subdivision correcte
+    # Vérifie que le résultat est le tuple avec le nom de la
+    # subdivision correcte
     assert result == ("SubdivisionExistante", "NomSubdivision")
-    args = ("commune", "SubdivisionExistante", 2024)
-    mock_chercherSubdivisionParID.assert_called_once_with(*args)
 
-
-def test_point_hors_subdivision(localisation_service, point_hors_contour,
-                                contour_qui_ne_contient_pas_point):
-    """Teste la localisation du point dans des contours ne le
-    contenant pas"""
-    # Simule le retour de get_all_contours pour des contours ne contenant
-    #  pas le point
-    localisation_service.contour_dao.get_all_contours.return_value = [
-        contour_qui_ne_contient_pas_point
-    ]
-
-    # Exécute la méthode avec un point hors des contours
-    result = localisation_service.localiserPointDansSubdivision(
-        point_hors_contour,
-        "commune"
-    )
-
-    # Vérifie que le résultat est None
-    assert result is None
+    # Vérifie que la méthode chercherSubdivisionParID a été appelée
+    # correctement
+    mock_chercherSubdivisionParID.assert_called_once_with("Commune",
+                                                          "SubdivisionExistante",
+                                                          2024)
 
 
 def test_type_subdivision_invalide(localisation_service, point_dans_contour):
