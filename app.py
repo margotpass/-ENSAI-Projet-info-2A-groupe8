@@ -18,106 +18,99 @@ async def rechercher_information(type_subdivision: str, id: str, annee: int = 20
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@app.get("/localisation/{type_subdivision}")
-async def localisation_point(type_subdivision: str, lat: float,
-                             long: float, annee: int = 2024,
-                             typecoordonnees: str = "WGS84"):
+@app.get("/localisation")
+async def localisation_point(
+    type_subdivision: str, 
+    lat: float, 
+    long: float, 
+    annee: int = 2024, 
+    typecoordonnees: str = "WGS84"
+):
     """
-    Localise un point géographique (latitude, longitude) dans un niveau
-    spécifié pour une année donnée.
-    """
-    # Convertir les coordonnées si besoin
-    if typecoordonnees != "WGS84":
-        if typecoordonnees == "Lamb93":
-            lat, long = PointGeographique(lat, long, typecoordonnees).convertir_type_coordonnees()
-            typecoordonnees = "WGS84"  # Mise à jour du type après conversion
-        else:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Type de coordonnées inconnu : {typecoordonnees}"
-            )
-    # Créer un objet PointGeographique pour représenter les coordonnées
-    point = PointGeographique(latitude=lat, longitude=long,
-                              typecoordonnees=typecoordonnees)
-
-    # Utiliser le service pour localiser la subdivision contenant ce point
-    subdivision = LocalisationService().localiserPointDansSubdivision(
-     point,
-     type_subdivision,
-     annee
-    )
-    if type_subdivision in ["Commune", "Departement", "Region", "EPCI"]:
-        if subdivision:
-            result = {
-                "code_insee": subdivision[0],
-                "niveau": type_subdivision,
-                "nom": subdivision[1].get("nom"),
-                "annee": annee,
-                "coordonnees": {"latitude": lat, "longitude": long}
-            }
-            return result
-    elif type_subdivision in ["Arrondissement", "Canton"]:
-        if subdivision:
-            result = {
-                "code_insee": subdivision[0],
-                "insee_dep": subdivision[2],
-                "niveau": type_subdivision,
-                "nom": subdivision[1].get("nom"),
-                "annee": annee,
-                "coordonnees": {"latitude": lat, "longitude": long}
-            }
-            return result
-
-    else:
-        raise HTTPException(status_code=404,
-                            detail="Point non localisé dans une subdivision.")
-
-
-@app.get("/localiser")
-async def localiser(lat: float, long: float, annee: int = 2024, typecoordonnees: str = "WGS84"):
-    """
-    Localise un point géographique dans une hiérarchie complète :
-    Région → Département → Arrondissement → Commune.
+    Localise un point géographique (latitude, longitude) dans un niveau spécifié 
+    (Région, Département, Arrondissement, ou Commune) pour une année donnée.
 
     Args:
-        lat (float): Latitude du point (ou coordonnée X en Lambert93).
-        long (float): Longitude du point (ou coordonnée Y en Lambert93).
+        type_subdivision (str): Type de subdivision (Region, Departement, Arrondissement, Commune).
+        lat (float): Latitude du point.
+        long (float): Longitude du point.
         annee (int): Année pour la localisation (défaut : 2024).
         typecoordonnees (str): Type de coordonnées (WGS84 ou Lamb93, par défaut WGS84).
 
     Returns:
-        dict: Informations hiérarchiques sur la localisation (Région, Département, etc.).
+        dict: Informations de localisation pour la subdivision spécifiée.
     """
-    # Étape 1 : Conversion des coordonnées si nécessaire
+    # Conversion des coordonnées si nécessaire
     if typecoordonnees != "WGS84":
         if typecoordonnees == "Lamb93":
             lat, long = PointGeographique(lat, long, typecoordonnees).convertir_type_coordonnees()
+            typecoordonnees = "WGS84"  # Mise à jour après conversion
         else:
             raise HTTPException(
                 status_code=400,
                 detail=f"Type de coordonnées inconnu : {typecoordonnees}"
             )
 
-    # Étape 2 : Création du point géographique
-    point = PointGeographique(latitude=lat, longitude=long, typecoordonnees="WGS84")
+    # Création du point géographique
+    point = PointGeographique(latitude=lat, longitude=long, typecoordonnees=typecoordonnees)
 
-    # Étape 3 : Utilisation du service de localisation
+    # Choisir la méthode de localisation en fonction du type de subdivision
     try:
-        localisation = LocalisationService().localiser_point(point, annee)
+        service = LocalisationService()
 
-        # Étape 4 : Retourner la localisation complète
-        return localisation
+        if type_subdivision in ["Region", "Departement", "Arrondissement"]:
+            # Localisation spécifique à une subdivision
+            subdivision = service.localiserPointDansSubdivision(point, type_subdivision, annee)
+            if not subdivision:
+                raise HTTPException(status_code=404, detail="Subdivision introuvable pour le point spécifié.")
+
+            # Construction de la réponse pour les subdivisions
+            result = {
+                "code_insee": subdivision[0],
+                "niveau": type_subdivision,
+                "nom": subdivision[1].get("nom") if subdivision[1] else None,
+                "annee": annee,
+                "coordonnees": {"latitude": lat, "longitude": long}
+            }
+
+            # Ajout du code département pour les arrondissements
+            if type_subdivision == "Arrondissement":
+                result["insee_dep"] = subdivision[2]
+
+            return result
+
+        elif type_subdivision == "Commune":
+            # Localisation hiérarchique complète pour les communes
+            localisation = service.localiser_point(point, annee)
+            return localisation
+
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Type de subdivision inconnu : {type_subdivision}"
+            )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/localisation-liste/")
-async def localisation_liste_points(file: UploadFile = File(...),
-                                    type_subdivision: str = "Commune",
-                                    annee: int = 2024):
+async def localisation_liste_points(
+    file: UploadFile = File(...),
+    type_subdivision: str = "Commune",
+    annee: int = 2024
+):
     """
     Localise un ensemble de points fournis dans un fichier CSV pour un niveau
     géographique spécifié et une année donnée.
+
+    Args:
+        file (UploadFile): Fichier CSV contenant les points.
+        type_subdivision (str): Type de subdivision ("Region", "Departement", "Arrondissement", "Commune").
+        annee (int): Année pour la localisation (par défaut 2024).
+
+    Returns:
+        FileResponse: Fichier CSV avec les résultats de la localisation.
     """
     # Vérifier le format du fichier
     if not file.filename.endswith(".csv"):
@@ -134,24 +127,44 @@ async def localisation_liste_points(file: UploadFile = File(...),
     with open("input.csv", mode="r") as csvfile, open(file_path, mode="w", newline="") as csv_output:
         reader = csv.DictReader(csvfile)
         writer = csv.writer(csv_output)
-        writer.writerow(["Latitude", "Longitude", "Code INSEE", "niveau","Nom", "Annee"])  # En-têtes du fichier
+        writer.writerow(["Latitude", "Longitude", "Code INSEE", "Niveau", "Nom", "Annee"])  # En-têtes du fichier
+
+        service = LocalisationService()
 
         for row in reader:
             lat = float(row["latitude"])
             long = float(row["longitude"])
             point = PointGeographique(latitude=lat, longitude=long)
 
-            # Utiliser le service pour localiser chaque point dans la subdivision demandée
-            subdivision = LocalisationService().localiserPointDansSubdivision(point, type_subdivision, annee)
+            if type_subdivision in ["Region", "Departement", "Arrondissement"]:
+                # Utiliser la méthode `localiserPointDansSubdivision`
+                subdivision = service.localiserPointDansSubdivision(point, type_subdivision, annee)
 
-            if subdivision:
-                code_subdivision = subdivision[0]
-                niveau = type_subdivision
-                nom_subdivision = subdivision[1]["nom"]
-                writer.writerow([lat, long, code_subdivision, niveau, nom_subdivision, annee])
+                if subdivision:
+                    code_subdivision = subdivision[0]
+                    niveau = type_subdivision
+                    nom_subdivision = subdivision[1]["nom"] if subdivision[1] else "Nom indisponible"
+                    writer.writerow([lat, long, code_subdivision, niveau, nom_subdivision, annee])
+                else:
+                    writer.writerow([lat, long, "Non localisé", type_subdivision, "", annee])
+
+            elif type_subdivision == "Commune":
+                # Utiliser la méthode `localiser_point` pour gérer la hiérarchie complète et extraire la commune
+                localisation = service.localiser_point(point, annee)
+
+                if "Commune" in localisation and localisation["Commune"]:
+                    commune_data = localisation["Commune"]
+                    writer.writerow([lat, long, commune_data["code"], "Commune", commune_data["nom"], annee])
+                else:
+                    writer.writerow([lat, long, "Non localisé", "Commune", "", annee])
+
             else:
-                writer.writerow([lat, long, "Non localisé", "", annee])
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Type de subdivision inconnu : {type_subdivision}"
+                )
 
+    # Retourner le fichier CSV avec les résultats
     return FileResponse(path=file_path, filename="localisation_resultats.csv", media_type="text/csv")
 
 
