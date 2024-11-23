@@ -8,7 +8,8 @@ def test_trouver_code_succes():
 
     # GIVEN
     type_subdivision, id, annee = "Departement", "53", 2024
-    nom = "MAYENNE"
+    nom = "Mayenne"
+    insee_dep = None
     SubdivisionDAO().find_by_code_insee = MagicMock(return_value=True)
 
     # WHEN
@@ -16,8 +17,9 @@ def test_trouver_code_succes():
         SubdivisionService().chercherSubdivisionParID(
             type_subdivision,
             id,
-            annee)
+            annee,
+            insee_dep)
     )
 
     # THEN
-    assert subd == nom
+    assert subd["nom"] == nom

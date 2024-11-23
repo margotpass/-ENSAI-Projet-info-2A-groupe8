@@ -31,5 +31,14 @@ fastapi : FastAPI is a modern web framework for building APIs with high performa
 uvicorn : Uvicorn is a lightning-fast ASGI server implementation.
 python-multipart : handles encoding/decoding of multipart/form-data for HTTP requests.
 
-Run
+Run :
+
+First option :
+
+python src/app.py
+
+127.0.0.1:8000/docs (in your browser)
+
+
+Second option :
 python src/__main__.py
