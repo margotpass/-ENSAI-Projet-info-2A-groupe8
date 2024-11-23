@@ -6,7 +6,8 @@ Authors : Passard Margot, Courtel Juliette, Guizani Maryem, Kane Mouhamadou Mous
 
 Tutors : Thierry Mathé
 
-Goals
+Goals:
+
 This application allows you to obtain information about a subdivision or locate a geographic point, only for France.
 
 Service 1: Retrieve a subdivision based on a code
