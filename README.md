@@ -1,22 +1,39 @@
-# -ENSAI-Projet-info-2A-groupe8
+# **ENSAI - Projet Info 2A - Groupe 8**
 
-Source code for the ENSAI project "Vous êtes ici..."
+### **Source Code**
+Source code for the ENSAI project *"Vous êtes ici..."*
 
-Authors : Passard Margot, Courtel Juliette, Guizani Maryem, Kane Mouhamadou Moustapha, Lefrançois Marion
+### **Authors**
+- Passard Margot  
+- Courtel Juliette  
+- Guizani Maryem  
+- Kane Mouhamadou Moustapha  
+- Lefrançois Marion  
 
-Tutors : Thierry Mathé
+**Tutors** : Thierry Mathé  
 
-Goals:
+---
 
-This application allows you to obtain information about a subdivision or locate a geographic point, only for France.
+### **Goals**
+This application allows you to:
+1. Obtain information about a subdivision.
+2. Locate a geographic point.  
+*(Note: The application is limited to France.)*
 
-Service 1: Retrieve a subdivision based on a code
-Service 2: Retrieve a subdivision based on a geographic point
-Service 3: Retrieve a file containing the subdivision of a list of geographic points
+#### **Services:**
+- **Service 1**: Retrieve a subdivision based on a code.  
+- **Service 2**: Retrieve a subdivision based on a geographic point.  
+- **Service 3**: Retrieve a file containing the subdivision of a list of geographic points.  
 
-Install
-Install the required packages with the following bash commands :
-pip install -r requirements.txt     # install all packages listed in the file
+---
+
+### **Install**
+Install the required packages with the following bash commands:
+
+```bash
+pip install -r requirements.txt     # Install all packages listed in the file
+pip list                            # List all installed packages
+
 
 pip list                            # to list all installed packages
 inquirerPy: Creates interactive command-line interfaces (e.g., prompts and surveys).
