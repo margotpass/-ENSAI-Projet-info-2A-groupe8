@@ -33,31 +33,39 @@ Install the required packages with the following bash commands:
 ```bash
 pip install -r requirements.txt     # Install all packages listed in the file
 pip list                            # List all installed packages
+```
 
+# Project Documentation
 
-pip list                            # to list all installed packages
-inquirerPy: Creates interactive command-line interfaces (e.g., prompts and surveys).
-pyproj: Performs cartographic projections and geodetic transformations.
-typing: Provides type hints and annotations for Python code.
-dotenv: Loads environment variables from a .env file.
-psycopg2: Connects and interacts with PostgreSQL databases.
-psycopg2.extras: Adds advanced features to psycopg2, like support for composite types or query builders.
-fiona: Reads and writes spatial data files like shapefiles.
-unittest.mock: Mocks objects for testing Python code.
-csv: Reads and writes CSV (comma-separated values) files.
-pytest : powerful testing framework for Python.
-fastapi : FastAPI is a modern web framework for building APIs with high performance.
-uvicorn : Uvicorn is a lightning-fast ASGI server implementation.
-python-multipart : handles encoding/decoding of multipart/form-data for HTTP requests.
+## Libraries Used:
 
-Run :
+- **inquirerPy**: Creates interactive command-line interfaces (e.g., prompts and surveys).
+- **pyproj**: Performs cartographic projections and geodetic transformations.
+- **typing**: Provides type hints and annotations for Python code.
+- **dotenv**: Loads environment variables from a `.env` file.
+- **psycopg2**: Connects and interacts with PostgreSQL databases.
+- **psycopg2.extras**: Adds advanced features to `psycopg2`, like support for composite types or query builders.
+- **fiona**: Reads and writes spatial data files like shapefiles.
+- **unittest.mock**: Mocks objects for testing Python code.
+- **csv**: Reads and writes CSV (comma-separated values) files.
+- **pytest**: A powerful testing framework for Python.
+- **fastapi**: FastAPI is a modern web framework for building APIs with high performance.
+- **uvicorn**: Uvicorn is a lightning-fast ASGI server implementation.
+- **python-multipart**: Handles encoding/decoding of multipart/form-data for HTTP requests.
 
-First option :
+## Run:
 
+### First option:
+To run the application, use the following command:
+
+```bash
 python src/app.py
+```
 
-127.0.0.1:8000/docs (in your browser)
+Then, visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) in your browser.
 
 
-Second option :
+### Second option:
+Alternatively, you can run the application using this command:
+```bash
 python src/__main__.py
