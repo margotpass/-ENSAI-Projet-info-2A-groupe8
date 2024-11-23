@@ -10,7 +10,7 @@ Source code for the ENSAI project *"Vous êtes ici..."*
 - Lefrançois Marion
 - Passard Margot  
 
-**Tutors** : Thierry Mathé  
+**Tutor** : Thierry Mathé  
 
 ---
 
