@@ -68,9 +68,13 @@ class LocalisationService:
         # Si aucun contour ne contient le point, retourner None
         return None
 
-    def localiser_point_dans_contours(self, point: PointGeographique, type_sup: str, type_inf: str, code_insee_sup: str) -> dict:
+    def localiser_point_dans_contours(self, point: PointGeographique,
+                                      type_sup: str,
+                                      type_inf: str,
+                                      code_insee_sup: str) -> dict:
         """
-        Localise un point dans une subdivision enfant en vérifiant les contours.
+        Localise un point dans une subdivision enfant en vérifiant les
+        contours.
 
         Args:
             point (PointGeographique): Point à localiser.
@@ -79,7 +83,8 @@ class LocalisationService:
             code_insee_sup (str): Code INSEE de la subdivision parent.
 
         Returns:
-            dict: Un dictionnaire contenant le code et le nom de la subdivision enfant trouvée.
+            dict: Un dictionnaire contenant le code et le nom de la
+            subdivision enfant trouvée.
         """
         # Récupère tous les contours enfants dans le parent donné
         contours = self.subdivision_dao.get_all_contours_inf_in_sup(
@@ -88,14 +93,27 @@ class LocalisationService:
 
         # Parcourt chaque contour et vérifie si le point y est inclus
         for contour, code_insee_inf in contours:
-            if contour.estDansPolygone(point):  # Vérifie si le point est dans le contour
+            # Vérifie si le point est dans le contour
+            if contour.estDansPolygone(point):
                 if type_inf == "Arrondissement":
-                    subdivision = self.subdivision_dao.find_by_code_insee(type_inf, code_insee_inf, code_insee_sup)
+                    subdivision = (
+                        self.subdivision_dao.find_by_code_insee(
+                            type_inf,
+                            code_insee_inf,
+                            code_insee_sup)
+                    )
                 else:
-                    subdivision = self.subdivision_dao.find_by_code_insee(type_inf, code_insee_inf)
-                
+                    subdivision = (
+                        self.subdivision_dao.find_by_code_insee(
+                            type_inf,
+                            code_insee_inf)
+                        )
+
                 if not subdivision:  # Si aucune subdivision n'est trouvée
-                    print(f"Subdivision introuvable pour {type_inf} avec code INSEE {code_insee_inf}")
+                    print(
+                        f"Subdivision introuvable pour {type_inf}\n"
+                        f" avec code INSEE {code_insee_inf}"
+                    )
                     return None
                 # Récupère le nom de la subdivision, ou un message par défaut
                 nom_subdivision = subdivision.get("nom", "Nom indisponible")
@@ -105,12 +123,12 @@ class LocalisationService:
         print(f"Aucun contour trouvé contenant le point {point}")
         return None
 
-  
-
-
-    def localiser_point(self, point: PointGeographique, annee: int = 2024) -> dict:
+    def localiser_point(self,
+                        point: PointGeographique,
+                        annee: int = 2024) -> dict:
         """
-        Localise un point géographique à travers les subdivisions hiérarchiques :
+        Localise un point géographique à travers les subdivisions
+        hiérarchiques :
         Région → Département → Arrondissement → Commune.
 
         Args:
@@ -118,33 +136,79 @@ class LocalisationService:
             annee (int): Année de la localisation. Par défaut 2024.
 
         Returns:
-            dict: Localisation complète avec Région, Département, Arrondissement et Commune.
+            dict: Localisation complète avec Région, Département,
+                  Arrondissement et Commune.
         """
         # Initialisation de la localisation
-        localisation = {"Region": None, "Departement": None, "Arrondissement": None, "Commune": None}
+        localisation = {
+            "Region": None,
+            "Departement": None,
+            "Arrondissement": None,
+            "Commune": None
+        }
 
         # Étape 1 : Localiser la région
-        localisation_region = self.localiserPointDansSubdivision(point, "Region", annee)
+        localisation_region = (
+            self.localiserPointDansSubdivision(
+                point,
+                "Region",
+                annee)
+        )
         if localisation_region:
-            code_region, nom_region = localisation_region[0], localisation_region[1]
-            localisation["Region"] = {"code": code_region, "nom": nom_region}
+            code_region = localisation_region[0]
+            nom_region = localisation_region[1]
+            localisation["Region"] = {
+                "insee_reg": code_region,
+                "nom": nom_region
+            }
 
             # Étape 2 : Localiser le département
-            localisation_dep = self.localiser_point_dans_contours(point, "Region", "Departement", code_region)
+            localisation_dep = (
+                self.localiser_point_dans_contours(
+                    point,
+                    "Region",
+                    "Departement",
+                    code_region)
+                )
             if localisation_dep:
-                code_dep, nom_dep = localisation_dep["code"], localisation_dep["nom"]
-                localisation["Departement"] = {"code": code_dep, "nom": nom_dep}
+                code_dep = localisation_dep["code"]
+                nom_dep = localisation_dep["nom"]
+                localisation["Departement"] = {
+                    "insee_dep": code_dep,
+                    "nom": nom_dep
+                }
 
                 # Étape 3 : Localiser l'arrondissement
-                localisation_arr = self.localiser_point_dans_contours(point, "Departement", "Arrondissement", code_dep)
+                localisation_arr = (
+                    self.localiser_point_dans_contours(
+                        point,
+                        "Departement",
+                        "Arrondissement",
+                        code_dep)
+                )
                 if localisation_arr:
-                    code_arr, nom_arr = localisation_arr["code"], localisation_arr["nom"]
-                    localisation["Arrondissement"] = {"code": code_arr, "nom": nom_arr}
+                    code_arr = localisation_arr["code"]
+                    nom_arr = localisation_arr["nom"]
+                    localisation["Arrondissement"] = {
+                        "insee_arr": code_arr,
+                        "nom": nom_arr
+                        }
 
                     # Étape 4 : Localiser la commune
-                    localisation_com = self.localiser_point_dans_contours(point, "Arrondissement", "Commune", code_arr)
+                    localisation_com = (
+
+                        self.localiser_point_dans_contours(
+                            point,
+                            "Arrondissement",
+                            "Commune",
+                            code_arr
+                        )
+                    )
                     if localisation_com:
-                        code_com, nom_com = localisation_com["code"], localisation_com["nom"]
-                        localisation["Commune"] = {"code": code_com, "nom": nom_com}
+                        code_com = localisation_com["code"]
+                        nom_com = localisation_com["nom"]
+                        localisation["Commune"] = {
+                            "insee_com": code_com,
+                            "nom": nom_com}
 
         return localisation

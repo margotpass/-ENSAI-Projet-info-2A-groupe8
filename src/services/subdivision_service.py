@@ -55,7 +55,9 @@ class SubdivisionService(metaclass=Singleton):
 
         # Gestion des cas où la subdivision n'est pas trouvée
         if not subdivision:
-            raise ValueError(f"Aucune subdivision trouvée pour le type {type_subdivision}, ID {id}, et code INSEE '{code_insee}'.")
+            raise ValueError(
+                f"Aucune subdivision trouvée pour le type {type_subdivision}, "
+                f"ID {id}, et code INSEE '{code_insee}'.")
 
         return subdivision
 
@@ -63,6 +65,18 @@ class SubdivisionService(metaclass=Singleton):
         """
         Retourne le zonage d'une subdivision, avec ses subdivisions
         supérieures complètes.
+
+        Args
+        ----
+            type_subdivision(str): le type de la subdivision
+            id(str): l'identifiant de la subdivision
+            annee(int) : l'annee que l'on veut, défaut 2024
+            dep: code insee du département, vide si type division différent
+            de Arrondissement
+
+        Returns
+        -------
+            dict: zonage associé à une subdivision
         """
         subdivision = self.chercherSubdivisionParID(type_subdivision, id,
                                                     annee)

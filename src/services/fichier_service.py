@@ -25,7 +25,14 @@ class FichierService:
         self, liste_coordonnees
     ) -> List[PointGeographique]:
         """Transforme une liste de tuples (latitude, longitude, coordonnées)
-        en une liste d'objets PointGeographique."""
+        en une liste d'objets PointGeographique.
+
+        Args:
+            liste_coordonnees(list)
+
+        Returns:
+            list: Liste d'objets d'instance PointGeographique
+        """
         liste_coordonnees2 = eval(liste_coordonnees)
         points = []
 
@@ -50,8 +57,10 @@ class FichierService:
         liste = self.creer_points_a_partir_de_coordonnees(liste_points)
 
         for point in liste:
-            subdivision = self.localisation_service.localiserPointDansSubdivision(
-                point, type_subdivision
+            subdivision = (
+                self.localisation_service.localiserPointDansSubdivision(
+                    point, type_subdivision
+                    )
             )
             if subdivision is not None:
                 subdivision = subdivision[1]
@@ -83,7 +92,11 @@ class FichierService:
         liste = self.creer_points_a_partir_de_coordonnees(liste_points)
 
         # Ouvre le fichier CSV avec l'encodage 'utf-8'
-        with open('reponse.csv', mode='w', newline='', encoding='utf-8') as file:
+        with open(
+            'reponse.csv',
+             mode='w',
+             newline='',
+             encoding='utf-8') as file:
             writer = csv.writer(file)
 
             # En-tête avec plus d'explications
@@ -92,7 +105,8 @@ class FichierService:
                  "Subdivision"]
             )
 
-            assert len(liste) == len(liste_reponse), "Mismatch between points and subdivisions"
+            condition = len(liste) == len(liste_reponse)
+            assert condition, "Mismatch between points and subdivisions"
             # Ajouter les données point par point
             for point, subdivision in zip(liste, liste_reponse):
                 writer.writerow([point.latitude, point.longitude,
