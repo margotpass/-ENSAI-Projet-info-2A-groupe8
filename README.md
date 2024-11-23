@@ -3,6 +3,7 @@
 Source code for the ENSAI project "Vous êtes ici..."
 
 Authors : Passard Margot, Courtel Juliette, Guizani Maryem, Kane Mouhamadou Moustapha, Lefrançois Marion
+
 Tutors : Thierry Mathé
 
 Goals
